@@ -1,0 +1,1168 @@
+/* ==========================================
+   1. Variables
+   ========================================== */
+   :root {
+    --background: #fff;
+    --text-color: #363d44;
+    --body-font-family: Arial, Helvetica, sans-serif; /* CHANGED: Set to standard system fonts. */
+    --body-line-height: 1.4;
+    --header-bg-color: #4f6fb0;
+    --dropdown-hovered: #d3d7db;
+    --link-color: #e9ebed;
+    --nav-bg-color: #4f6fb0;
+    --blue-link: #333fff;
+    --nav-link-spacing: 11px;
+    --main-padding: 0.5em;
+    --container-max-width: 1200px;
+    --logo-max-width: 16em;
+    font-size: 1em;
+    --dark-mode-text: #e6ebf0;
+    --dark-mode-mainbg: #25282b;
+    --dark-mode-headerbg: #404858;
+    --dark-mode-navhover: #404444;
+    --dark-mode-searchplaceholder: #e6ebf0;
+}
+
+/* ==========================================
+   2. Base Styles (Resets & Typography)
+   ========================================== */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-weight: 500;
+
+}
+
+html,
+body {
+    color: var(--text-color); /* Default text color - Remains --text-color */
+    font-family: var(--body-font-family); /* Correctly uses the variable. */
+    line-height: var(--body-line-height);
+}
+
+h1 {
+    font-size: 40px;
+    font-weight: 500;
+    white-space: nowrap;
+    /* Inherits color from body/main - should be --text-color */
+}
+
+h2 {
+    margin-bottom: 10px;
+     /* Inherits color from body/main - should be --text-color */
+}
+
+/* Specific heading styles moved down */
+
+p {
+    font-size: 1em;
+    /* Inherits color from body/main - should be --text-color */
+}
+
+ul {
+    list-style: none;
+}
+
+li {
+    margin-bottom: 5px;
+}
+
+hr.section-divider { /* Moved general divider here */
+    border: 0;
+    height: 1px;
+    background-color: #ddd;
+    margin: 30px 0;
+}
+
+/* ==========================================
+   3. Layout Styles
+   ========================================== */
+
+main {
+    padding: var(--main-padding);
+    min-height: 100vh;
+    margin-bottom: auto;
+    color: var(--text-color); /* Main content default text - Remains --text-color */
+    
+}
+
+.main-container {
+    display: flex; /* Make the container a flexbox */
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+    padding: 1.2em 2em;
+    gap: 20px; /* Add spacing between section and aside */
+      min-width: var(--container-max-width); 
+    
+}
+
+section {
+
+
+        flex-grow: 1;  /* This tells the section to grow and fill the available space. */
+    min-width: 0;  /* Allows the section to shrink below its content's natural width, forcing text to wrap. */
+}
+
+aside {
+    padding: 1em 0;
+    /* Add this rule to prevent content from stretching the aside */
+    min-width: 0;
+
+        /* ADD THESE LINES: */
+    width: 300px;     /* Give it a fixed width. Adjust this value if you like. */
+    flex-shrink: 0;   /* This is the key: it PREVENTS the aside from shrinking. */
+    
+    
+    min-width: 0;
+}
+
+/* ==========================================
+   4. Header Styles
+   ========================================== */
+header {
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    background-color: var(--nav-bg-color);
+    position: relative;
+
+        /* ADD THIS LINE to lock the header's width */
+    min-width: var(--container-max-width);
+
+}
+
+.header-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    max-width: var(--container-max-width);
+    margin: 0 auto;
+
+}
+
+.logo {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 1em;
+}
+
+.logo img {
+    max-width: var(--logo-max-width);
+    padding-top: 2em;
+}
+
+.nav-container {
+    display: flex;
+    align-items: center;
+    position: relative;
+
+}
+
+nav.header-menu {
+    display: flex;
+    padding: 14px;
+    margin: 0;
+    margin-left: calc(var(--logo-max-width) + 20px);
+    color: var(--link-color); /* Navigation container default - Remains --link-color */
+}
+
+nav.header-menu a {
+    text-decoration: none;
+    margin: 0 var(--nav-link-spacing);
+    transition: transform 0.01s ease-in-out;
+    transform-origin: center;
+    white-space: nowrap;
+    color: var(--link-color); /* Navigation link text - Remains --link-color (as requested) */
+
+}
+
+nav.header-menu a:hover {
+    transform: scale(1.1);
+}
+/* Selects the main div wrapping the search input and button */
+.search-container {
+    position: relative; /* Needed for absolute positioning of the button */
+    display: block; /* Change from flex, let input fill it */
+    width: 280px; /* Keep the desired width */
+    border: none;
+    border-radius: 0;
+    overflow: visible; /* Allow focus styles */
+}
+
+/* Selects the text input element within the search container */
+.search-container input[type="text"] {
+    /* Core styles */
+    display: block;
+    width: 100%;
+    border: none;
+    border-radius: 4px;
+    background-color: var(--background);
+    font-size: 0.9em;
+    font-family: var(--body-font-family);
+    color: var(--text-color);
+    transition: box-shadow .15s ease-in-out; /* Example transition */
+
+    /* Padding & Height */
+    padding-top: 5px;
+    padding-bottom: 3px;
+    padding-left: 5px;
+    padding-right: 35px; /* Keep space for the icon */
+    line-height: 1.5em;
+    box-sizing: border-box;
+
+    /* Resets */
+    outline: none; /* Removes default focus *outline*, but focus state still exists */
+    margin: 0;
+}
+
+/* Position the button *over* the input field */
+.search-container button {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    padding: 0 8px;
+    margin: 0;
+    cursor: pointer;
+    color: var(--text-color);
+}
+.search-container input[type="text"]::placeholder {
+    color: var(--text-color); /* Default placeholder color for light mode */
+    opacity: 0.5; /* Optional: Adjust opacity */
+}
+
+/* Styles the button when it receives focus */
+.search-container button:focus {
+     outline: none;
+}
+
+/* Selects the icon element (<i> tag) within the search button */
+.search-container button i {
+     font-size: 16px;
+     display: block;
+}
+.auth-button {
+    color: var(--text-color); /* Auth button text - Remains --text-color */
+    background-color: #f1f1f1; /* Example */
+    border: 1px solid #ccc;
+    padding: 4px 5px;
+    margin-left: 10px;
+    border-radius: 1.5em;
+    cursor: pointer;
+    font-size: 0.9em;
+
+  }
+
+  .auth-button:hover {
+    background-color: #ddd; /* Example hover */
+  }
+
+ #auth-buttons,
+#user-status {
+    margin-left: 2em;
+    flex-shrink: 0;
+    width: 280px; /* <-- Replace 280px with the value you measured in Step 5 */
+    display: flex;
+    justify-content: flex-end; /* Aligns content inside to the right */
+    align-items: center;     /* Vertically centers content inside */
+    color: var(--text-color); /* Default color for this area - Remains --text-color */
+}
+
+  #auth-buttons {
+      display: flex; /* Good for aligning buttons */
+       justify-content: flex-end; /* Push buttons to the right */
+
+
+  }
+
+#user-status > span { /* Adjust selector if you wrapped the text */
+    white-space: nowrap;
+    overflow: hidden;
+    max-width: 200px; /* Example: Leaves ~80px for button + margins */
+    display: inline-block; /* Or block if it's the only child */
+    color: var(--link-color); /* <<< CHANGED user status email text to --link-color */
+}
+
+#user-status #logout-button {
+    flex-shrink: 0;
+}
+
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-toggle {
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+}
+.dropdown-toggle i {
+    pointer-events: none; /* Clicks will ignore the icon */
+}
+
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 41px;
+    left: 10px;
+    background-color: #fff;
+    box-shadow: 0px 3px 6px 6px rgba(0, 0, 0, 0.25);
+    z-index: 100;
+    border: 1px solid #8F99A3;
+    width: 230px;
+    padding: 0 0;
+}
+
+.dropdown-menu a {
+    color: var(--text-color) !important;
+    padding: 5px 6px;
+    text-decoration: none;
+    display: block;
+    justify-content: space-between;
+    text-align: left;
+    margin: 0 !important;
+    font-size: 16px;
+}
+
+.dropdown-menu a:hover,
+.dropdown-menu a.hovered {
+    background-color: #d3d7db;
+    font-weight: bold;
+    transform-origin: left;
+    width: 228px;
+    transform: none !important;
+    
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.dropdown-item-label {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 6px;
+    cursor: pointer;
+    margin: 0;
+    font-weight: normal;
+    transition: background-color 0.15s ease-in-out;
+    color: var(--text-color); /* <<< ADD OR ENSURE THIS LINE IS PRESENT */
+}
+
+/* Light Mode Hover for the dropdown label */
+.dropdown-item-label:hover {
+    background-color: var(--dropdown-hovered); /* Use the light mode hover background */
+    font-weight: bold;                     /* Make text bold on hover, like links */
+    color: var(--text-color);              /* Keep standard text color on hover */
+}
+
+/* ==========================================
+   5. Footer Styles
+   ========================================== */
+footer {
+    background-color: var(--header-bg-color);
+    color: var(--link-color); /* <<< CHANGED footer text to --text-color */
+    text-align: center;
+    padding: 5.25em;
+    font-size: 0.9em;
+    display: flex;
+    flex-direction: column;
+    
+    
+}
+
+/* ==========================================
+   6. Blog Post & Form Component Styles
+   ========================================== */
+
+/* Base box for posts, forms, widgets */
+.content-box {
+    background-color: #ffffff;
+    padding: 25px; /* Using the later definition */
+    margin-bottom: 30px; /* Using the later definition */
+    border-radius: 5px;
+    border: 1px solid #c2c9d6;
+}
+
+/* --- Create Post Form Specific Styles --- */
+#create-post-area {
+    margin: 20px auto; /* Center the form area */
+}
+
+#create-post-area h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+     /* Inherits color from body/main - should be --text-color */
+}
+
+.form-group {
+    margin-bottom: 20px; /* Using the later definition */
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: var(--text-color); /* <<< CHANGED form label text to --text-color */
+}
+
+/* General styles for inputs and textareas in the create area */
+#create-post-area input[type="text"],
+#create-post-area textarea {
+    font-weight: 500;
+    font-family: var(--body-font-family); /* Correctly uses the variable. */
+    padding: 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    line-height: 1.3; /* Adjusted line-height based on your previous code */
+    width: 100%;
+    /* Default font size (will be overridden for title) */
+    font-size: 1em;
+    color: var(--text-color);
+    overflow-wrap: break-word;
+    word-wrap: break-word;
+}
+
+/* Specific styles for the content textarea */
+#create-post-area #post-content { /* Target content specifically */
+    resize: vertical;
+    font-size: 1em; /* Explicitly 1em */
+    min-height: 150px; /* Example min-height */
+}
+
+/* Specific styles for the title element */
+#create-post-area #post-title { /* Target title specifically */
+    font-size: 1.5em; /* <<< SET TITLE FONT SIZE HERE */
+    resize: none; /* Typically don't resize title */
+    /* Add specific line-height/padding for title if needed */
+    /* line-height: 1.2; */
+    /* padding-top: 10px; */
+    /* padding-bottom: 10px; */
+     overflow-y: hidden; /* Hide scrollbar for title textarea if it grows */
+     height: auto; /* Allow title textarea to grow vertically */
+}
+
+
+/* Button styles (keep as they were) */
+#create-post-area button[type="submit"] {
+    background-color: #5cb85c;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+#create-post-area button[type="submit"]:hover {
+    background-color: #4cae4c;
+}
+
+#create-post-area button[type="submit"]:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+#form-message {
+    margin-top: 15px;
+    font-weight: bold;
+    min-height: 1.2em;
+    padding: 10px;
+    border-radius: 4px;
+    display: none; /* Hide initially */
+}
+#form-message.success {
+    color: #155724; background-color: #d4edda; border: 1px solid #c3e6cb; display: block; /* Specific UI color - Left unchanged */
+}
+#form-message.error {
+     color: #721c24; background-color: #f8d7da; border: 1px solid #f5c6cb; display: block; /* Specific UI color - Left unchanged */
+}
+/* Added info style */
+#form-message.info {
+     color: #0c5460; background-color: #d1ecf1; border: 1px solid #bee5eb; display: block;
+}
+
+#login-prompt {
+    color: #856404; background-color: #fff3cd; border: 1px solid #ffeeba; /* Specific UI color - Left unchanged */
+    padding: 15px; margin-bottom: 20px; border-radius: 4px;
+    display: none; /* Hidden by default */
+}
+#login-prompt a { color: #004085; font-weight: bold; text-decoration: underline; } /* Specific UI color - Left unchanged */
+
+/* --- View Posts Specific Styles --- */
+#view-posts-area h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+    font-size: 1.4em;
+     /* Inherits color from body/main - should be --text-color */
+}
+
+#posts-container {
+    margin-top: 10px;
+}
+
+.post {
+    border-bottom: 1px solid #eee;
+    padding-bottom: 20px; /* Adjusted */
+    margin-bottom: 25px; /* Adjusted */
+}
+
+.post:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.post h3 { /* Post Title */
+    margin-top: 0;
+    margin-bottom: 10px; /* Adjusted */
+    font-size: 1.5em; /* Adjusted */
+    color: var(--text-color); /* <<< CHANGED post title text to --text-color */
+    line-height: 1.3;
+    overflow-wrap: break-word; /* Added */
+    word-wrap: break-word; /* Added */
+}
+
+.post p { /* Post Content */
+    margin-bottom: 15px; /* Adjusted */
+    color: var(--text-color); /* <<< CHANGED post content text to --text-color */
+    white-space: pre-wrap;
+    line-height: 1.6;
+    overflow-wrap: break-word; /* Added */
+    word-wrap: break-word; /* Added */
+}
+
+/* Using more specific selector from before */
+.post small.post-metadata { /* Post Date / Author */
+    display: block;
+    margin-top: 15px; /* Adjusted */
+    color: var(--text-color); /* <<< CHANGED post date text to --text-color */
+    font-size: 0.85em;
+    font-style: italic;
+}
+
+#posts-container > p { /* Loading/error message */
+    color: var(--text-color); /* <<< CHANGED loading/error message text to --text-color */
+    font-style: italic;
+    text-align: center;
+    padding: 25px 0; /* Adjusted */
+}
+
+
+/* ==========================================
+   7. Mini Music Player Styles
+   ========================================== */
+
+   .mini-music-player h4 {
+    margin-top: 0;
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: 1.1em;
+    color: var(--text-color);
+    font-weight: bold;
+}
+
+.player-thumbnail {
+    position: relative;
+    margin-bottom: 10px;
+    max-width: 100%;
+    overflow: hidden;
+    border-radius: 4px;
+    background-color: #e0e0e0;
+    
+}
+
+.player-thumbnail img {
+    display: block;
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    border: none;
+    
+}
+
+#youtube-player-container {
+  position: absolute;
+  top: -9999px;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.player-controls {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+.player-controls .player-btn {
+    background: none;
+    border: none;
+    font-size: 1.6em;
+    cursor: pointer;
+    padding: 5px;
+    line-height: 1;
+    color: var(--text-color);
+    transition: color 0.2s ease, transform 0.1s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.player-controls .player-btn:hover {
+    color: var(--header-bg-color);
+}
+.player-controls .player-btn:active {
+    transform: scale(0.9);
+}
+
+.volume-control {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+#player-volume-slider { /* Base styles added */
+    height: 5px;
+    cursor: pointer;
+    background: #ddd;
+    border-radius: 3px;
+    width: 80px;
+    margin-left: 5px;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+#player-volume-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 14px;
+    height: 14px;
+    background: var(--text-color);
+    border-radius: 50%;
+    cursor: pointer;
+    margin-top: -4.5px;
+}
+
+#player-volume-slider::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    background: var(--text-color);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+}
+
+#player-volume-slider::-webkit-slider-runnable-track {
+    width: 100%;
+    height: 5px;
+    cursor: pointer;
+    background: #ddd;
+    border-radius: 3px;
+    border: none;
+}
+
+#player-volume-slider::-moz-range-track {
+    width: 100%;
+    height: 5px;
+    cursor: pointer;
+    background: #ddd;
+    border-radius: 3px;
+    border: none;
+}
+
+.player-info {
+    margin-top: 5px; /* From later change */
+    text-align: center;
+    overflow: hidden; /* Added */
+    
+}
+
+#player-video-title {
+    font-size: 0.85em; /* From later change */
+    color: var(--text-color);
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 0 5px;
+    height: 1.3em; /* From later change */
+    line-height: 1.3em; /* From later change */
+    display: block; /* Added */
+    width: 100%; /* Added */
+    box-sizing: border-box; /* Added */
+    
+}
+
+.seek-bar-container {
+    width: 100%;
+    height: 5px; /* From later change */
+    background-color: #e0e0e0;
+    border-radius: 3px; /* From later change */
+    margin-top: 5px; /* From later change */
+    cursor: pointer;
+    overflow: hidden;
+    position: relative;
+    
+}
+
+.seek-bar-progress {
+    height: 100%;
+    width: 0%;
+    background-color: var(--header-bg-color);
+    border-radius: 3px; /* From later change */
+    transition: width 0.1s linear;
+    
+}
+
+
+
+/* ==========================================
+   8. Quick Links Styles
+   ========================================== */
+
+   .quick-links-container {
+    padding: 8px 8px;
+    background-color: #f2f2f2;
+}
+
+.quick-links-toggle {
+    background: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    font: inherit;
+    width: 100%;
+    text-align: left;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    color: var(--text-color);
+    font-weight: bold;
+    font-size: 1.1em;
+    line-height: 1.3;
+}
+
+.quick-links-toggle:hover,
+.quick-links-toggle:focus {
+    color: var(--text-color);
+    outline: 2px solid transparent;
+    outline-offset: 2px;
+}
+
+.quick-links-toggle i {
+    font-size: 0.8em;
+    margin-left: 8px;
+    transition: transform 0.2s ease-in-out;
+    pointer-events: none;
+}
+
+.quick-links-toggle[aria-expanded="true"] i {
+    transform: rotate(180deg);
+}
+
+.quick-links-list {
+    margin-top: 10px;
+    padding-left: 5px;
+    border-top: 1px solid #eee;
+    padding-top: 10px;
+}
+
+.quick-links-list ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.quick-links-list li {
+    margin-bottom: 8px;
+}
+
+.quick-links-list li a {
+    color: var(--blue-link);
+    text-decoration: none;
+    display: block;
+    padding: 2px 0;
+}
+
+.quick-links-list li a:hover,
+.quick-links-list li a:focus {
+    color: var(--blue-link);
+    text-decoration: underline;
+}
+   /* ==========================================
+   9. Video Embed Styles
+   ========================================== */
+
+#video-embed-container {
+    display: none; /* Starts hidden */
+    position: relative; /* For overlay */
+    overflow: hidden;
+    margin-top: 5px;
+    background-color: #000; /* Optional background */
+    /* Container width will be 100% of aside, height auto based on video */
+    width: 100%;
+    height: auto;
+}
+
+/* Style for the video element itself */
+#video-embed-container video {
+    display: block; /* Remove extra space below */
+    /* Make video fill container width, height adjusts automatically */
+    max-width: 100%;
+    width: 100%;
+    height: auto;
+    object-fit: contain; /* Use contain to see the whole video, or cover to fill */
+}
+
+/* Overlay to block interaction (optional but good practice) */
+.video-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: transparent;
+    z-index: 1;
+    cursor: default;
+}
+
+/* Style for the trigger text */
+#video-trigger-info {
+    display: inline-block; 
+    padding: 2px 0; 
+    text-decoration: none;
+    cursor: pointer;
+    color: var(--blue-link); /* <<<< FIX: This makes it blue by default */
+}
+
+/* Make its hover/focus state match other links */
+#video-trigger-info:hover,
+#video-trigger-info:focus {
+    color: var(--blue-link); /* Stays blue on hover */
+    text-decoration: underline; /* Adds underline on hover, like other links */
+    outline: none;
+}
+
+/* Style when video is playing (optional, but good to keep) */
+#video-trigger-info.video-active {
+    cursor: default;
+    text-decoration: none;
+    color: var(--text-color); /* Back to default text color when active */
+}
+
+/* Separator between inline trigger and fullscreen link */
+.separator {
+    font-size: 2em; /* Keep the size of the dot */
+    content: "•"; /* Ensure it's a dot */
+    color: var(--text-color); /* Use the appropriate color */
+    margin: 0 8px; /* Adjust spacing around the dot */
+    display: inline-block; /* Ensure it aligns properly */
+    vertical-align: middle; /* Adjust this to move it further down */
+}
+/* Style for the fullscreen symbol link */
+.video-fullscreen-link {
+    text-decoration: none; /* Remove underline */
+    /* Inherits color by default */
+    /* Optional: Adjust vertical alignment if needed */
+    /* vertical-align: middle; */
+}
+
+.video-fullscreen-link:hover,
+.video-fullscreen-link:focus {
+    text-decoration: none; /* Keep underline removed on hover */
+    color: var(--header-bg-color); /* Example: Change color on hover like other links */
+    outline: none; /* Optional */
+}
+
+/* Ensure the inner span with the symbol inherits link states */
+.video-fullscreen-link span {
+    color: inherit; /* Make symbol color match link color */
+}
+/* Add this rule to override the display: block for the fullscreen link */
+.quick-links-list li a.video-fullscreen-link {
+    display: inline; /* Change display back to inline */
+    padding: 0;      /* Remove vertical padding that block might have applied */
+    vertical-align: baseline; /* Align with surrounding text (optional but good practice) */
+    /* Ensure hover/focus styles still work as expected */
+}
+
+/* Optional: You might want to adjust the hover/focus slightly if needed */
+.quick-links-list li a.video-fullscreen-link:hover,
+.quick-links-list li a.video-fullscreen-link:focus {
+    /* Keep existing hover styles or adjust */
+    color: var(--header-bg-color);
+    text-decoration: none; /* Override underline if the base rule added it */
+    /* Remove background changes if the base hover rule added them */
+    background-color: transparent;
+}
+
+/* ==========================================
+   10. Character Counter Styles
+   ========================================== */
+.char-counter {
+    display: none; /* Hide by default */
+    text-align: right;
+    font-size: 0.85em;
+    color: #dc3545; /* Show in red when visible */
+    font-weight: bold;
+    margin-top: 5px;
+    height: 1em;
+}
+
+.char-counter.limit-reached {
+    display: block; /* Make visible */
+}
+
+/* ==========================================
+   Dark Mode Overrides
+   (Strictly using provided :root variables, with exceptions)
+   ========================================== */
+
+   body.dark-mode {
+    /* Re-assign core variables using ONLY provided dark mode vars */
+    --background: var(--dark-mode-mainbg);
+    --text-color: var(--dark-mode-text);
+    --nav-bg-color: var(--dark-mode-headerbg);
+    --header-bg-color: var(--dark-mode-headerbg);
+    --link-color: var(--dark-mode-text); /* Header/Footer links become light text */
+
+    /* Apply to body directly */
+    background-color: var(--dark-mode-mainbg);
+    color: var(--dark-mode-text);
+}
+
+/* General Content Boxes (Default Dark Mode Style) */
+/* Most content boxes will use this style */
+body.dark-mode .content-box {
+    /* Using header background for most content boxes */
+    background-color: var(--dark-mode-headerbg);
+    /* Using header background for border too - may have low contrast */
+    border-color: var(--dark-mode-headerbg);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+    /* Text color inherits from body.dark-mode */
+}
+
+/* === Specific Content Box Background Overrides === */
+/* These specific boxes should use the main background */
+body.dark-mode #view-posts-area.content-box,
+body.dark-mode .mini-music-player.content-box,
+body.dark-mode .quick-links-container.content-box,
+body.dark-mode #create-post-area.content-box { /* <-- ADDED THIS LINE */
+    background-color: var(--dark-mode-mainbg); /* Use main background */
+    /* Border should contrast with the main background now */
+    border-color: var(--dark-mode-headerbg);
+    /* Text color still inherits from body.dark-mode */
+}
+/* === End Specific Overrides === */
+
+
+/* Inputs, Textareas (Create Post) */
+/* These are in a content box that uses --dark-mode-headerbg */
+body.dark-mode #create-post-area input[type="text"],
+body.dark-mode #create-post-area textarea {
+     /* Using header background for general inputs (matches container) */
+    background-color: var(--dark-mode-headerbg);
+    color: var(--dark-mode-text);
+    /* Using main background for border to make it visible */
+    border-color: var(--dark-mode-mainbg);
+}
+
+/* Search Input Specific Background */
+body.dark-mode .search-container input[type="text"] {
+    background-color: var(--dark-mode-mainbg); /* Use main background for search input */
+    color: var(--dark-mode-text);
+    /* Using header background for border */
+    border-color: var(--dark-mode-headerbg);
+}
+
+
+/* --- Placeholder Text Colors --- */
+
+/* General Placeholder text color */
+body.dark-mode ::placeholder { color: var(--dark-mode-text); opacity: 0.7; }
+body.dark-mode :-ms-input-placeholder { color: var(--dark-mode-text); opacity: 0.7; }
+body.dark-mode ::-ms-input-placeholder { color: var(--dark-mode-text); opacity: 0.7; }
+
+/* Dark Mode Placeholder */
+body.dark-mode .search-container input[type="text"]::placeholder {
+    color: var(--dark-mode-searchplaceholder); /* Use the dark mode placeholder color */
+    opacity: 0.5; /* Ensure full visibility */
+}
+
+
+
+/* Search button icon */
+body.dark-mode .search-container button {
+    color: var(--dark-mode-text);
+}
+
+/* Auth Buttons */
+body.dark-mode .auth-button {
+    background-color: var(--dark-mode-headerbg);
+    color: var(--dark-mode-text);
+    border-color: var(--dark-mode-mainbg);
+}
+body.dark-mode .auth-button:hover {
+    background-color: var(--dark-mode-navhover);
+}
+
+/* Disabled Submit Button */
+body.dark-mode #create-post-area button[type="submit"]:disabled {
+    background-color: var(--dark-mode-headerbg);
+    color: var(--dark-mode-text);
+    opacity: 0.6;
+    border-color: var(--dark-mode-headerbg);
+}
+
+/* Dropdown Menu */
+body.dark-mode .dropdown-menu {
+    background-color: var(--dark-mode-mainbg);
+    border-color: var(--dark-mode-headerbg);
+    box-shadow: 0px 3px 6px 6px rgba(0, 0, 0, 0.4);
+}
+
+/* Text color for items inside the dark mode dropdown */
+body.dark-mode .dropdown-menu a,
+body.dark-mode .dropdown-item-label {
+    color: var(--dark-mode-text);
+}
+
+/* Hover background color FOR ALL items (links and label) */
+/* Ensure consistency */
+body.dark-mode .dropdown-menu a:hover,
+body.dark-mode .dropdown-menu a.hovered,
+body.dark-mode .dropdown-item-label:hover {
+    background-color: var(--dark-mode-navhover);
+    font-weight: bold; /* Add bold consistency with light mode link hover */
+}
+
+/* Style the horizontal rule (separator) */
+body.dark-mode .dropdown-menu hr {
+    border-color: var(--dark-mode-headerbg) !important;
+}
+
+/* Form Messages & Login Prompt */
+/* Residing within a --dark-mode-headerbg content-box */
+body.dark-mode #form-message.success,
+body.dark-mode #form-message.error,
+body.dark-mode #form-message.info,
+body.dark-mode #login-prompt {
+    color: var(--dark-mode-text);
+    background-color: var(--dark-mode-headerbg);
+    border: 1px solid var(--dark-mode-mainbg);
+}
+body.dark-mode #login-prompt a {
+     text-decoration: underline;
+}
+
+/* Mini Music Player & Quick Links Specific Text/Elements */
+/* These are inside containers now using --dark-mode-mainbg */
+body.dark-mode .mini-music-player h4,
+body.dark-mode .mini-music-player .player-controls .player-btn,
+body.dark-mode .mini-music-player #player-video-title,
+body.dark-mode .quick-links-container .quick-links-toggle,
+body.dark-mode .quick-links-container .quick-links-list li a,
+body.dark-mode .quick-links-container #video-trigger-info,
+body.dark-mode .quick-links-container .separator
+{
+    color: var(--dark-mode-text); /* Ensure text remains light */
+}
+
+/* Hovers and Accents within specific containers */
+body.dark-mode .mini-music-player .player-controls .player-btn:hover,
+body.dark-mode .quick-links-container .quick-links-toggle:hover,
+body.dark-mode .quick-links-container .quick-links-toggle:focus,
+body.dark-mode .quick-links-container .quick-links-list li a:hover,
+body.dark-mode .quick-links-container .quick-links-list li a:focus,
+body.dark-mode .quick-links-container #video-trigger-info:hover,
+body.dark-mode .quick-links-container #video-trigger-info:focus,
+body.dark-mode .quick-links-container .video-fullscreen-link:hover,
+body.dark-mode .quick-links-container .video-fullscreen-link:focus {
+    color: var(--dark-mode-text); /* No accent, use text color */
+    text-decoration: underline; /* Add underline for hover feedback */
+}
+/* Base Quick Links toggle style reset */
+body.dark-mode .quick-links-container .quick-links-toggle {
+    text-decoration: none;
+}
+
+
+/* Music Player Slider/Seek Bar */
+/* Assuming these are within the --dark-mode-mainbg music player */
+body.dark-mode .mini-music-player #player-volume-slider::-webkit-slider-thumb,
+body.dark-mode .mini-music-player #player-volume-slider::-moz-range-thumb {
+     background: var(--dark-mode-text);
+}
+body.dark-mode .mini-music-player #player-volume-slider::-webkit-slider-runnable-track,
+body.dark-mode .mini-music-player #player-volume-slider::-moz-range-track,
+body.dark-mode .mini-music-player .seek-bar-container {
+      /* Using header bg for contrast against the mainbg container */
+     background: var(--dark-mode-headerbg);
+}
+body.dark-mode .mini-music-player .seek-bar-progress {
+    /* Using text color for progress */
+    background-color: var(--dark-mode-text);
+}
+
+/* User Status email text */
+body.dark-mode #user-status > span {
+    color: var(--dark-mode-text);
+}
+
+/* Player thumbnail placeholder */
+body.dark-mode .player-thumbnail {
+    /* Using header bg for placeholder */
+    background-color: var(--dark-mode-headerbg);
+}
+
+/* ==========================================
+   Dark Mode Toggle Styles (in Dropdown)
+   ========================================== */
+
+/* Base styles for dropdown label (ensure these are present from base CSS) */
+.dropdown-item-label {
+    display: flex; /* Makes it behave like a block, allows flex alignment */
+    justify-content: space-between; /* Pushes checkbox to the right */
+    align-items: center; /* Vertically aligns text and checkbox */
+    padding: 5px 6px; /* Match link padding */
+    cursor: pointer; /* Indicates clickability */
+    /* Other base styles like color, font-size, etc. */
+    margin: 0;
+    font-weight: normal;
+    transition: background-color 0.15s ease-in-out;
+}
+
+/* Dark mode specific styles for the label/checkbox */
+body.dark-mode .dropdown-item-label {
+    color: var(--dark-mode-text);
+}
+/* Hover is handled by the combined rule above */
+
+body.dark-mode .dark-mode-checkbox {
+    /* Using text color for accent */
+    accent-color: var(--dark-mode-text);
+}

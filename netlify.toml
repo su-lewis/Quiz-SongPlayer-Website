@@ -1,0 +1,19 @@
+      
+# netlify.toml (For Netlify Function Approach)
+
+[build]
+  # Set your publish directory correctly (likely ".")
+  publish = "."
+  # Tell Netlify where the functions are
+  functions = "netlify/functions"
+
+[functions]
+  # Ensure the Supabase library gets included with the function
+  # You might need to adjust the path depending on your node_bundler
+  # If using default zip-it-and-ship-it or esbuild, this might work:
+  included_files = ["node_modules/@supabase/supabase-js/**"]
+  # Or potentially: included_files = ["!node_modules/some-other-heavy-dep/**"]
+
+# Optional redirects/headers...
+
+    
