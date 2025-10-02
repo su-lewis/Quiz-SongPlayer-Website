@@ -1399,7 +1399,7 @@ body {
     /* Header adjustments - very compact layout */
     .header-top {
         flex-direction: row !important;
-        flex-wrap: wrap;
+        flex-wrap: nowrap;
         align-items: center !important;
         padding: 0.2em 0.5em !important;
         gap: 4px;
@@ -1437,6 +1437,7 @@ body {
         align-items: center;
         gap: 6px;
         flex-direction: row !important;
+        flex-wrap: nowrap;
     }
 
     nav.header-menu {
@@ -1464,17 +1465,18 @@ body {
         white-space: nowrap;
     }
 
-    /* Auth buttons on second row, full width */
+    /* Auth buttons on same row, top right */
     #auth-buttons,
     .auth-buttons {
         order: 3;
-        width: 100%;
-        justify-content: flex-start !important;
+        width: auto;
+        justify-content: flex-end !important;
         gap: 6px;
         margin: 0 !important;
-        margin-left: 0 !important;
-        flex-basis: 100%;
+        margin-left: auto !important;
+        flex-basis: auto;
         display: flex !important;
+        flex-shrink: 0;
     }
 
     #auth-buttons {
@@ -1488,21 +1490,9 @@ body {
         display: inline-block !important;
     }
 
-    /* Search bar on third row */
+    /* Hide search bar on mobile */
     .search-container {
-        order: 4;
-        width: 100%;
-        max-width: 100%;
-        margin: 0;
-        box-sizing: border-box;
-        flex-basis: 100%;
-    }
-
-    .search-container input {
-        width: 100%;
-        box-sizing: border-box;
-        font-size: 0.85em;
-        padding: 4px 30px 4px 6px;
+        display: none !important;
     }
 
     /* Main container - stack sidebar below content */
