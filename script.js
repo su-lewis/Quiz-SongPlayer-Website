@@ -219,7 +219,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // --- Constants & Config ---
         const SESSION_STORAGE_KEY = 'musicPlayerState_v1';
-        const youtubePlaylistId = 'PLtlRsnKr2ic9-Fe4t98mQ8ceA30juh--u'; // Your playlist ID
+        const youtubePlaylistId = 'PLC1tH2RPEXpS58v3v7HX2P75jw1M1vCW6'; // Your playlist ID
         const initialVolume = 75;
 
         // --- DOM Elements (Music Player Specific) ---
