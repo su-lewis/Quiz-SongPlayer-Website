@@ -1373,6 +1373,17 @@ body.dark-mode .dark-mode-checkbox {
    MOBILE RESPONSIVE STYLES
    ========================================== */
 
+/* Prevent horizontal scrolling on all screen sizes */
+html, body {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100%;
+}
+
+body {
+    position: relative;
+}
+
 /* Tablet and below (768px) */
 @media (max-width: 768px) {
     :root {
@@ -1380,29 +1391,40 @@ body.dark-mode .dark-mode-checkbox {
         --logo-max-width: 12em;
     }
 
-    /* Header adjustments */
+    /* Prevent any element from causing horizontal scroll */
+    * {
+        max-width: 100%;
+    }
+
+    /* Header adjustments - much more compact */
     .header-top {
         flex-direction: column;
         align-items: stretch !important;
-        padding: 0.5em 0.8em !important;
-        gap: 10px;
+        padding: 0.3em 0.6em !important;
+        gap: 6px;
     }
 
     header {
         height: auto !important;
+        min-height: auto !important;
     }
 
     .logo {
-        max-width: 10em;
+        max-width: 9em;
         margin-top: 0 !important;
         margin-right: 0 !important;
         align-self: flex-start;
     }
 
+    .logo img {
+        max-height: 30px;
+    }
+
     .nav-container {
         width: 100%;
         flex-direction: column;
-        gap: 10px;
+        gap: 6px;
+        align-self: flex-start !important;
     }
 
     nav.header-menu {
@@ -1412,58 +1434,68 @@ body.dark-mode .dark-mode-checkbox {
 
     nav.header-menu ul {
         flex-wrap: wrap;
-        gap: 5px;
+        gap: 4px;
         justify-content: flex-start;
+        padding: 0;
     }
 
     nav.header-menu li a {
-        font-size: 0.9em;
-        padding: 6px 10px;
+        font-size: 0.85em;
+        padding: 4px 8px;
+        white-space: nowrap;
     }
 
     .auth-buttons {
         width: 100%;
         justify-content: flex-start;
-        gap: 8px;
+        gap: 6px;
         margin-left: 0 !important;
     }
 
     .auth-button {
-        font-size: 0.9em;
-        padding: 6px 12px;
+        font-size: 0.85em;
+        padding: 4px 10px;
     }
 
     /* Search bar */
     .search-container {
         width: 100%;
-        margin-top: 5px;
+        max-width: 100%;
+        margin-top: 4px;
+        box-sizing: border-box;
     }
 
     .search-container input {
         width: 100%;
+        box-sizing: border-box;
     }
 
     /* Main container - stack sidebar below content */
     .main-container {
         flex-direction: column;
-        padding: 0.5em 0.8em 1em 0.8em !important;
+        padding: 0.5em 0.6em 1em 0.6em !important;
         gap: 15px;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     section {
         width: 100%;
+        box-sizing: border-box;
     }
 
     aside {
         width: 100% !important;
         order: 2;
+        box-sizing: border-box;
     }
 
     /* Typography adjustments */
     h1 {
-        font-size: 28px;
+        font-size: 26px;
         white-space: normal;
-        margin: 0.5em 0.5em 0.2em 0.5em;
+        margin: 0.3em 0.3em 0.1em 0.3em;
+        word-wrap: break-word;
     }
 
     section > p {
@@ -1479,6 +1511,7 @@ body.dark-mode .dark-mode-checkbox {
     /* Content boxes */
     .content-box {
         padding: 12px;
+        box-sizing: border-box;
     }
 
     /* Music player */
@@ -1513,16 +1546,19 @@ body.dark-mode .dark-mode-checkbox {
     .quick-links-list li a,
     .quick-links-list li span {
         font-size: 0.95em;
+        word-wrap: break-word;
     }
 
     /* Posts */
     .post {
         padding-bottom: 15px;
         margin-bottom: 20px;
+        box-sizing: border-box;
     }
 
     .post h3 {
         font-size: 1.1em;
+        word-wrap: break-word;
     }
 
     .post-meta {
@@ -1533,6 +1569,8 @@ body.dark-mode .dark-mode-checkbox {
     #create-post-form input[type="text"],
     #create-post-form textarea {
         font-size: 0.95em;
+        width: 100%;
+        box-sizing: border-box;
     }
 
     #create-post-form button {
@@ -1547,34 +1585,39 @@ body.dark-mode .dark-mode-checkbox {
         font-size: 0.9em;
     }
 
-    /* Header - more compact */
+    /* Header - much more compact */
     .header-top {
-        padding: 0.4em 0.6em !important;
+        padding: 0.25em 0.5em !important;
+        gap: 4px;
     }
 
     .logo {
-        max-width: 8em;
+        max-width: 7em;
+    }
+
+    .logo img {
+        max-height: 25px;
     }
 
     nav.header-menu li a {
-        font-size: 0.85em;
-        padding: 5px 8px;
+        font-size: 0.8em;
+        padding: 3px 6px;
     }
 
     .auth-button {
-        font-size: 0.85em;
-        padding: 5px 10px;
+        font-size: 0.8em;
+        padding: 3px 8px;
     }
 
     /* Main content */
     .main-container {
-        padding: 0.4em 0.6em 0.8em 0.6em !important;
+        padding: 0.4em 0.5em 0.8em 0.5em !important;
         gap: 12px;
     }
 
     h1 {
-        font-size: 24px;
-        margin: 0.3em 0.3em 0.1em 0.3em;
+        font-size: 22px;
+        margin: 0.2em 0.2em 0.1em 0.2em;
     }
 
     section > p {
@@ -1700,22 +1743,30 @@ body.dark-mode .dark-mode-checkbox {
         font-size: 0.85em;
     }
 
+    .header-top {
+        padding: 0.2em 0.4em !important;
+    }
+
     .logo {
-        max-width: 7em;
+        max-width: 6em;
+    }
+
+    .logo img {
+        max-height: 22px;
     }
 
     h1 {
-        font-size: 20px;
+        font-size: 18px;
     }
 
     nav.header-menu li a {
-        font-size: 0.8em;
-        padding: 4px 6px;
+        font-size: 0.75em;
+        padding: 2px 5px;
     }
 
     .auth-button {
-        font-size: 0.8em;
-        padding: 4px 8px;
+        font-size: 0.75em;
+        padding: 3px 6px;
     }
 
     .player-controls .player-btn {
@@ -1724,6 +1775,10 @@ body.dark-mode .dark-mode-checkbox {
 
     #player-volume-slider {
         width: 50px;
+    }
+
+    .main-container {
+        padding: 0.3em 0.4em 0.6em 0.4em !important;
     }
 }
 
