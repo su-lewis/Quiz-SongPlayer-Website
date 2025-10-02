@@ -1,18 +1,16 @@
       
-# netlify.toml (For Netlify Function Approach)
+# netlify.toml
 
 [build]
-  # Set your publish directory correctly (likely ".")
   publish = "."
-  # Tell Netlify where the functions are
   functions = "netlify/functions"
+  # Install dependencies in netlify/functions before building
+  command = "cd netlify/functions && npm install"
 
 [functions]
-  # Ensure the Supabase library gets included with the function
-  # You might need to adjust the path depending on your node_bundler
-  # If using default zip-it-and-ship-it or esbuild, this might work:
-  included_files = ["node_modules/@supabase/supabase-js/**"]
-  # Or potentially: included_files = ["!node_modules/some-other-heavy-dep/**"]
+  # Ensure Firebase Admin gets included with the function
+  node_bundler = "esbuild"
+  external_node_modules = ["firebase-admin"]
 
 # Optional redirects/headers...
 
