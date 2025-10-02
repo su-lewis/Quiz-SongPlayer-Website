@@ -304,9 +304,16 @@ document.addEventListener('DOMContentLoaded', () => {
             updateVideoTitle("Loading Playlist..."); 
             updateThumbnail(null); 
             
-            // If no saved state, load the default video by ID, otherwise load playlist at saved index
-            if (!savedState) {
-                // Load the specific default video (vIOSkVRSgWY) from the playlist
+            // Load playlist with proper index handling
+            if (savedState && savedState.index !== undefined) {
+                // If we have a saved state with an index, load playlist at that index
+                player.loadPlaylist({ 
+                    list: youtubePlaylistId, 
+                    listType: 'playlist', 
+                    index: savedState.index 
+                });
+            } else if (!hasPlayedBefore) {
+                // First time ever - load the specific default video (vIOSkVRSgWY)
                 player.cuePlaylist({
                     list: youtubePlaylistId,
                     listType: 'playlist',
@@ -323,7 +330,12 @@ document.addEventListener('DOMContentLoaded', () => {
                     }
                 }, 500);
             } else {
-                player.loadPlaylist({ list: youtubePlaylistId, listType: 'playlist', index: currentPlaylistIndex });
+                // Has played before but no saved state - load at index 0
+                player.loadPlaylist({ 
+                    list: youtubePlaylistId, 
+                    listType: 'playlist', 
+                    index: 0 
+                });
             }
             
             setupPlayerEventListeners(); 
@@ -361,7 +373,7 @@ document.addEventListener('DOMContentLoaded', () => {
         isPlayerReady = false; internalIsPlaying = false; playlistLoaded = false; pendingSeekTime = null; pendingPlay = false; restoreAttempted = true; updatePlayPauseIcon(); updateVideoTitle("Player Error"); if (seekBarInterval) { clearInterval(seekBarInterval); seekBarInterval = null; } disablePlayerControls(); if (thumbnailImg) { thumbnailImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Crect width='16' height='9' fill='%23ccc'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='1.5px' fill='%23555'%3EError%3C/text%3E%3C/svg%3E"; } try { sessionStorage.removeItem(SESSION_STORAGE_KEY); } catch (e) {} }
 
         // --- Player Control Functions ---
-        function setupPlayerEventListeners() { playPauseBtn?.addEventListener('click', togglePlayPause); prevBtn?.addEventListener('click', playPreviousVideo); nextBtn?.addEventListener('click', playNextVideo); volumeIconBtn?.addEventListener('click', toggleMute); volumeSlider?.addEventListener('input', handleVolumeChange); seekBarContainer?.addEventListener('click', handleSeekBarClick); window.addEventListener('beforeunload', savePlayerState); }
+        function setupPlayerEventListeners() { playPauseBtn?.addEventListener('click', togglePlayPause); prevBtn?.addEventListener('click', playPreviousVideo); nextBtn?.addEventListener('click', playNextVideo); volumeIconBtn?.addEventListener('click', toggleMute); volumeSlider?.addEventListener('input', handleVolumeChange); seekBarContainer?.addEventListener('click', handleSeekBarClick); window.addEventListener('beforeunload', savePlayerState); window.addEventListener('pagehide', savePlayerState); document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') { savePlayerState(); } }); }
         function disablePlayerControls() { console.warn("[Music Player] Disabling player controls."); const controls = [playPauseBtn, prevBtn, nextBtn, volumeIconBtn, volumeSlider, seekBarContainer]; controls.forEach(control => { if(control) { control.disabled = true; if(control === seekBarContainer) control.style.cursor = 'default'; } }); if(thumbnailImg) thumbnailImg.style.opacity = 0.6; }
         // Make clearPendingRestoreFlags accessible outside this block
         clearPendingRestoreFlags = () => { if (pendingSeekTime !== null || pendingPlay) { /* console.log("[Music Player] User interaction detected, clearing pending restore flags."); */ } pendingSeekTime = null; pendingPlay = false; restoreAttempted = true; };
