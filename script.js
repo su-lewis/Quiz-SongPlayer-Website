@@ -251,7 +251,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let restoreAttempted = false;
         let pendingSeekTime = null;
         let pendingPlay = false;
-        let currentPlaylistIndex = 0;
+        let currentPlaylistIndex = 738; // Default to track 739
 
         // --- State Management ---
         function savePlayerState() { if (!isPlayerReady || !player || typeof player.getPlayerState !== 'function') { return; } try { let apiState = player.getPlayerState(); let isCurrentlyPlaying = (apiState === YT.PlayerState.PLAYING || apiState === YT.PlayerState.BUFFERING); const state = { playlistId: youtubePlaylistId, index: player.getPlaylistIndex(), time: player.getCurrentTime() || 0, volume: player.getVolume(), muted: player.isMuted(), playing: isCurrentlyPlaying, timestamp: Date.now() }; sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(state)); } catch (e) { console.error("[Music Player] Error saving state:", e); } }
@@ -271,7 +271,8 @@ document.addEventListener('DOMContentLoaded', () => {
             
             currentVolume = savedState ? savedState.volume : initialVolume; 
             internalIsMuted = savedState ? savedState.muted : false; 
-            currentPlaylistIndex = savedState ? savedState.index : 738; // Always start with track 739
+            // Always start with track 739 if this is first time playing
+            currentPlaylistIndex = (!hasPlayedBefore) ? 738 : (savedState ? savedState.index : 738);
             
             if (savedState) { 
                 player.setVolume(currentVolume); 
@@ -302,7 +303,29 @@ document.addEventListener('DOMContentLoaded', () => {
             updateVolumeIcon(internalIsMuted ? 0 : currentVolume); 
             updateVideoTitle("Loading Playlist..."); 
             updateThumbnail(null); 
-            player.loadPlaylist({ list: youtubePlaylistId, listType: 'playlist', index: currentPlaylistIndex }); 
+            
+            // If no saved state, load the default video by ID, otherwise load playlist at saved index
+            if (!savedState) {
+                // Load the specific default video (vIOSkVRSgWY) from the playlist
+                player.cuePlaylist({
+                    list: youtubePlaylistId,
+                    listType: 'playlist',
+                    index: 0
+                });
+                // After playlist is cued, jump to the specific video
+                setTimeout(() => {
+                    if (player && isPlayerReady) {
+                        try {
+                            player.loadVideoById('vIOSkVRSgWY');
+                        } catch(e) {
+                            console.error("[Music Player] Error loading default video:", e);
+                        }
+                    }
+                }, 500);
+            } else {
+                player.loadPlaylist({ list: youtubePlaylistId, listType: 'playlist', index: currentPlaylistIndex });
+            }
+            
             setupPlayerEventListeners(); 
         }
         function onPlayerStateChange(event) { const state = event.data; const stateNames = { '-1': 'UNSTARTED', 0: 'ENDED', 1: 'PLAYING', 2: 'PAUSED', 3: 'BUFFERING', 5: 'CUED' }; /* console.log(`[Music Player] Event: onStateChange - ${stateNames[state] || state}`); */ if (!isPlayerReady) return; if (!restoreAttempted && (state === YT.PlayerState.CUED || state === YT.PlayerState.BUFFERING || state === YT.PlayerState.PLAYING)) { playlistLoaded = true; restoreAttempted = true; 
