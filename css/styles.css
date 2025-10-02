@@ -48,6 +48,8 @@ h1 {
     font-size: 40px;
     font-weight: 500;
     white-space: nowrap;
+    margin-top: 0.1em;
+    margin-bottom: 0.2em;
     /* Inherits color from body/main - should be --text-color */
 }
 
@@ -94,26 +96,31 @@ main {
     display: flex; /* Make the container a flexbox */
     max-width: var(--container-max-width);
     margin: 0 auto;
-    padding: 1.2em 2em;
-    gap: 20px; /* Add spacing between section and aside */
-      min-width: var(--container-max-width); 
-    
+    padding: 0.8em 1.5em 1.2em 1.5em;
+    gap: 20px; /* Gap between main content and sidebar */
 }
 
 section {
-
-
-        flex-grow: 1;  /* This tells the section to grow and fill the available space. */
+    flex-grow: 1;  /* This tells the section to grow and fill the available space. */
     min-width: 0;  /* Allows the section to shrink below its content's natural width, forcing text to wrap. */
 }
 
+/* Styling for the intro paragraph under h1 */
+section > p {
+    margin-top: 0;
+    margin-bottom: 1.5em;
+    font-size: 1.1em;
+    font-weight: 400;
+    line-height: 1.4;
+}
+
 aside {
-    padding: 1em 0;
+    padding: 0;
     /* Add this rule to prevent content from stretching the aside */
     min-width: 0;
 
         /* ADD THESE LINES: */
-    width: 300px;     /* Give it a fixed width. Adjust this value if you like. */
+    width: 380px;     /* Sidebar width to match JetPunk */
     flex-shrink: 0;   /* This is the key: it PREVENTS the aside from shrinking. */
     
     
@@ -127,9 +134,10 @@ header {
     padding: 0;
     display: flex;
     flex-direction: row;
-    align-items: center;
     background-color: var(--nav-bg-color);
     position: relative;
+    overflow: visible;
+    height: 50px; /* Fixed height like JetPunk */
 
         /* ADD THIS LINE to lock the header's width */
     min-width: var(--container-max-width);
@@ -138,37 +146,39 @@ header {
 
 .header-top {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
     max-width: var(--container-max-width);
     margin: 0 auto;
-
+    padding: 0.1em 1em;
+    width: 100%;
+    overflow: visible;
+    height: 100%;
 }
 
 .logo {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    left: 1em;
+    flex-shrink: 0;
+    margin-right: 20px;
+    margin-top: 1.4em;
 }
 
 .logo img {
     max-width: var(--logo-max-width);
-    padding-top: 2em;
+    display: block;
 }
 
 .nav-container {
     display: flex;
     align-items: center;
-    position: relative;
-
+    flex-grow: 1;
+    gap: 20px;
+    align-self: center;
 }
 
 nav.header-menu {
     display: flex;
-    padding: 14px;
+    padding: 6px;
     margin: 0;
-    margin-left: calc(var(--logo-max-width) + 20px);
     color: var(--link-color); /* Navigation container default - Remains --link-color */
 }
 
@@ -209,11 +219,8 @@ nav.header-menu a:hover {
     transition: box-shadow .15s ease-in-out; /* Example transition */
 
     /* Padding & Height */
-    padding-top: 5px;
-    padding-bottom: 3px;
-    padding-left: 5px;
-    padding-right: 35px; /* Keep space for the icon */
-    line-height: 1.5em;
+    padding: 6px 35px 6px 8px; /* Balanced padding, space for icon on right */
+    line-height: 1.4;
     box-sizing: border-box;
 
     /* Resets */
@@ -253,30 +260,31 @@ nav.header-menu a:hover {
      display: block;
 }
 .auth-button {
-    color: var(--text-color); /* Auth button text - Remains --text-color */
-    background-color: #f1f1f1; /* Example */
-    border: 1px solid #ccc;
-    padding: 4px 5px;
-    margin-left: 10px;
-    border-radius: 1.5em;
+    color: var(--text-color); /* Use default text color */
+    background-color: #ffc500; /* JetPunk yellow */
+    border: 1px solid #e6b000;
+    padding: 6px 12px;
+    margin-left: 6px;
+    border-radius: 4px; /* Smooth rounded corners */
     cursor: pointer;
     font-size: 0.9em;
+    font-weight: 400; /* Normal weight like JetPunk */
 
   }
 
   .auth-button:hover {
-    background-color: #ddd; /* Example hover */
+    background-color: #ffb700; /* Slightly darker yellow on hover */
   }
 
  #auth-buttons,
 #user-status {
-    margin-left: 2em;
+    margin-left: auto;
     flex-shrink: 0;
-    width: 280px; /* <-- Replace 280px with the value you measured in Step 5 */
     display: flex;
     justify-content: flex-end; /* Aligns content inside to the right */
     align-items: center;     /* Vertically centers content inside */
     color: var(--text-color); /* Default color for this area - Remains --text-color */
+    padding-right: 0; /* Remove padding, let header-top handle it */
 }
 
   #auth-buttons {
@@ -391,10 +399,10 @@ footer {
 /* Base box for posts, forms, widgets */
 .content-box {
     background-color: #ffffff;
-    padding: 25px; /* Using the later definition */
-    margin-bottom: 30px; /* Using the later definition */
+    padding: 15px; /* Match JetPunk's more compact padding */
+    margin-bottom: 20px;
     border-radius: 5px;
-    border: 1px solid #c2c9d6;
+    border: 1px solid #ddd; /* Lighter border like JetPunk */
 }
 
 /* --- Create Post Form Specific Styles --- */
@@ -506,12 +514,22 @@ footer {
 #login-prompt a { color: #004085; font-weight: bold; text-decoration: underline; } /* Specific UI color - Left unchanged */
 
 /* --- View Posts Specific Styles --- */
+#view-posts-area {
+    border: none;
+    margin-top: 0.5em;
+    background: none;
+    padding: 0;
+    border-radius: 0;
+}
+
 #view-posts-area h2 {
     margin-top: 0;
-    margin-bottom: 20px;
-    border-bottom: 1px solid #eee;
-    padding-bottom: 10px;
+    margin-bottom: 15px;
+    margin-left: 0;
+    border-bottom: none;
+    padding-bottom: 0;
     font-size: 1.4em;
+    font-weight: 700;
      /* Inherits color from body/main - should be --text-color */
 }
 
@@ -571,11 +589,11 @@ footer {
    7. Mini Music Player Styles
    ========================================== */
 
-   .mini-music-player h4 {
+      .mini-music-player h4 {
     margin-top: 0;
     margin-bottom: 10px;
     text-align: center;
-    font-size: 1.1em;
+    font-size: 1em;
     color: var(--text-color);
     font-weight: bold;
 }
@@ -802,7 +820,7 @@ footer {
 }
 
 .track-number {
-    font-size: 0.85em;
+    font-size: 0.9em;
     color: var(--text-color);
     font-weight: 700;
     white-space: nowrap;
@@ -824,16 +842,12 @@ footer {
 }
 
 #player-video-title {
-    font-size: 0.85em; /* From later change */
+    font-size: 0.9em; /* From later change */
     color: var(--text-color);
     margin: 0;
     white-space: nowrap;
     padding: 0 5px;
     height: 1.3em; /* From later change */
-    line-height: 1.3em; /* From later change */
-    display: inline-block; /* Changed from block for scrolling */
-    box-sizing: border-box; /* Added */
-    position: relative;
 }
 
 /* Scrolling animation for overflowing titles */
@@ -894,9 +908,9 @@ footer {
    ========================================== */
 
 .quick-links-container {
-    padding: 15px;
+    padding: 20px;
     background: transparent;
-    border: 1px solid #c2c9d6;
+    border: 1px solid #ddd; /* Match content-box border */
     border-radius: 5px;
 }
 
@@ -918,7 +932,7 @@ footer {
     margin: 0;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 6px;
 }
 
 .quick-links-list li {
@@ -932,7 +946,8 @@ footer {
     text-decoration: none;
     display: inline;
     padding: 0;
-    font-size: 0.95em;
+    font-size: 1em;
+    font-weight: 600;
     transition: color 0.2s ease;
 }
 
@@ -943,7 +958,9 @@ footer {
 }
 
 .quick-links-list li span {
-    font-size: 0.95em;
+    font-size: 1em;
+    font-weight: 600;
+    color: var(--blue-link);
 }
    /* ==========================================
    9. Video Embed Styles

@@ -258,7 +258,53 @@ document.addEventListener('DOMContentLoaded', () => {
         function loadPlayerState() { try { const savedStateString = sessionStorage.getItem(SESSION_STORAGE_KEY); if (savedStateString) { return JSON.parse(savedStateString); } } catch (e) { console.error("[Music Player] Error loading state:", e); sessionStorage.removeItem(SESSION_STORAGE_KEY); } return null; }
 
         // --- Player Event Handlers ---
-        function onPlayerReady(event) { isPlayerReady = true; player = event.target; playlistLoaded = false; restoreAttempted = false; pendingSeekTime = null; pendingPlay = false; const savedState = loadPlayerState(); currentVolume = savedState ? savedState.volume : initialVolume; internalIsMuted = savedState ? savedState.muted : false; currentPlaylistIndex = savedState ? savedState.index : Math.floor(Math.random() * 946); if (savedState) { player.setVolume(currentVolume); if (internalIsMuted) player.mute(); pendingSeekTime = savedState.time; pendingPlay = savedState.playing; internalIsPlaying = pendingPlay; updatePlayPauseIcon(); } else { player.mute(); internalIsMuted = true; internalIsPlaying = true; pendingPlay = true; pendingSeekTime = null; updatePlayPauseIcon(); } if (volumeSlider) volumeSlider.value = currentVolume; updateVolumeIcon(internalIsMuted ? 0 : currentVolume); updateVideoTitle("Loading Playlist..."); updateThumbnail(null); player.loadPlaylist({ list: youtubePlaylistId, listType: 'playlist', index: currentPlaylistIndex }); setupPlayerEventListeners(); }
+        function onPlayerReady(event) { 
+            isPlayerReady = true; 
+            player = event.target; 
+            playlistLoaded = false; 
+            restoreAttempted = false; 
+            pendingSeekTime = null; 
+            pendingPlay = false; 
+            
+            const savedState = loadPlayerState(); 
+            const hasPlayedBefore = localStorage.getItem('musicPlayerHasPlayed');
+            
+            currentVolume = savedState ? savedState.volume : initialVolume; 
+            internalIsMuted = savedState ? savedState.muted : false; 
+            currentPlaylistIndex = savedState ? savedState.index : Math.floor(Math.random() * 946); 
+            
+            if (savedState) { 
+                player.setVolume(currentVolume); 
+                if (internalIsMuted) player.mute(); 
+                pendingSeekTime = savedState.time; 
+                pendingPlay = savedState.playing; 
+                internalIsPlaying = pendingPlay; 
+                updatePlayPauseIcon(); 
+            } else { 
+                player.mute(); 
+                internalIsMuted = true; 
+                
+                // Only autoplay on first ever visit
+                if (!hasPlayedBefore) {
+                    internalIsPlaying = true; 
+                    pendingPlay = true;
+                    localStorage.setItem('musicPlayerHasPlayed', 'true');
+                } else {
+                    internalIsPlaying = false;
+                    pendingPlay = false;
+                }
+                
+                pendingSeekTime = null; 
+                updatePlayPauseIcon(); 
+            } 
+            
+            if (volumeSlider) volumeSlider.value = currentVolume; 
+            updateVolumeIcon(internalIsMuted ? 0 : currentVolume); 
+            updateVideoTitle("Loading Playlist..."); 
+            updateThumbnail(null); 
+            player.loadPlaylist({ list: youtubePlaylistId, listType: 'playlist', index: currentPlaylistIndex }); 
+            setupPlayerEventListeners(); 
+        }
         function onPlayerStateChange(event) { const state = event.data; const stateNames = { '-1': 'UNSTARTED', 0: 'ENDED', 1: 'PLAYING', 2: 'PAUSED', 3: 'BUFFERING', 5: 'CUED' }; /* console.log(`[Music Player] Event: onStateChange - ${stateNames[state] || state}`); */ if (!isPlayerReady) return; if (!restoreAttempted && (state === YT.PlayerState.CUED || state === YT.PlayerState.BUFFERING || state === YT.PlayerState.PLAYING)) { playlistLoaded = true; restoreAttempted = true; 
         
         // Load full playlist data immediately for track numbers and shuffle
