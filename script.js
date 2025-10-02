@@ -21,7 +21,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const submitButton = document.getElementById('submit-button');
     const postsContainer = document.getElementById('posts-container');
     const viewPostsArea = document.getElementById('view-posts-area');
-    const randomSongButton = document.getElementById('random-song');
 
     // --- Character Counter References ---
     const titleCharCount = document.getElementById('title-char-count'); // Span for title count
@@ -210,7 +209,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const musicPlayerContainer = document.querySelector('.mini-music-player');
     let player; // Holds the YT.Player instance for the music player - make it accessible outside the block if needed
     let isPlayerReady = false; // Make accessible for random button
-    let playlistLoaded = false; // Make accessible for random button
+    let playlistLoaded = false; // Make accessible for shuffle button
+    let playedVideos = []; // Track played videos for shuffle functionality
+    let shuffleMode = false; // Track if shuffle is active
+    let shuffleButton = null; // Reference to shuffle button
+    let updatePlaylistActiveState = () => {}; // Placeholder for playlist dropdown update
     let internalIsPlaying = false; // Music player's internal state
     let clearPendingRestoreFlags = () => {}; // Placeholder accessible function
 
@@ -253,8 +256,8 @@ document.addEventListener('DOMContentLoaded', () => {
         function loadPlayerState() { try { const savedStateString = sessionStorage.getItem(SESSION_STORAGE_KEY); if (savedStateString) { return JSON.parse(savedStateString); } } catch (e) { console.error("[Music Player] Error loading state:", e); sessionStorage.removeItem(SESSION_STORAGE_KEY); } return null; }
 
         // --- Player Event Handlers ---
-        function onPlayerReady(event) { console.log("[Music Player] Event: onPlayerReady"); isPlayerReady = true; player = event.target; playlistLoaded = false; restoreAttempted = false; pendingSeekTime = null; pendingPlay = false; const savedState = loadPlayerState(); currentVolume = savedState ? savedState.volume : initialVolume; internalIsMuted = savedState ? savedState.muted : false; currentPlaylistIndex = savedState ? savedState.index : 0; player.setVolume(currentVolume); if (internalIsMuted) player.mute(); if (volumeSlider) volumeSlider.value = currentVolume; updateVolumeIcon(internalIsMuted ? 0 : currentVolume); updateVideoTitle("Loading Playlist..."); updateThumbnail(null); if (savedState) { pendingSeekTime = savedState.time; pendingPlay = savedState.playing; internalIsPlaying = pendingPlay; updatePlayPauseIcon(); } else { internalIsPlaying = false; updatePlayPauseIcon(); } player.cuePlaylist({ list: youtubePlaylistId, listType: 'playlist', index: currentPlaylistIndex }); setupPlayerEventListeners(); }
-        function onPlayerStateChange(event) { const state = event.data; const stateNames = { '-1': 'UNSTARTED', 0: 'ENDED', 1: 'PLAYING', 2: 'PAUSED', 3: 'BUFFERING', 5: 'CUED' }; /* console.log(`[Music Player] Event: onStateChange - ${stateNames[state] || state}`); */ if (!isPlayerReady) return; if (!restoreAttempted && (state === YT.PlayerState.CUED || state === YT.PlayerState.BUFFERING || state === YT.PlayerState.PLAYING)) { playlistLoaded = true; restoreAttempted = true; if (pendingSeekTime !== null && pendingSeekTime > 0.1) { player.seekTo(pendingSeekTime, true); } if (pendingPlay) { setTimeout(() => { if (player && isPlayerReady) { try { player.playVideo(); } catch (e) { console.error("[Music Player] Error calling playVideo during restore:", e); } } }, 100); } else { if (pendingSeekTime !== null && pendingSeekTime > 0.1) { setTimeout(updateSeekBar, 150); } } pendingSeekTime = null; pendingPlay = false; } const actualPlayerState = player.getPlayerState(); internalIsPlaying = (actualPlayerState === YT.PlayerState.PLAYING || actualPlayerState === YT.PlayerState.BUFFERING); updatePlayPauseIcon(); if (state === YT.PlayerState.CUED || state === YT.PlayerState.PLAYING || state === YT.PlayerState.BUFFERING) { let newIndex = player.getPlaylistIndex(); if (newIndex !== currentPlaylistIndex || videoTitleElement.textContent.includes("Loading") || videoTitleElement.textContent.includes("Initializing")) { currentPlaylistIndex = newIndex; updateVideoDetails(); } } if (internalIsPlaying) { startSeekBarUpdate(); } else { if (seekBarInterval) clearInterval(seekBarInterval); seekBarInterval = null; if (state === YT.PlayerState.PAUSED || state === YT.PlayerState.ENDED) { setTimeout(updateSeekBar, 50); savePlayerState(); } } if (state === YT.PlayerState.ENDED) { if(seekBarProgress) seekBarProgress.style.width = '0%'; internalIsPlaying = false; updatePlayPauseIcon(); savePlayerState(); } }
+        function onPlayerReady(event) { console.log("[Music Player] Event: onPlayerReady"); isPlayerReady = true; player = event.target; playlistLoaded = false; restoreAttempted = false; pendingSeekTime = null; pendingPlay = false; const savedState = loadPlayerState(); currentVolume = savedState ? savedState.volume : initialVolume; internalIsMuted = savedState ? savedState.muted : false; currentPlaylistIndex = savedState ? savedState.index : Math.floor(Math.random() * 50); player.setVolume(currentVolume); if (internalIsMuted) player.mute(); if (volumeSlider) volumeSlider.value = currentVolume; updateVolumeIcon(internalIsMuted ? 0 : currentVolume); updateVideoTitle("Loading Playlist..."); updateThumbnail(null); if (savedState) { pendingSeekTime = savedState.time; pendingPlay = savedState.playing; internalIsPlaying = pendingPlay; updatePlayPauseIcon(); } else { internalIsPlaying = false; updatePlayPauseIcon(); } player.cuePlaylist({ list: youtubePlaylistId, listType: 'playlist', index: currentPlaylistIndex }); setTimeout(() => { if (player && isPlayerReady && !savedState) { try { const duration = player.getDuration(); if (duration > 0) { player.seekTo(duration / 2, true); console.log('[Music Player] Starting at halfway point'); } } catch(e) { console.log('[Music Player] Could not seek to halfway'); } } }, 1500); setupPlayerEventListeners(); }
+        function onPlayerStateChange(event) { const state = event.data; const stateNames = { '-1': 'UNSTARTED', 0: 'ENDED', 1: 'PLAYING', 2: 'PAUSED', 3: 'BUFFERING', 5: 'CUED' }; /* console.log(`[Music Player] Event: onStateChange - ${stateNames[state] || state}`); */ if (!isPlayerReady) return; if (!restoreAttempted && (state === YT.PlayerState.CUED || state === YT.PlayerState.BUFFERING || state === YT.PlayerState.PLAYING)) { playlistLoaded = true; restoreAttempted = true; if (pendingSeekTime !== null && pendingSeekTime > 0.1) { player.seekTo(pendingSeekTime, true); } if (pendingPlay) { setTimeout(() => { if (player && isPlayerReady) { try { player.playVideo(); } catch (e) { console.error("[Music Player] Error calling playVideo during restore:", e); } } }, 100); } else { if (pendingSeekTime !== null && pendingSeekTime > 0.1) { setTimeout(updateSeekBar, 150); } } pendingSeekTime = null; pendingPlay = false; } const actualPlayerState = player.getPlayerState(); internalIsPlaying = (actualPlayerState === YT.PlayerState.PLAYING || actualPlayerState === YT.PlayerState.BUFFERING); updatePlayPauseIcon(); if (state === YT.PlayerState.CUED || state === YT.PlayerState.PLAYING || state === YT.PlayerState.BUFFERING) { let newIndex = player.getPlaylistIndex(); if (newIndex !== currentPlaylistIndex || videoTitleElement.textContent.includes("Loading") || videoTitleElement.textContent.includes("Initializing")) { currentPlaylistIndex = newIndex; updateVideoDetails(); } } if (internalIsPlaying) { startSeekBarUpdate(); } else { if (seekBarInterval) clearInterval(seekBarInterval); seekBarInterval = null; if (state === YT.PlayerState.PAUSED || state === YT.PlayerState.ENDED) { setTimeout(updateSeekBar, 50); savePlayerState(); } } if (state === YT.PlayerState.ENDED) { if(seekBarProgress) seekBarProgress.style.width = '0%'; internalIsPlaying = false; updatePlayPauseIcon(); savePlayerState(); if (shuffleMode && playlistLoaded) { setTimeout(() => { if (shuffleMode && player && isPlayerReady) { playShuffledVideo(); } }, 500); } } }
         function onPlayerError(event) { console.error(`[Music Player] Event: onPlayerError. Code: ${event.data}`); const errorMessages = { 2: "Invalid parameter", 5: "HTML5 player error", 100: "Video not found", 101: "Playback disallowed", 150: "Playback disallowed" }; console.error(`[Music Player] Error: ${errorMessages[event.data] || 'Unknown error.'}`); isPlayerReady = false; internalIsPlaying = false; playlistLoaded = false; pendingSeekTime = null; pendingPlay = false; restoreAttempted = true; updatePlayPauseIcon(); updateVideoTitle("Player Error"); if (seekBarInterval) { clearInterval(seekBarInterval); seekBarInterval = null; } disablePlayerControls(); if (thumbnailImg) { thumbnailImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Crect width='16' height='9' fill='%23ccc'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='1.5px' fill='%23555'%3EError%3C/text%3E%3C/svg%3E"; } try { sessionStorage.removeItem(SESSION_STORAGE_KEY); } catch (e) {} }
 
         // --- Player Control Functions ---
@@ -273,8 +276,8 @@ document.addEventListener('DOMContentLoaded', () => {
         function updatePlayPauseIcon() { if (!playPauseBtn) return; const iconElement = playPauseBtn.querySelector('i'); if (!iconElement) return; iconElement.classList.remove(playIconClass, pauseIconClass); if (internalIsPlaying) { iconElement.classList.add(pauseIconClass); playPauseBtn.title = "Pause"; } else { iconElement.classList.add(playIconClass); playPauseBtn.title = "Play"; } }
         function updateVolumeIcon(volume) { if (!volumeIcon || !volumeIconBtn) return; volumeIcon.classList.remove('bi-volume-up-fill', 'bi-volume-down-fill', 'bi-volume-mute-fill'); if (internalIsMuted || volume === 0) { volumeIcon.classList.add('bi-volume-mute-fill'); volumeIconBtn.title = "Unmute"; } else if (volume < 50) { volumeIcon.classList.add('bi-volume-down-fill'); volumeIconBtn.title = "Mute"; } else { volumeIcon.classList.add('bi-volume-up-fill'); volumeIconBtn.title = "Mute"; } }
         function updateThumbnail(videoId) { if (thumbnailImg && videoId) { thumbnailImg.src = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`; thumbnailImg.alt = `Thumbnail`; thumbnailImg.style.opacity = 1; } else if (thumbnailImg) { thumbnailImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Crect width='16' height='9' fill='%23e0e0e0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='1.5px' fill='%23999'%3EWaiting...%3C/text%3E%3C/svg%3E"; thumbnailImg.alt = 'Video Thumbnail Loading'; } }
-        function updateVideoTitle(title) { if (videoTitleElement) { const displayTitle = title || "---"; videoTitleElement.textContent = displayTitle; videoTitleElement.title = displayTitle; } }
-        function updateVideoDetails() { if (!isPlayerReady || !player || typeof player.getVideoData !== 'function') return; try { const videoData = player.getVideoData(); if (videoData && videoData.title) { updateThumbnail(videoData.video_id); updateVideoTitle(videoData.title); } else { setTimeout(() => { try { const freshVideoData = player.getVideoData(); if (freshVideoData && freshVideoData.title){ updateThumbnail(freshVideoData.video_id); updateVideoTitle(freshVideoData.title); } else { updateThumbnail(null); updateVideoTitle("Loading Info..."); } } catch(e) { /* ignore inner error */} }, 500); } } catch (error) { console.error("[Music Player] Error in updateVideoDetails:", error); updateThumbnail(null); updateVideoTitle("Error loading info"); } }
+        function updateVideoTitle(title) { if (videoTitleElement) { const displayTitle = title || "---"; videoTitleElement.textContent = displayTitle; videoTitleElement.title = displayTitle; videoTitleElement.setAttribute('data-title', displayTitle); videoTitleElement.classList.remove('scrolling'); setTimeout(() => { const parentWidth = videoTitleElement.parentElement ? videoTitleElement.parentElement.offsetWidth : 0; const titleWidth = videoTitleElement.scrollWidth; if (titleWidth > parentWidth && parentWidth > 0) { videoTitleElement.classList.add('scrolling'); } }, 100); } }
+        function updateVideoDetails() { if (!isPlayerReady || !player || typeof player.getVideoData !== 'function') return; try { const videoData = player.getVideoData(); if (videoData && videoData.title) { updateThumbnail(videoData.video_id); updateVideoTitle(videoData.title); updatePlaylistActiveState(); } else { setTimeout(() => { try { const freshVideoData = player.getVideoData(); if (freshVideoData && freshVideoData.title){ updateThumbnail(freshVideoData.video_id); updateVideoTitle(freshVideoData.title); updatePlaylistActiveState(); } else { updateThumbnail(null); updateVideoTitle("Loading Info..."); } } catch(e) { /* ignore inner error */} }, 500); } } catch (error) { console.error("[Music Player] Error in updateVideoDetails:", error); updateThumbnail(null); updateVideoTitle("Error loading info"); } }
 
         // --- Seek Bar Update ---
         function startSeekBarUpdate() { if (!isPlayerReady || !player || !seekBarProgress) return; if (seekBarInterval) clearInterval(seekBarInterval); updateSeekBar(); seekBarInterval = setInterval(() => { updateSeekBar(); savePlayerState(); }, 500); }
@@ -500,32 +503,194 @@ if (quickLinksToggle && quickLinksList) {
 // --- End Quick Links Toggle ---
 
 
-    // --- Random Song Button Logic ---
-    if (randomSongButton) {
-        randomSongButton.addEventListener('click', () => {
-            // Uses 'player', 'isPlayerReady', 'playlistLoaded', 'clearPendingRestoreFlags' from music player scope
-            if (typeof player !== 'undefined' && player && isPlayerReady && playlistLoaded) {
-                 clearPendingRestoreFlags(); // Ensure state is cleared
-                 try {
-                     const playlist = player.getPlaylist(); // Get the list of video IDs
-                     if (playlist && playlist.length > 0) {
-                         let randomIndex;
-                         let currentIdx = player.getPlaylistIndex();
-                         // Ensure the new random index is different from the current one, if possible
-                         if (playlist.length > 1) {
-                              do {
-                                  randomIndex = Math.floor(Math.random() * playlist.length);
-                              } while (randomIndex === currentIdx);
-                         } else {
-                              randomIndex = 0; // Only one song, just play it
-                         }
-                         player.playVideoAt(randomIndex); // Play the video at the random index
-                     } else { console.warn("[Music Player] Playlist empty for random song."); /* alert("Playlist is empty."); */ }
-                 } catch (e) { console.error("[Music Player] Error playing random video:", e); /* alert("Could not play random song."); */ }
-            } else { /* alert("Music player is not ready yet."); */ console.warn("[Random Song] Music player not ready or accessible."); }
+    // --- Shuffle Button Logic ---
+    shuffleButton = document.getElementById('player-shuffle');
+    
+    // Helper function to play a shuffled video
+    function playShuffledVideo() {
+        if (typeof player !== 'undefined' && player && isPlayerReady && playlistLoaded) {
+            clearPendingRestoreFlags(); // Ensure state is cleared
+            try {
+                const playlist = player.getPlaylist(); // Get the list of video IDs
+                if (playlist && playlist.length > 0) {
+                    let randomIndex;
+                    const currentIdx = player.getPlaylistIndex();
+                    
+                    // If all videos have been played, reset the played list
+                    if (playedVideos.length >= playlist.length - 1) {
+                        playedVideos = [currentIdx]; // Keep current video in played list
+                        console.log("[Shuffle] All songs played, resetting shuffle queue");
+                    }
+                    
+                    // Find an unplayed video
+                    const unplayedIndices = [];
+                    for (let i = 0; i < playlist.length; i++) {
+                        if (!playedVideos.includes(i)) {
+                            unplayedIndices.push(i);
+                        }
+                    }
+                    
+                    if (unplayedIndices.length > 0) {
+                        // Pick a random unplayed video
+                        randomIndex = unplayedIndices[Math.floor(Math.random() * unplayedIndices.length)];
+                        playedVideos.push(randomIndex); // Mark as played
+                        player.playVideoAt(randomIndex); // Play the video
+                        console.log(`[Shuffle] Playing video ${randomIndex}, played count: ${playedVideos.length}/${playlist.length}`);
+                    } else {
+                        // Fallback: just play a different song if something goes wrong
+                        if (playlist.length > 1) {
+                            do {
+                                randomIndex = Math.floor(Math.random() * playlist.length);
+                            } while (randomIndex === currentIdx);
+                            player.playVideoAt(randomIndex);
+                        }
+                    }
+                } else { console.warn("[Music Player] Playlist empty for shuffle."); }
+            } catch (e) { console.error("[Music Player] Error shuffling video:", e); }
+        } else { console.warn("[Shuffle] Music player not ready or accessible."); }
+    }
+    
+    if (shuffleButton) {
+        shuffleButton.addEventListener('click', () => {
+            // Toggle shuffle mode
+            shuffleMode = !shuffleMode;
+            
+            if (shuffleMode) {
+                // Enable shuffle mode - turn button blue
+                shuffleButton.classList.add('shuffle-active');
+                console.log('[Shuffle] Shuffle mode enabled');
+                // Play a shuffled video immediately
+                playShuffledVideo();
+            } else {
+                // Disable shuffle mode - return to normal color
+                shuffleButton.classList.remove('shuffle-active');
+                playedVideos = []; // Reset played videos list
+                console.log('[Shuffle] Shuffle mode disabled');
+            }
         });
     }
-    // --- End Random Song Button ---
+    // --- End Shuffle Button ---
+
+
+    // --- Playlist Dropdown Logic ---
+    const playlistBtn = document.getElementById('player-playlist-btn');
+    const playlistDropdown = document.getElementById('player-playlist-dropdown');
+    let isPlaylistLoaded = false;
+
+    function populatePlaylist() {
+        if (!player || !isPlayerReady || !playlistLoaded || isPlaylistLoaded) return;
+        
+        try {
+            const playlist = player.getPlaylist();
+            if (!playlist || playlist.length === 0) {
+                console.warn('[Playlist] No videos in playlist');
+                return;
+            }
+
+            const dropdownContent = playlistDropdown.querySelector('.playlist-dropdown-content');
+            dropdownContent.innerHTML = ''; // Clear loading message
+
+            // Fetch each video's details and create playlist items
+            playlist.forEach((videoId, index) => {
+                const item = document.createElement('div');
+                item.className = 'playlist-item';
+                item.dataset.index = index;
+                
+                // Create title element
+                const titleSpan = document.createElement('span');
+                titleSpan.className = 'playlist-item-title';
+                titleSpan.textContent = `${index + 1}. Loading...`;
+                item.appendChild(titleSpan);
+
+                // Add click handler
+                item.addEventListener('click', () => {
+                    if (player && isPlayerReady) {
+                        clearPendingRestoreFlags();
+                        player.playVideoAt(index);
+                        playlistDropdown.style.display = 'none';
+                        updatePlaylistActiveState();
+                    }
+                });
+
+                dropdownContent.appendChild(item);
+
+                // Fetch video details using YouTube API
+                fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${videoId}&format=json`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.title) {
+                            titleSpan.textContent = `${index + 1}. ${data.title}`;
+                        }
+                    })
+                    .catch(() => {
+                        titleSpan.textContent = `${index + 1}. Video ${index + 1}`;
+                    });
+            });
+
+            isPlaylistLoaded = true;
+            updatePlaylistActiveState();
+            console.log('[Playlist] Loaded', playlist.length, 'videos');
+        } catch (e) {
+            console.error('[Playlist] Error populating:', e);
+        }
+    }
+
+    // Assign to global variable so it can be called from updateVideoDetails
+    updatePlaylistActiveState = function() {
+        if (!player || !isPlayerReady || !playlistDropdown) return;
+        
+        const items = playlistDropdown.querySelectorAll('.playlist-item');
+        const currentIndex = player.getPlaylistIndex();
+        
+        items.forEach((item, index) => {
+            if (index === currentIndex) {
+                item.classList.add('active');
+            } else {
+                item.classList.remove('active');
+            }
+        });
+    };
+
+    if (playlistBtn && playlistDropdown) {
+        playlistBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            
+            // Toggle dropdown visibility
+            if (playlistDropdown.style.display === 'none' || !playlistDropdown.style.display) {
+                // Try to populate if not already done
+                if (!isPlaylistLoaded && player && isPlayerReady && playlistLoaded) {
+                    populatePlaylist();
+                }
+                playlistDropdown.style.display = 'block';
+                updatePlaylistActiveState();
+            } else {
+                playlistDropdown.style.display = 'none';
+            }
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            if (playlistDropdown && playlistDropdown.style.display === 'block') {
+                if (!playlistDropdown.contains(e.target) && e.target !== playlistBtn && !playlistBtn.contains(e.target)) {
+                    playlistDropdown.style.display = 'none';
+                }
+            }
+        });
+
+        // Populate playlist when it becomes ready
+        if (typeof window.onYouTubeIframeAPIReady === 'function') {
+            const originalReady = window.onYouTubeIframeAPIReady;
+            window.onYouTubeIframeAPIReady = function() {
+                originalReady();
+                setTimeout(() => {
+                    if (player && isPlayerReady && playlistLoaded && !isPlaylistLoaded) {
+                        populatePlaylist();
+                    }
+                }, 2000);
+            };
+        }
+    }
+    // --- End Playlist Dropdown ---
 
 
     // --- INITIALIZE FEATURES ON LOAD ---

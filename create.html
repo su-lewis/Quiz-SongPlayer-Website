@@ -54,7 +54,6 @@
             </div>
           </div>
           <a href="/create.html" id="create-link">Create</a>
-          <a id="random-song">Random Song</a>
         </nav>
         <div class="search-bar">
           <div class="search-container">
@@ -115,9 +114,18 @@
                       <div id="youtube-player-container"></div>
                   </div>
                   <div class="player-controls">
+                      <div class="playlist-dropdown-container">
+                          <button id="player-playlist-btn" title="Show Playlist" class="player-btn"><i class="bi bi-list"></i></button>
+                          <div id="player-playlist-dropdown" class="playlist-dropdown" style="display: none;">
+                              <div class="playlist-dropdown-content">
+                                  <p class="playlist-loading">Loading playlist...</p>
+                              </div>
+                          </div>
+                      </div>
                       <button id="player-prev" title="Previous" class="player-btn"><i class="bi bi-skip-backward-fill"></i></button>
                       <button id="player-play-pause" title="Play" class="player-btn"><i class="bi bi-play-fill"></i></button>
                       <button id="player-next" title="Next" class="player-btn"><i class="bi bi-skip-forward-fill"></i></button>
+                      <button id="player-shuffle" title="Shuffle" class="player-btn"><i class="bi bi-shuffle"></i></button>
                       <div class="volume-control">
                           <button id="player-volume-icon" title="Mute" class="player-btn"><i class="bi bi-volume-up-fill"></i></button>
                           <input type="range" id="player-volume-slider" min="0" max="100" value="100" title="Volume">
@@ -137,18 +145,12 @@
                     <h4>Quick Links</h4>
                     <div id="quick-links-list" class="quick-links-list">
                         <ul>
-                            <li>
-                                <span id="video-trigger-info" role="button" tabindex="0" style="cursor: pointer;">ANSI Art (Click to play)</span>
-                                <span class="separator" aria-hidden="true" style="margin: 0 4px; cursor: default;">·</span>
-                                <a href="/videos/art.mp4" target="_blank" class="video-fullscreen-link" title="Open video fullscreen in new tab" style="text-decoration: none;">
-                                     <span aria-label="Open fullscreen video in new tab">⛶</span>
-                                </a>
-                                <div id="video-embed-container" style="display: none;">
-                                    <!-- Video element gets inserted here by JS -->
-                                </div>
-                            </li>
-                
-                            <li><a href="#">Another Link</a></li>
+                    <li>
+                        <span id="video-trigger-info" role="button" tabindex="0" style="cursor: pointer;">ANSI Art (Click to play)</span>
+                        <div id="video-embed-container" style="display: none;">
+                            <!-- Video element gets inserted here by JS -->
+                        </div>
+                    </li>                            <li><a href="#">Another Link</a></li>
                             <li><a href="https://www.google.com" target="_blank">External Link</a></li>
                           <!-- Add more links here -->
                       </ul>

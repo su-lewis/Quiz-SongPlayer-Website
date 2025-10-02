@@ -638,6 +638,95 @@ footer {
     transform: scale(0.9);
 }
 
+/* Playlist button - thicker and closer lines */
+#player-playlist-btn i {
+    font-weight: 900;
+    letter-spacing: -0.1em;
+}
+
+/* Previous and Next buttons - slightly smaller */
+#player-prev,
+#player-next {
+    font-size: 1.4em;
+}
+
+/* Shuffle button specific styles */
+#player-shuffle {
+    font-size: 1.3em;
+}
+
+#player-shuffle.shuffle-active {
+    color: var(--header-bg-color);
+}
+
+#player-shuffle.shuffle-active:hover {
+    color: #0066cc;
+}
+
+/* Playlist dropdown */
+.playlist-dropdown-container {
+    position: relative;
+    display: inline-block;
+}
+
+.playlist-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    margin-top: 10px;
+    background: white;
+    border: 1px solid #c2c9d6;
+    border-radius: 5px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    min-width: 250px;
+    max-width: 300px;
+    max-height: 400px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.playlist-dropdown-content {
+    padding: 10px 0;
+}
+
+.playlist-loading {
+    padding: 15px;
+    text-align: center;
+    color: #999;
+    font-size: 0.9em;
+    margin: 0;
+}
+
+.playlist-item {
+    padding: 10px 15px;
+    cursor: pointer;
+    border-bottom: 1px solid #f0f0f0;
+    transition: background-color 0.2s ease;
+    font-size: 0.9em;
+    color: var(--text-color);
+}
+
+.playlist-item:last-child {
+    border-bottom: none;
+}
+
+.playlist-item:hover {
+    background-color: #f5f5f5;
+}
+
+.playlist-item.active {
+    background-color: #e3f2fd;
+    font-weight: bold;
+    color: var(--header-bg-color);
+}
+
+.playlist-item-title {
+    display: block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
 .volume-control {
     position: relative;
     display: flex;
@@ -695,9 +784,10 @@ footer {
 
 .player-info {
     margin-top: 5px; /* From later change */
-    text-align: center;
+    text-align: left;
     overflow: hidden; /* Added */
-    
+    position: relative;
+    width: 100%;
 }
 
 #player-video-title {
@@ -705,15 +795,34 @@ footer {
     color: var(--text-color);
     margin: 0;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
     padding: 0 5px;
     height: 1.3em; /* From later change */
     line-height: 1.3em; /* From later change */
-    display: block; /* Added */
-    width: 100%; /* Added */
+    display: inline-block; /* Changed from block for scrolling */
     box-sizing: border-box; /* Added */
-    
+    position: relative;
+}
+
+/* Scrolling animation for overflowing titles */
+@keyframes scroll-title {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+#player-video-title.scrolling {
+    animation: scroll-title 20s linear infinite;
+}
+
+#player-video-title.scrolling::after {
+    content: attr(data-title);
+    position: absolute;
+    left: 100%;
+    white-space: nowrap;
+    padding-left: 3em;
 }
 
 .seek-bar-container {
@@ -746,7 +855,8 @@ footer {
 .quick-links-container {
     padding: 15px;
     background: transparent;
-    border: none;
+    border: 1px solid #c2c9d6;
+    border-radius: 5px;
 }
 
 .quick-links-container h4 {
@@ -1073,6 +1183,11 @@ body.dark-mode .quick-links-container .separator
     color: var(--dark-mode-text); /* Ensure text remains light */
 }
 
+/* Ensure playlist button icon inherits proper styling */
+body.dark-mode #player-playlist-btn i {
+    font-weight: 900;
+}
+
 /* Hovers and Accents within specific containers */
 body.dark-mode .mini-music-player .player-controls .player-btn:hover,
 body.dark-mode .quick-links-container .quick-links-toggle:hover,
@@ -1085,6 +1200,40 @@ body.dark-mode .quick-links-container .video-fullscreen-link:hover,
 body.dark-mode .quick-links-container .video-fullscreen-link:focus {
     color: var(--dark-mode-text); /* No accent, use text color */
     text-decoration: underline; /* Add underline for hover feedback */
+}
+
+/* Dark mode shuffle button active state */
+body.dark-mode #player-shuffle.shuffle-active {
+    color: #4da6ff;
+}
+
+body.dark-mode #player-shuffle.shuffle-active:hover {
+    color: #80c1ff;
+}
+
+/* Dark mode playlist dropdown */
+body.dark-mode .playlist-dropdown {
+    background-color: var(--dark-mode-mainbg);
+    border-color: var(--dark-mode-headerbg);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-mode .playlist-item {
+    color: var(--dark-mode-text);
+    border-bottom-color: var(--dark-mode-headerbg);
+}
+
+body.dark-mode .playlist-item:hover {
+    background-color: var(--dark-mode-headerbg);
+}
+
+body.dark-mode .playlist-item.active {
+    background-color: #1a3a52;
+    color: #4da6ff;
+}
+
+body.dark-mode .playlist-loading {
+    color: #999;
 }
 /* Base Quick Links toggle style reset */
 body.dark-mode .quick-links-container .quick-links-toggle {
