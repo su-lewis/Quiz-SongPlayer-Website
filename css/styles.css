@@ -1416,10 +1416,16 @@ body {
         max-width: 7em;
         margin: 0 !important;
         flex-shrink: 0;
+        display: block !important;
+    }
+
+    .logo a {
+        display: block;
     }
 
     .logo img {
         max-height: 24px;
+        display: block;
     }
 
     /* Nav container second - to the right of logo */
@@ -1430,6 +1436,7 @@ body {
         display: flex;
         align-items: center;
         gap: 6px;
+        flex-direction: row !important;
     }
 
     nav.header-menu {
@@ -1458,19 +1465,27 @@ body {
     }
 
     /* Auth buttons on second row, full width */
+    #auth-buttons,
     .auth-buttons {
         order: 3;
         width: 100%;
-        justify-content: flex-start;
+        justify-content: flex-start !important;
         gap: 6px;
         margin: 0 !important;
+        margin-left: 0 !important;
         flex-basis: 100%;
+        display: flex !important;
+    }
+
+    #auth-buttons {
+        display: flex !important;
     }
 
     .auth-button {
         font-size: 0.8em;
         padding: 3px 10px;
         flex-shrink: 0;
+        display: inline-block !important;
     }
 
     /* Search bar on third row */
