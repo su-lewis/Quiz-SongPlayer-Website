@@ -1401,8 +1401,9 @@ body {
         flex-direction: row !important;
         flex-wrap: nowrap;
         align-items: center !important;
-        padding: 0.2em 0.5em !important;
-        gap: 4px;
+        padding: 0.15em 0.3em !important;
+        gap: 2px;
+        overflow-x: hidden;
     }
 
     header {
@@ -1413,7 +1414,7 @@ body {
     /* Logo first - top left */
     .logo {
         order: 1;
-        max-width: 7em;
+        max-width: 3em;
         margin: 0 !important;
         flex-shrink: 0;
         display: block !important;
@@ -1424,7 +1425,8 @@ body {
     }
 
     .logo img {
-        max-height: 24px;
+        max-height: 16px;
+        width: auto;
         display: block;
     }
 
@@ -1435,9 +1437,10 @@ body {
         min-width: 0;
         display: flex;
         align-items: center;
-        gap: 6px;
+        gap: 2px;
         flex-direction: row !important;
         flex-wrap: nowrap;
+        overflow: hidden;
     }
 
     nav.header-menu {
@@ -1445,23 +1448,28 @@ body {
         padding: 0;
         flex: 1;
         min-width: 0;
+        overflow: hidden;
     }
 
     nav.header-menu ul {
-        flex-wrap: wrap;
-        gap: 3px;
+        flex-wrap: nowrap;
+        gap: 2px;
         justify-content: flex-start;
         padding: 0;
         margin: 0;
+        overflow-x: auto;
+        overflow-y: hidden;
+        -webkit-overflow-scrolling: touch;
     }
 
     nav.header-menu li {
         margin: 0;
+        flex-shrink: 0;
     }
 
     nav.header-menu li a {
-        font-size: 0.75em;
-        padding: 3px 6px;
+        font-size: 0.6em;
+        padding: 2px 4px;
         white-space: nowrap;
     }
 
@@ -1471,7 +1479,7 @@ body {
         order: 3;
         width: auto;
         justify-content: flex-end !important;
-        gap: 6px;
+        gap: 2px;
         margin: 0 !important;
         margin-left: auto !important;
         flex-basis: auto;
@@ -1484,10 +1492,11 @@ body {
     }
 
     .auth-button {
-        font-size: 0.8em;
-        padding: 3px 10px;
+        font-size: 0.55em;
+        padding: 2px 6px;
         flex-shrink: 0;
         display: inline-block !important;
+        white-space: nowrap;
     }
 
     /* Hide search bar on mobile */
@@ -1498,8 +1507,8 @@ body {
     /* Main container - stack sidebar below content */
     .main-container {
         flex-direction: column;
-        padding: 0.5em 0.6em 1em 0.6em !important;
-        gap: 15px;
+        padding: 0.3em 0.4em 1em 0.4em !important;
+        gap: 10px;
         width: 100%;
         box-sizing: border-box;
     }
