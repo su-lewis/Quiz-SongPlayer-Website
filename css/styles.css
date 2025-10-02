@@ -1396,12 +1396,13 @@ body {
         max-width: 100%;
     }
 
-    /* Header adjustments - much more compact */
+    /* Header adjustments - very compact layout */
     .header-top {
-        flex-direction: column;
-        align-items: stretch !important;
-        padding: 0.3em 0.6em !important;
-        gap: 6px;
+        flex-direction: row !important;
+        flex-wrap: wrap;
+        align-items: center !important;
+        padding: 0.2em 0.5em !important;
+        gap: 4px;
     }
 
     header {
@@ -1409,65 +1410,84 @@ body {
         min-height: auto !important;
     }
 
+    /* Logo first - top left */
     .logo {
-        max-width: 9em;
-        margin-top: 0 !important;
-        margin-right: 0 !important;
-        align-self: flex-start;
+        order: 1;
+        max-width: 7em;
+        margin: 0 !important;
+        flex-shrink: 0;
     }
 
     .logo img {
-        max-height: 30px;
+        max-height: 24px;
     }
 
+    /* Nav container second - to the right of logo */
     .nav-container {
-        width: 100%;
-        flex-direction: column;
+        order: 2;
+        flex: 1;
+        min-width: 0;
+        display: flex;
+        align-items: center;
         gap: 6px;
-        align-self: flex-start !important;
     }
 
     nav.header-menu {
-        width: 100%;
+        width: auto;
         padding: 0;
+        flex: 1;
+        min-width: 0;
     }
 
     nav.header-menu ul {
         flex-wrap: wrap;
-        gap: 4px;
+        gap: 3px;
         justify-content: flex-start;
         padding: 0;
+        margin: 0;
+    }
+
+    nav.header-menu li {
+        margin: 0;
     }
 
     nav.header-menu li a {
-        font-size: 0.85em;
-        padding: 4px 8px;
+        font-size: 0.75em;
+        padding: 3px 6px;
         white-space: nowrap;
     }
 
+    /* Auth buttons on second row, full width */
     .auth-buttons {
+        order: 3;
         width: 100%;
         justify-content: flex-start;
         gap: 6px;
-        margin-left: 0 !important;
+        margin: 0 !important;
+        flex-basis: 100%;
     }
 
     .auth-button {
-        font-size: 0.85em;
-        padding: 4px 10px;
+        font-size: 0.8em;
+        padding: 3px 10px;
+        flex-shrink: 0;
     }
 
-    /* Search bar */
+    /* Search bar on third row */
     .search-container {
+        order: 4;
         width: 100%;
         max-width: 100%;
-        margin-top: 4px;
+        margin: 0;
         box-sizing: border-box;
+        flex-basis: 100%;
     }
 
     .search-container input {
         width: 100%;
         box-sizing: border-box;
+        font-size: 0.85em;
+        padding: 4px 30px 4px 6px;
     }
 
     /* Main container - stack sidebar below content */
@@ -1585,28 +1605,33 @@ body {
         font-size: 0.9em;
     }
 
-    /* Header - much more compact */
+    /* Header - ultra compact */
     .header-top {
-        padding: 0.25em 0.5em !important;
-        gap: 4px;
+        padding: 0.15em 0.4em !important;
+        gap: 3px;
     }
 
     .logo {
-        max-width: 7em;
+        max-width: 6em;
     }
 
     .logo img {
-        max-height: 25px;
+        max-height: 20px;
     }
 
     nav.header-menu li a {
-        font-size: 0.8em;
-        padding: 3px 6px;
+        font-size: 0.7em;
+        padding: 2px 5px;
     }
 
     .auth-button {
-        font-size: 0.8em;
+        font-size: 0.75em;
         padding: 3px 8px;
+    }
+
+    .search-container input {
+        font-size: 0.8em;
+        padding: 3px 28px 3px 5px;
     }
 
     /* Main content */
@@ -1744,15 +1769,15 @@ body {
     }
 
     .header-top {
-        padding: 0.2em 0.4em !important;
+        padding: 0.1em 0.3em !important;
     }
 
     .logo {
-        max-width: 6em;
+        max-width: 5em;
     }
 
     .logo img {
-        max-height: 22px;
+        max-height: 18px;
     }
 
     h1 {
@@ -1760,13 +1785,17 @@ body {
     }
 
     nav.header-menu li a {
-        font-size: 0.75em;
-        padding: 2px 5px;
+        font-size: 0.65em;
+        padding: 2px 4px;
     }
 
     .auth-button {
+        font-size: 0.7em;
+        padding: 2px 6px;
+    }
+
+    .search-container input {
         font-size: 0.75em;
-        padding: 3px 6px;
     }
 
     .player-controls .player-btn {
