@@ -189,7 +189,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const contentElement = document.createElement('p');
                     const sanitizedContent = post.content.replace(/</g, "<").replace(/>/g, ">"); 
 					contentElement.innerHTML = sanitizedContent.replace(/\n/g, '<br>');
-                    const username = post.profiles?.username || 'Anonymous';
+                    const username = post.username || 'Anonymous';
                     const postDate = new Date(post.created_at);
                     const formattedDateTime = postDate.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
                     const metadataElement = document.createElement('small'); metadataElement.className = 'post-metadata';
