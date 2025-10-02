@@ -4,11 +4,10 @@
 [build]
   publish = "."
   functions = "netlify/functions"
-  # Install dependencies in netlify/functions before building
-  command = "cd netlify/functions && npm install"
+  command = "chmod +x build.sh && ./build.sh"
 
 [functions]
-  # Ensure Firebase Admin gets included with the function
+  # Let Netlify bundle the dependencies
   node_bundler = "esbuild"
   external_node_modules = ["firebase-admin"]
 
