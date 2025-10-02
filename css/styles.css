@@ -1368,3 +1368,381 @@ body.dark-mode .dark-mode-checkbox {
     /* Using text color for accent */
     accent-color: var(--dark-mode-text);
 }
+
+/* ==========================================
+   MOBILE RESPONSIVE STYLES
+   ========================================== */
+
+/* Tablet and below (768px) */
+@media (max-width: 768px) {
+    :root {
+        font-size: 0.95em;
+        --logo-max-width: 12em;
+    }
+
+    /* Header adjustments */
+    .header-top {
+        flex-direction: column;
+        align-items: stretch !important;
+        padding: 0.5em 0.8em !important;
+        gap: 10px;
+    }
+
+    header {
+        height: auto !important;
+    }
+
+    .logo {
+        max-width: 10em;
+        margin-top: 0 !important;
+        margin-right: 0 !important;
+        align-self: flex-start;
+    }
+
+    .nav-container {
+        width: 100%;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    nav.header-menu {
+        width: 100%;
+        padding: 0;
+    }
+
+    nav.header-menu ul {
+        flex-wrap: wrap;
+        gap: 5px;
+        justify-content: flex-start;
+    }
+
+    nav.header-menu li a {
+        font-size: 0.9em;
+        padding: 6px 10px;
+    }
+
+    .auth-buttons {
+        width: 100%;
+        justify-content: flex-start;
+        gap: 8px;
+        margin-left: 0 !important;
+    }
+
+    .auth-button {
+        font-size: 0.9em;
+        padding: 6px 12px;
+    }
+
+    /* Search bar */
+    .search-container {
+        width: 100%;
+        margin-top: 5px;
+    }
+
+    .search-container input {
+        width: 100%;
+    }
+
+    /* Main container - stack sidebar below content */
+    .main-container {
+        flex-direction: column;
+        padding: 0.5em 0.8em 1em 0.8em !important;
+        gap: 15px;
+    }
+
+    section {
+        width: 100%;
+    }
+
+    aside {
+        width: 100% !important;
+        order: 2;
+    }
+
+    /* Typography adjustments */
+    h1 {
+        font-size: 28px;
+        white-space: normal;
+        margin: 0.5em 0.5em 0.2em 0.5em;
+    }
+
+    section > p {
+        font-size: 1em;
+        margin-bottom: 1em;
+    }
+
+    /* Recent Posts */
+    #view-posts-area h2 {
+        font-size: 1.2em;
+    }
+
+    /* Content boxes */
+    .content-box {
+        padding: 12px;
+    }
+
+    /* Music player */
+    .mini-music-player h4 {
+        font-size: 0.95em;
+    }
+
+    .player-controls .player-btn {
+        font-size: 1.4em;
+        padding: 4px;
+    }
+
+    #player-prev,
+    #player-next {
+        font-size: 1.2em;
+    }
+
+    #player-shuffle {
+        font-size: 1.1em;
+    }
+
+    .track-number,
+    #player-video-title {
+        font-size: 0.85em;
+    }
+
+    /* Quick links */
+    .quick-links-container h4 {
+        font-size: 0.95em;
+    }
+
+    .quick-links-list li a,
+    .quick-links-list li span {
+        font-size: 0.95em;
+    }
+
+    /* Posts */
+    .post {
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+    }
+
+    .post h3 {
+        font-size: 1.1em;
+    }
+
+    .post-meta {
+        font-size: 0.85em;
+    }
+
+    /* Forms */
+    #create-post-form input[type="text"],
+    #create-post-form textarea {
+        font-size: 0.95em;
+    }
+
+    #create-post-form button {
+        padding: 8px 16px;
+        font-size: 0.95em;
+    }
+}
+
+/* Mobile phones (480px and below) */
+@media (max-width: 480px) {
+    :root {
+        font-size: 0.9em;
+    }
+
+    /* Header - more compact */
+    .header-top {
+        padding: 0.4em 0.6em !important;
+    }
+
+    .logo {
+        max-width: 8em;
+    }
+
+    nav.header-menu li a {
+        font-size: 0.85em;
+        padding: 5px 8px;
+    }
+
+    .auth-button {
+        font-size: 0.85em;
+        padding: 5px 10px;
+    }
+
+    /* Main content */
+    .main-container {
+        padding: 0.4em 0.6em 0.8em 0.6em !important;
+        gap: 12px;
+    }
+
+    h1 {
+        font-size: 24px;
+        margin: 0.3em 0.3em 0.1em 0.3em;
+    }
+
+    section > p {
+        font-size: 0.95em;
+    }
+
+    #view-posts-area h2 {
+        font-size: 1.1em;
+        margin-bottom: 12px;
+    }
+
+    /* Tighter spacing */
+    .content-box {
+        padding: 10px;
+        margin-bottom: 15px;
+    }
+
+    /* Music player - more compact */
+    .mini-music-player h4 {
+        font-size: 0.9em;
+        margin-bottom: 8px;
+    }
+
+    .player-controls {
+        gap: 8px;
+    }
+
+    .player-controls .player-btn {
+        font-size: 1.3em;
+    }
+
+    #player-prev,
+    #player-next {
+        font-size: 1.1em;
+    }
+
+    #player-shuffle {
+        font-size: 1em;
+    }
+
+    .track-number,
+    #player-video-title {
+        font-size: 0.8em;
+    }
+
+    #player-volume-slider {
+        width: 60px;
+    }
+
+    /* Quick links */
+    .quick-links-container h4 {
+        font-size: 0.9em;
+        margin-bottom: 10px;
+    }
+
+    .quick-links-list ul {
+        gap: 5px;
+    }
+
+    .quick-links-list li a,
+    .quick-links-list li span {
+        font-size: 0.9em;
+    }
+
+    /* Posts */
+    .post {
+        padding-bottom: 12px;
+        margin-bottom: 15px;
+    }
+
+    .post h3 {
+        font-size: 1em;
+    }
+
+    .post h3 a {
+        word-break: break-word;
+    }
+
+    .post-meta {
+        font-size: 0.8em;
+        flex-wrap: wrap;
+        gap: 5px;
+    }
+
+    .post-content {
+        font-size: 0.9em;
+    }
+
+    /* Forms */
+    #create-post-form input[type="text"],
+    #create-post-form textarea {
+        font-size: 0.9em;
+        padding: 8px;
+    }
+
+    #create-post-form button {
+        padding: 7px 14px;
+        font-size: 0.9em;
+    }
+
+    /* Dropdown adjustments */
+    .dropdown-menu {
+        min-width: 140px;
+        font-size: 0.9em;
+    }
+
+    /* Playlist dropdown */
+    .playlist-dropdown {
+        min-width: 200px;
+        max-width: 250px;
+        font-size: 0.9em;
+    }
+
+    /* Video embed */
+    #video-embed-container video {
+        max-height: 200px;
+    }
+}
+
+/* Extra small screens (360px and below) */
+@media (max-width: 360px) {
+    :root {
+        font-size: 0.85em;
+    }
+
+    .logo {
+        max-width: 7em;
+    }
+
+    h1 {
+        font-size: 20px;
+    }
+
+    nav.header-menu li a {
+        font-size: 0.8em;
+        padding: 4px 6px;
+    }
+
+    .auth-button {
+        font-size: 0.8em;
+        padding: 4px 8px;
+    }
+
+    .player-controls .player-btn {
+        font-size: 1.2em;
+    }
+
+    #player-volume-slider {
+        width: 50px;
+    }
+}
+
+/* Landscape mobile orientation */
+@media (max-width: 768px) and (orientation: landscape) {
+    .main-container {
+        flex-direction: row;
+    }
+
+    aside {
+        width: 35% !important;
+        order: 0;
+    }
+
+    section {
+        width: 65%;
+    }
+
+    h1 {
+        font-size: 24px;
+    }
+}
