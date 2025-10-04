@@ -254,7 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let currentPlaylistIndex = 738; // Default to track 739
 
         // --- State Management ---
-        function savePlayerState() { if (!isPlayerReady || !player || typeof player.getPlayerState !== 'function') { return; } try { let apiState = player.getPlayerState(); let isCurrentlyPlaying = (apiState === YT.PlayerState.PLAYING || apiState === YT.PlayerState.BUFFERING); const state = { playlistId: youtubePlaylistId, index: player.getPlaylistIndex(), time: player.getCurrentTime() || 0, volume: player.getVolume(), muted: player.isMuted(), playing: isCurrentlyPlaying, timestamp: Date.now() }; sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(state)); } catch (e) { console.error("[Music Player] Error saving state:", e); } }
+        function savePlayerState() { if (!isPlayerReady || !player || typeof player.getPlayerState !== 'function') { return; } try { let apiState = player.getPlayerState(); let isCurrentlyPlaying = (apiState === YT.PlayerState.PLAYING || apiState === YT.PlayerState.BUFFERING); let playlistIndex = player.getPlaylistIndex(); if (playlistIndex === -1 || playlistIndex === null || playlistIndex === undefined) { playlistIndex = currentPlaylistIndex; } const state = { playlistId: youtubePlaylistId, index: playlistIndex, time: player.getCurrentTime() || 0, volume: player.getVolume(), muted: player.isMuted(), playing: isCurrentlyPlaying, timestamp: Date.now() }; sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(state)); } catch (e) { console.error("[Music Player] Error saving state:", e); } }
         function loadPlayerState() { try { const savedStateString = sessionStorage.getItem(SESSION_STORAGE_KEY); if (savedStateString) { return JSON.parse(savedStateString); } } catch (e) { console.error("[Music Player] Error loading state:", e); sessionStorage.removeItem(SESSION_STORAGE_KEY); } return null; }
 
         // --- Player Event Handlers ---
@@ -269,10 +269,24 @@ document.addEventListener('DOMContentLoaded', () => {
             const savedState = loadPlayerState(); 
             const hasPlayedBefore = localStorage.getItem('musicPlayerHasPlayed');
             
-            currentVolume = savedState ? savedState.volume : initialVolume; 
-            internalIsMuted = savedState ? savedState.muted : false; 
-            // Always start with track 739 if this is first time playing
-            currentPlaylistIndex = (!hasPlayedBefore) ? 738 : (savedState ? savedState.index : 738);
+            // Determine the correct index to load
+            // True first visit (no flag): index 738, Otherwise use saved index or 738
+            if (!hasPlayedBefore) {
+                // Genuine first visit - start with Like a Bird
+                currentPlaylistIndex = 738;
+                currentVolume = initialVolume;
+                internalIsMuted = false;
+            } else if (savedState && savedState.index !== null && savedState.index !== undefined) {
+                // Has played before and we have saved state - use it
+                currentPlaylistIndex = savedState.index;
+                currentVolume = savedState.volume || initialVolume;
+                internalIsMuted = savedState.muted || false;
+            } else {
+                // Has played before but no saved state - default to 738
+                currentPlaylistIndex = 738;
+                currentVolume = initialVolume;
+                internalIsMuted = false;
+            }
             
             if (savedState) { 
                 player.setVolume(currentVolume); 
@@ -282,60 +296,54 @@ document.addEventListener('DOMContentLoaded', () => {
                 internalIsPlaying = pendingPlay; 
                 updatePlayPauseIcon(); 
             } else { 
-                player.mute(); 
-                internalIsMuted = true; 
+                // First time or no saved state - start unmuted
+                player.setVolume(initialVolume);
+                player.unMute();
+                internalIsMuted = false; 
                 
-                // Only autoplay on first ever visit
-                if (!hasPlayedBefore) {
-                    internalIsPlaying = true; 
-                    pendingPlay = true;
-                    localStorage.setItem('musicPlayerHasPlayed', 'true');
-                } else {
-                    internalIsPlaying = false;
-                    pendingPlay = false;
-                }
+                // Don't autoplay on first visit - just load paused
+                internalIsPlaying = false;
+                pendingPlay = false;
                 
                 pendingSeekTime = null; 
                 updatePlayPauseIcon(); 
             } 
             
-            if (volumeSlider) volumeSlider.value = currentVolume; 
+            if (volumeSlider) volumeSlider.value = internalIsMuted ? 0 : currentVolume; 
             updateVolumeIcon(internalIsMuted ? 0 : currentVolume); 
-            updateVideoTitle("Loading Playlist..."); 
+            updateVideoTitle("Loading..."); 
             updateThumbnail(null); 
             
-            // Load playlist with proper index handling
-            if (savedState && savedState.index !== undefined) {
-                // If we have a saved state with an index, load playlist at that index
+            // Load playlist at the determined index
+            if (savedState && savedState.playing) {
                 player.loadPlaylist({ 
                     list: youtubePlaylistId, 
                     listType: 'playlist', 
-                    index: savedState.index 
+                    index: currentPlaylistIndex 
                 });
-            } else if (!hasPlayedBefore) {
-                // First time ever - load the specific default video (vIOSkVRSgWY)
+            } else {
                 player.cuePlaylist({
                     list: youtubePlaylistId,
                     listType: 'playlist',
-                    index: 0
+                    index: currentPlaylistIndex
                 });
-                // After playlist is cued, jump to the specific video
-                setTimeout(() => {
-                    if (player && isPlayerReady) {
-                        try {
-                            player.loadVideoById('vIOSkVRSgWY');
-                        } catch(e) {
-                            console.error("[Music Player] Error loading default video:", e);
+            }
+            
+            // Add click listener to start playing on first interaction (only if never played before)
+            if (!hasPlayedBefore) {
+                const startPlayingOnInteraction = () => {
+                    if (!localStorage.getItem('musicPlayerHasPlayed')) {
+                        localStorage.setItem('musicPlayerHasPlayed', 'true');
+                        if (player && isPlayerReady && !internalIsPlaying) {
+                            player.playVideo();
                         }
+                        // Remove listeners after first interaction
+                        document.removeEventListener('click', startPlayingOnInteraction);
+                        document.removeEventListener('keydown', startPlayingOnInteraction);
                     }
-                }, 500);
-            } else {
-                // Has played before but no saved state - load at index 0
-                player.loadPlaylist({ 
-                    list: youtubePlaylistId, 
-                    listType: 'playlist', 
-                    index: 0 
-                });
+                };
+                document.addEventListener('click', startPlayingOnInteraction);
+                document.addEventListener('keydown', startPlayingOnInteraction);
             }
             
             setupPlayerEventListeners(); 
@@ -347,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
             populatePlaylist();
         }
         
-        const savedState = loadPlayerState(); if (pendingSeekTime !== null && pendingSeekTime > 0.1) { player.seekTo(pendingSeekTime, true); } if (pendingPlay) { setTimeout(() => { if (player && isPlayerReady) { try { player.playVideo(); if (internalIsMuted && !savedState?.muted) { setTimeout(() => { player.unMute(); player.setVolume(currentVolume); internalIsMuted = false; updateVolumeIcon(currentVolume); }, 1000); } } catch (e) { console.error("[Music Player] Error calling playVideo during restore:", e); } } }, 100); } else { if (pendingSeekTime !== null && pendingSeekTime > 0.1) { setTimeout(updateSeekBar, 150); } } pendingSeekTime = null; pendingPlay = false; } const actualPlayerState = player.getPlayerState(); internalIsPlaying = (actualPlayerState === YT.PlayerState.PLAYING || actualPlayerState === YT.PlayerState.BUFFERING); updatePlayPauseIcon(); if (state === YT.PlayerState.CUED || state === YT.PlayerState.PLAYING || state === YT.PlayerState.BUFFERING) { let newIndex = player.getPlaylistIndex(); if (newIndex !== currentPlaylistIndex || videoTitleElement.textContent.includes("Loading") || videoTitleElement.textContent.includes("Initializing")) { currentPlaylistIndex = newIndex; updateVideoDetails(); } } if (internalIsPlaying) { startSeekBarUpdate(); } else { if (seekBarInterval) clearInterval(seekBarInterval); seekBarInterval = null; if (state === YT.PlayerState.PAUSED || state === YT.PlayerState.ENDED) { setTimeout(updateSeekBar, 50); savePlayerState(); } } if (state === YT.PlayerState.ENDED) { if(seekBarProgress) seekBarProgress.style.width = '0%'; internalIsPlaying = false; updatePlayPauseIcon(); savePlayerState(); if (shuffleMode && playlistLoaded) { setTimeout(() => { if (shuffleMode && player && isPlayerReady) { playShuffledVideo(); } }, 500); } } }
+        const savedState = loadPlayerState(); if (pendingSeekTime !== null && pendingSeekTime > 0.1) { player.seekTo(pendingSeekTime, true); } if (pendingPlay) { setTimeout(() => { if (player && isPlayerReady) { try { player.playVideo(); if (internalIsMuted && !savedState?.muted) { setTimeout(() => { player.unMute(); player.setVolume(currentVolume); internalIsMuted = false; updateVolumeIcon(currentVolume); }, 1000); } } catch (e) { console.error("[Music Player] Error calling playVideo during restore:", e); } } }, 100); } else { if (pendingSeekTime !== null && pendingSeekTime > 0.1) { setTimeout(updateSeekBar, 150); } } pendingSeekTime = null; pendingPlay = false; } const actualPlayerState = player.getPlayerState(); internalIsPlaying = (actualPlayerState === YT.PlayerState.PLAYING || actualPlayerState === YT.PlayerState.BUFFERING); updatePlayPauseIcon(); if (state === YT.PlayerState.CUED || state === YT.PlayerState.PLAYING || state === YT.PlayerState.BUFFERING) { let newIndex = player.getPlaylistIndex(); if (newIndex !== -1 && newIndex !== null && (newIndex !== currentPlaylistIndex || videoTitleElement.textContent.includes("Loading"))) { currentPlaylistIndex = newIndex; updateVideoDetails(); savePlayerState(); } } if (internalIsPlaying) { startSeekBarUpdate(); } else { if (seekBarInterval) clearInterval(seekBarInterval); seekBarInterval = null; if (state === YT.PlayerState.PAUSED || state === YT.PlayerState.ENDED) { setTimeout(updateSeekBar, 50); savePlayerState(); } } if (state === YT.PlayerState.ENDED) { if(seekBarProgress) seekBarProgress.style.width = '0%'; internalIsPlaying = false; updatePlayPauseIcon(); savePlayerState(); if (shuffleMode && playlistLoaded) { setTimeout(() => { if (shuffleMode && player && isPlayerReady) { playShuffledVideo(); } }, 500); } } }
         function onPlayerError(event) { console.error(`[Music Player] Event: onPlayerError. Code: ${event.data}`); const errorMessages = { 2: "Invalid parameter", 5: "HTML5 player error", 100: "Video not found", 101: "Playback disallowed", 150: "Playback disallowed" }; console.error(`[Music Player] Error: ${errorMessages[event.data] || 'Unknown error.'}`); 
         
         // For deleted/unavailable videos (100, 101, 150), skip to next
@@ -373,7 +381,16 @@ document.addEventListener('DOMContentLoaded', () => {
         isPlayerReady = false; internalIsPlaying = false; playlistLoaded = false; pendingSeekTime = null; pendingPlay = false; restoreAttempted = true; updatePlayPauseIcon(); updateVideoTitle("Player Error"); if (seekBarInterval) { clearInterval(seekBarInterval); seekBarInterval = null; } disablePlayerControls(); if (thumbnailImg) { thumbnailImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Crect width='16' height='9' fill='%23ccc'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='1.5px' fill='%23555'%3EError%3C/text%3E%3C/svg%3E"; } try { sessionStorage.removeItem(SESSION_STORAGE_KEY); } catch (e) {} }
 
         // --- Player Control Functions ---
-        function setupPlayerEventListeners() { playPauseBtn?.addEventListener('click', togglePlayPause); prevBtn?.addEventListener('click', playPreviousVideo); nextBtn?.addEventListener('click', playNextVideo); volumeIconBtn?.addEventListener('click', toggleMute); volumeSlider?.addEventListener('input', handleVolumeChange); seekBarContainer?.addEventListener('click', handleSeekBarClick); window.addEventListener('beforeunload', savePlayerState); window.addEventListener('pagehide', savePlayerState); document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') { savePlayerState(); } }); }
+        function setupPlayerEventListeners() { playPauseBtn?.addEventListener('click', togglePlayPause); prevBtn?.addEventListener('click', playPreviousVideo); nextBtn?.addEventListener('click', playNextVideo); volumeIconBtn?.addEventListener('click', toggleMute); volumeSlider?.addEventListener('input', handleVolumeChange); seekBarContainer?.addEventListener('click', handleSeekBarClick); window.addEventListener('beforeunload', savePlayerState); window.addEventListener('pagehide', savePlayerState); document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') { savePlayerState(); } }); 
+        
+        // Save state when clicking navigation links
+        document.querySelectorAll('a[href]').forEach(link => {
+            link.addEventListener('click', () => {
+                // Save state immediately before navigation
+                savePlayerState();
+            });
+        });
+        }
         function disablePlayerControls() { console.warn("[Music Player] Disabling player controls."); const controls = [playPauseBtn, prevBtn, nextBtn, volumeIconBtn, volumeSlider, seekBarContainer]; controls.forEach(control => { if(control) { control.disabled = true; if(control === seekBarContainer) control.style.cursor = 'default'; } }); if(thumbnailImg) thumbnailImg.style.opacity = 0.6; }
         // Make clearPendingRestoreFlags accessible outside this block
         clearPendingRestoreFlags = () => { if (pendingSeekTime !== null || pendingPlay) { /* console.log("[Music Player] User interaction detected, clearing pending restore flags."); */ } pendingSeekTime = null; pendingPlay = false; restoreAttempted = true; };
@@ -391,20 +408,24 @@ document.addEventListener('DOMContentLoaded', () => {
                     const currentIndex = fullPlaylistData.videos.findIndex(v => v.videoId === currentVideoId);
                     
                     if (currentIndex > 0) {
-                        const prevVideo = fullPlaylistData.videos[currentIndex - 1];
+                        const prevIndex = currentIndex - 1;
+                        const prevVideo = fullPlaylistData.videos[prevIndex];
                         player.loadVideoById(prevVideo.videoId);
+                        currentPlaylistIndex = prevIndex;
                         updateVideoTitle(prevVideo.title);
                         updateThumbnail(prevVideo.videoId);
                         updateTrackNumber(prevVideo.videoId);
-                        console.log(`[Player] Previous: ${currentIndex - 1}`);
+                        savePlayerState();
                     } else {
                         // Wrap to last video
-                        const lastVideo = fullPlaylistData.videos[fullPlaylistData.videos.length - 1];
+                        const lastIndex = fullPlaylistData.videos.length - 1;
+                        const lastVideo = fullPlaylistData.videos[lastIndex];
                         player.loadVideoById(lastVideo.videoId);
+                        currentPlaylistIndex = lastIndex;
                         updateVideoTitle(lastVideo.title);
                         updateThumbnail(lastVideo.videoId);
                         updateTrackNumber(lastVideo.videoId);
-                        console.log(`[Player] Previous: wrapped to last`);
+                        savePlayerState();
                     }
                 } else {
                     player.previousVideo(); 
@@ -428,22 +449,25 @@ document.addEventListener('DOMContentLoaded', () => {
                     const currentIndex = fullPlaylistData.videos.findIndex(v => v.videoId === currentVideoId);
                     
                     if (currentIndex >= 0 && currentIndex < fullPlaylistData.videos.length - 1) {
-                        const nextVideo = fullPlaylistData.videos[currentIndex + 1];
+                        const nextIndex = currentIndex + 1;
+                        const nextVideo = fullPlaylistData.videos[nextIndex];
                         player.loadVideoById(nextVideo.videoId);
+                        currentPlaylistIndex = nextIndex;
                         updateVideoTitle(nextVideo.title);
                         updateThumbnail(nextVideo.videoId);
                         updateTrackNumber(nextVideo.videoId);
-                        console.log(`[Player] Next: ${currentIndex + 1}`);
+                        savePlayerState();
                     } else {
                         // Wrap to first video
                         const firstVideo = fullPlaylistData.videos[0];
                         player.loadVideoById(firstVideo.videoId);
+                        currentPlaylistIndex = 0;
                         updateVideoTitle(firstVideo.title);
                         updateThumbnail(firstVideo.videoId);
                         updateTrackNumber(firstVideo.videoId);
-                        console.log(`[Player] Next: wrapped to first`);
+                        savePlayerState();
                     }
-                } else {
+                } else { 
                     player.nextVideo(); 
                 }
             } catch(e){ 
@@ -467,30 +491,33 @@ document.addEventListener('DOMContentLoaded', () => {
                 videoTitleElement.setAttribute('data-title', displayTitle); 
                 videoTitleElement.classList.remove('scrolling'); 
                 
-                // Reset any custom animation duration
+                // Reset any custom animation settings
                 videoTitleElement.style.animationDuration = '';
+                videoTitleElement.style.setProperty('--title-gap', '4em');
                 
                 setTimeout(() => { 
                     const parentWidth = videoTitleElement.parentElement ? videoTitleElement.parentElement.offsetWidth : 0; 
                     const titleWidth = videoTitleElement.scrollWidth; 
                     
                     if (titleWidth > parentWidth && parentWidth > 0) { 
-                        // Calculate duration based on title length (longer titles = longer animation)
-                        // Base: 20s for average title, adjust proportionally
-                        const extraWidth = titleWidth - parentWidth;
-                        const baseDuration = 15; // seconds for base scroll
-                        const pauseDuration = 5; // seconds to pause
-                        const scrollSpeed = 30; // pixels per second (slower = more readable)
-                        const scrollDuration = extraWidth / scrollSpeed;
-                        const totalDuration = scrollDuration + pauseDuration;
+                        // For continuous scrolling, gap needs to be at least the container width
+                        // to ensure the duplicate doesn't appear until the original is fully scrolled out
+                        // Use pixels for more precise control
+                        const minGap = parentWidth * 1.2; // 120% of container width for safe spacing
+                        videoTitleElement.style.setProperty('--title-gap', `${minGap}px`);
                         
-                        videoTitleElement.style.animationDuration = `${totalDuration}s`;
+                        // Calculate duration: the title + gap needs to scroll completely
+                        const totalScrollDistance = titleWidth + minGap;
+                        const scrollSpeed = 50; // pixels per second
+                        const duration = totalScrollDistance / scrollSpeed;
+                        
+                        videoTitleElement.style.animationDuration = `${duration}s`;
                         videoTitleElement.classList.add('scrolling');
                     } 
                 }, 100); 
             } 
         }
-        function updateVideoDetails() { if (!isPlayerReady || !player || typeof player.getVideoData !== 'function') return; try { const videoData = player.getVideoData(); if (videoData && videoData.title) { updateThumbnail(videoData.video_id); updateTrackNumber(videoData.video_id); updateVideoTitle(videoData.title); updatePlaylistActiveState(); } else { setTimeout(() => { try { const freshVideoData = player.getVideoData(); if (freshVideoData && freshVideoData.title){ updateThumbnail(freshVideoData.video_id); updateTrackNumber(freshVideoData.video_id); updateVideoTitle(freshVideoData.title); updatePlaylistActiveState(); } else { updateThumbnail(null); updateVideoTitle("Loading Info..."); } } catch(e) { /* ignore inner error */} }, 500); } } catch (error) { console.error("[Music Player] Error in updateVideoDetails:", error); updateThumbnail(null); updateVideoTitle("Error loading info"); } }
+        function updateVideoDetails() { if (!isPlayerReady || !player || typeof player.getVideoData !== 'function') return; try { const videoData = player.getVideoData(); if (videoData && videoData.title) { updateThumbnail(videoData.video_id); updateTrackNumber(videoData.video_id); updateVideoTitle(videoData.title); updatePlaylistActiveState(); } else { setTimeout(() => { try { const freshVideoData = player.getVideoData(); if (freshVideoData && freshVideoData.title){ updateThumbnail(freshVideoData.video_id); updateTrackNumber(freshVideoData.video_id); updateVideoTitle(freshVideoData.title); updatePlaylistActiveState(); } else { updateThumbnail(null); updateVideoTitle("Loading..."); } } catch(e) { /* ignore */ } }, 300); } } catch (error) { updateThumbnail(null); updateVideoTitle("Error"); } }
 
         // --- Seek Bar Update ---
         function startSeekBarUpdate() { if (!isPlayerReady || !player || !seekBarProgress) return; if (seekBarInterval) clearInterval(seekBarInterval); updateSeekBar(); seekBarInterval = setInterval(() => { updateSeekBar(); savePlayerState(); }, 1000); }

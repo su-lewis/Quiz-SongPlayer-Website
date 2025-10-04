@@ -850,19 +850,13 @@ footer {
     height: 1.3em; /* From later change */
 }
 
-/* Scrolling animation for overflowing titles */
+/* Scrolling animation for overflowing titles - continuous scroll left */
 @keyframes scroll-title {
     0% {
         transform: translateX(0%);
     }
-    45% {
-        transform: translateX(calc(-100% - 2em));
-    }
-    55% {
-        transform: translateX(calc(-100% - 2em));
-    }
     100% {
-        transform: translateX(0%);
+        transform: translateX(calc(-100% - var(--title-gap, 4em)));
     }
 }
 
@@ -875,7 +869,7 @@ footer {
 #player-video-title.scrolling::after {
     content: attr(data-title);
     position: absolute;
-    left: calc(100% + 2em);
+    left: calc(100% + var(--title-gap, 4em));
     top: 0;
     white-space: nowrap;
 }
@@ -949,6 +943,10 @@ footer {
     font-size: 1em;
     font-weight: 600;
     transition: color 0.2s ease;
+}
+
+.quick-links-list li a:visited {
+    color: #551A8B; /* Purple for visited links */
 }
 
 .quick-links-list li a:hover,
@@ -1087,6 +1085,39 @@ footer {
 }
 
 /* ==========================================
+   11. Visited Link Styles
+   ========================================== */
+/* Main content links - visited state */
+a:visited {
+    color: #551A8B; /* JetPunk-style purple for visited links */
+}
+
+/* Keep nav menu links their normal color even when visited */
+nav.header-menu a:visited {
+    color: var(--link-color);
+}
+
+/* Keep auth buttons their normal color when visited */
+.auth-button:visited {
+    color: #333;
+}
+
+/* Quick links should turn purple when visited */
+/* Removed override to allow purple visited state */
+
+/* Dark mode visited links */
+body.dark-mode a:visited {
+    color: #b19cd9; /* Lighter purple for dark mode */
+}
+
+body.dark-mode nav.header-menu a:visited {
+    color: var(--link-color);
+}
+
+/* Quick links should turn purple when visited in dark mode too */
+/* Removed override to allow purple visited state */
+
+/* ==========================================
    Dark Mode Overrides
    (Strictly using provided :root variables, with exceptions)
    ========================================== */
@@ -1116,14 +1147,23 @@ body.dark-mode .content-box {
 }
 
 /* === Specific Content Box Background Overrides === */
-/* These specific boxes should use the main background */
+/* Main content area - seamless look without borders */
 body.dark-mode #view-posts-area.content-box,
-body.dark-mode .mini-music-player.content-box,
-body.dark-mode .quick-links-container.content-box,
-body.dark-mode #create-post-area.content-box { /* <-- ADDED THIS LINE */
+body.dark-mode #create-post-area.content-box {
     background-color: var(--dark-mode-mainbg); /* Use main background */
-    /* Border should contrast with the main background now */
+    /* Remove border and box shadow for seamless look */
+    border: none;
+    box-shadow: none;
+    /* Text color still inherits from body.dark-mode */
+}
+
+/* Sidebar items - keep borders */
+body.dark-mode .mini-music-player.content-box,
+body.dark-mode .quick-links-container.content-box {
+    background-color: var(--dark-mode-mainbg); /* Use main background */
+    /* Keep border and box shadow for sidebar items */
     border-color: var(--dark-mode-headerbg);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
     /* Text color still inherits from body.dark-mode */
 }
 /* === End Specific Overrides === */
