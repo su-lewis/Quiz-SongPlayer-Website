@@ -315,25 +315,42 @@ document.addEventListener('DOMContentLoaded', () => {
         englishTextToKey[value] = key;
     });
 
+    // Store original English text for each node on first load
+    let originalTextMap = new WeakMap();
     function autoTranslate(lang) {
         const translation = translations[lang] || translations.en;
         // Special case: Menu chevron
         const menuLink = document.getElementById('menu-link');
         if (menuLink) {
             const chevron = menuLink.querySelector('i');
-            menuLink.innerHTML = (translation.menu || 'Menu') + (chevron ? ' ' + chevron.outerHTML : ''); // non-breaking space
+            // Store original text if not already stored
+            if (!menuLink.hasAttribute('data-original')) {
+                menuLink.setAttribute('data-original', menuLink.textContent.replace(/\s*$/, ''));
+            }
+            // Always restore to original before translating
+            const originalMenu = menuLink.getAttribute('data-original');
+            menuLink.innerHTML = (lang === 'en' ? originalMenu : (translation.menu || 'Menu')) + (chevron ? ' ' + chevron.outerHTML : '');
         }
         // Translate all visible text nodes
         getVisibleTextNodes(document.body).forEach(node => {
+            // Store original text if not already stored
+            if (!originalTextMap.has(node)) {
+                originalTextMap.set(node, node.textContent);
+            }
+            // Always restore to original before translating
+            node.textContent = originalTextMap.get(node);
             const original = node.textContent.trim();
-            if (englishTextToKey[original] && translation[englishTextToKey[original]]) {
+            if (lang !== 'en' && englishTextToKey[original] && translation[englishTextToKey[original]]) {
                 node.textContent = translation[englishTextToKey[original]];
             }
         });
     }
 
-    // Replace applyTranslations with autoTranslate
+
+    // Track the current language
+    let currentLang = 'en';
     function applyTranslations(lang) {
+        currentLang = lang;
         autoTranslate(lang);
     }
 
@@ -345,11 +362,34 @@ document.addEventListener('DOMContentLoaded', () => {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const selectedLang = link.getAttribute('data-lang');
-            applyTranslations(selectedLang);
+            // Always reset to English first to ensure correct mapping
+            applyTranslations('en');
+            // Then apply the selected language
+            if (selectedLang !== 'en') {
+                setTimeout(() => applyTranslations(selectedLang), 0);
+            }
             // Optionally, update <html lang="...">
             document.documentElement.lang = selectedLang;
         });
     });
+
+    // Helper: re-apply translations after posts or nav items are loaded/changed
+    function retranslateDynamicContent() {
+        applyTranslations(currentLang);
+    }
+
+    // Example: If you load posts dynamically, call retranslateDynamicContent() after loading
+    // If you update nav bar dropdown items dynamically, call retranslateDynamicContent() after updating
+
+    // --- Example hooks for posts (replace with your actual post loading logic) ---
+    // If you use fetch or AJAX to load posts:
+    // fetch('/api/posts').then(...).then(() => { retranslateDynamicContent(); });
+
+    // If you use innerHTML or DOM manipulation to update posts:
+    // postsContainer.innerHTML = ...; retranslateDynamicContent();
+
+    // If you update nav bar dropdown items:
+    // dropdownMenu.innerHTML = ...; retranslateDynamicContent();
 
     // --- Global DOM Element References ---
     const signupButton = document.getElementById('signup-button');
