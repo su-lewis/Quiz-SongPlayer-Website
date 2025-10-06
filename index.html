@@ -41,12 +41,12 @@
                      </a>
                  </div>
                  <nav class="header-menu">
-                     <div class="dropdown">
-                         <a class="dropdown-toggle" href="#" id="menu-link">Menu <i class="bi bi-chevron-down"></i></a>
+                            <div class="dropdown">
+                                <a class="dropdown-toggle" href="#" id="menu-link" data-translate="menu">Menu <i class="bi bi-chevron-down"></i></a>
                          <div class="dropdown-menu">
                              <div class="language-menu-item">
                                  <a href="#">
-                                     Language <i class="bi bi-chevron-right"></i>
+                                    <span data-translate="language">Language</span> <i class="bi bi-chevron-right"></i>
                                  </a>
                                  <div class="language-submenu">
                                      <a href="#" data-lang="fr">Français</a>
@@ -61,12 +61,12 @@
                              <a href="#">Option 3</a>
                         
                              <label class="dropdown-item-label" for="dark-mode-toggle">
-                                 Dark Mode
+                                <span data-translate="darkMode">Dark Mode</span>
                                  <input type="checkbox" id="dark-mode-toggle" class="dark-mode-checkbox">
                              </label>
                            </div>
                          </div>
-                     <a href="/create.html" id="create-link">Create</a>
+                    <a href="/create.html" id="create-link" data-translate="create">Create</a>
                  </nav>
                  <div class="search-bar">
                      <div class="search-container">
@@ -79,8 +79,8 @@
 
                  <!-- Custom Auth Buttons/Status -->
                  <div id="auth-buttons">
-                     <button id="signup-button" class="auth-button">Create Account</button>
-                     <button id="login-button" class="auth-button">Login</button>
+                    <button id="signup-button" class="auth-button" data-translate="createAccount">Create Account</button>
+                    <button id="login-button" class="auth-button" data-translate="login">Login</button>
                  </div>
                  <div id="user-status" style="display: none;">
                      <span id="user-email"></span>
@@ -93,21 +93,21 @@
     <main class="blue-border">
         <div class="main-container">
             <section>
-                <h1>Welcome to QuizSongPlayer</h1>
-                <p>Keep track of my blog posts below!</p>
+                <h1 data-translate="welcome">Welcome to QuizSongPlayer</h1>
+                <p data-translate="keepTrack">Keep track of my blog posts below!</p>
                 <br>
                 <div id="view-posts-area" class="content-box">
-                    <h2>Recent Posts</h2>
+                    <h2 data-translate="recentPosts">Recent Posts</h2>
                     <!-- Container where posts will be loaded -->
                     <div id="posts-container">
-                        <p>Loading posts...</p>
+                        <p data-translate="loadingPosts">Loading posts...</p>
                     </div>
                 </div>
             </section>
             <aside>
               <!-- Mini Music Player (Same as before) -->
               <div class="mini-music-player content-box">
-                  <h4>Music Player</h4>
+                  <h4 data-translate="musicPlayer">Music Player</h4>
                   <div class="player-thumbnail">
                       <img id="player-video-thumbnail" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Crect width='16' height='9' fill='%23e0e0e0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='1.5px' fill='%23999'%3EWaiting...%3C/text%3E%3C/svg%3E" alt="Video Thumbnail Loading">
                       <div id="youtube-player-container"></div>
@@ -117,7 +117,7 @@
                           <button id="player-playlist-btn" title="Show Playlist" class="player-btn"><i class="bi bi-list"></i></button>
                           <div id="player-playlist-dropdown" class="playlist-dropdown" style="display: none;">
                               <div class="playlist-dropdown-content">
-                                  <p class="playlist-loading">Loading playlist...</p>
+                                  <p class="playlist-loading" data-translate="loadingPlaylist">Loading playlist...</p>
                               </div>
                           </div>
                       </div>
@@ -133,7 +133,7 @@
                   <div class="player-info">
                       <span id="player-track-number" class="track-number">1.</span>
                       <div class="title-container">
-                          <p id="player-video-title" title="Current Video Title">Loading title...</p>
+                          <p id="player-video-title" title="Current Video Title" data-translate="loadingTitle">Loading title...</p>
                       </div>
                   </div>
                   <div id="player-seek-bar-container" class="seek-bar-container" title="Seek">
@@ -144,15 +144,15 @@
                       
 <!-- ========== START: Quick Links Section ========== -->
 <div class="quick-links-container content-box">
-    <h4>Quick Links</h4>
+    <h4 data-translate="quickLinks">Quick Links</h4>
     <div id="quick-links-list" class="quick-links-list">
         <ul>
-            <li><a href="https://x.com/lollipop1110111" target="_blank">My X</a></li>
-            <li><a href="https://simpcity.cr/threads/alquis13.1195439/" target="_blank">SimpCity</a></li>
-            <li><a href="https://www.mega.nz" target="_blank"><s>Mega Folder</s></a></li>
+            <li><a href="https://x.com/lollipop1110111" target="_blank" data-translate="myX">My X</a></li>
+            <li><a href="https://simpcity.cr/threads/alquis13.1195439/" target="_blank" data-translate="simpCity">SimpCity</a></li>
+            <li><a href="https://www.mega.nz" target="_blank" data-translate="megaFolder"><s>Mega Folder</s></a></li>
             <!-- Add more links here -->
             <li>
-                <span id="video-trigger-info" role="button" tabindex="0" style="cursor: pointer;">ANSI Art (Click to play)</span>
+                <span id="video-trigger-info" role="button" tabindex="0" style="cursor: pointer;" data-translate="ansiArt">ANSI Art (Click to play)</span>
                 <div id="video-embed-container" style="display: none;">
                     <!-- Video element gets inserted here by JS -->
                 </div>
@@ -169,8 +169,8 @@
     </main>
 
     <footer>
-        <p>© QuizSongPlayer 2025</p><br>
-        <p>We are not affiliated with the city Minneapolis</p>
+    <p data-translate="copyright">© QuizSongPlayer 2025</p><br>
+    <p data-translate="notAffiliated">We are not affiliated with the city Minneapolis</p>
     </footer>
 
     <script>

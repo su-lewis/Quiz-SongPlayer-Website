@@ -72,7 +72,27 @@ document.addEventListener('DOMContentLoaded', () => {
             login: 'Login',
             createAccount: 'Create Account',
             recentPosts: 'Recent Posts',
-            quickLinks: 'Quick Links'
+            quickLinks: 'Quick Links',
+            welcome: 'Welcome to QuizSongPlayer',
+            keepTrack: 'Keep track of my blog posts below!',
+            loadingPosts: 'Loading posts...',
+            musicPlayer: 'Music Player',
+            loadingPlaylist: 'Loading playlist...',
+            previous: 'Previous',
+            play: 'Play',
+            next: 'Next',
+            shuffle: 'Shuffle',
+            mute: 'Mute',
+            track: '1.',
+            loadingTitle: 'Loading title...',
+            myX: 'My X',
+            simpCity: 'SimpCity',
+            megaFolder: 'Mega Folder',
+            ansiArt: 'ANSI Art (Click to play)',
+            copyright: '© QuizSongPlayer 2025',
+            notAffiliated: 'We are not affiliated with the city Minneapolis',
+            option2: 'Option 2',
+            option3: 'Option 3'
         },
         fr: {
             menu: 'Menu',
@@ -82,7 +102,27 @@ document.addEventListener('DOMContentLoaded', () => {
             login: 'Connexion',
             createAccount: 'Créer un Compte',
             recentPosts: 'Publications Récentes',
-            quickLinks: 'Liens Rapides'
+            quickLinks: 'Liens Rapides',
+            welcome: 'Bienvenue à QuizSongPlayer',
+            keepTrack: 'Suivez mes articles de blog ci-dessous !',
+            loadingPosts: 'Chargement des articles...',
+            musicPlayer: 'Lecteur de musique',
+            loadingPlaylist: 'Chargement de la playlist...',
+            previous: 'Précédent',
+            play: 'Lire',
+            next: 'Suivant',
+            shuffle: 'Aléatoire',
+            mute: 'Muet',
+            track: '1.',
+            loadingTitle: 'Chargement du titre...',
+            myX: 'Mon X',
+            simpCity: 'SimpCity',
+            megaFolder: 'Dossier Mega',
+            ansiArt: 'Art ANSI (Cliquez pour jouer)',
+            copyright: '© QuizSongPlayer 2025',
+            notAffiliated: 'Nous ne sommes pas affiliés à la ville de Minneapolis',
+            option2: 'Option 2',
+            option3: 'Option 3'
         },
         de: {
             menu: 'Menü',
@@ -92,7 +132,27 @@ document.addEventListener('DOMContentLoaded', () => {
             login: 'Anmelden',
             createAccount: 'Konto Erstellen',
             recentPosts: 'Neueste Beiträge',
-            quickLinks: 'Schnelllinks'
+            quickLinks: 'Schnelllinks',
+            welcome: 'Willkommen bei QuizSongPlayer',
+            keepTrack: 'Behalte meine Blogbeiträge unten im Blick!',
+            loadingPosts: 'Beiträge werden geladen...',
+            musicPlayer: 'Musikspieler',
+            loadingPlaylist: 'Playlist wird geladen...',
+            previous: 'Zurück',
+            play: 'Abspielen',
+            next: 'Weiter',
+            shuffle: 'Zufällig',
+            mute: 'Stumm',
+            track: '1.',
+            loadingTitle: 'Titel wird geladen...',
+            myX: 'Mein X',
+            simpCity: 'SimpCity',
+            megaFolder: 'Mega-Ordner',
+            ansiArt: 'ANSI Art (Klicken zum Abspielen)',
+            copyright: '© QuizSongPlayer 2025',
+            notAffiliated: 'Wir sind nicht mit der Stadt Minneapolis verbunden',
+            option2: 'Option 2',
+            option3: 'Option 3'
         },
         es: {
             menu: 'Menú',
@@ -102,7 +162,27 @@ document.addEventListener('DOMContentLoaded', () => {
             login: 'Iniciar Sesión',
             createAccount: 'Crear Cuenta',
             recentPosts: 'Publicaciones Recientes',
-            quickLinks: 'Enlaces Rápidos'
+            quickLinks: 'Enlaces Rápidos',
+            welcome: 'Bienvenido a QuizSongPlayer',
+            keepTrack: '¡Sigue mis publicaciones de blog a continuación!',
+            loadingPosts: 'Cargando publicaciones...',
+            musicPlayer: 'Reproductor de música',
+            loadingPlaylist: 'Cargando lista de reproducción...',
+            previous: 'Anterior',
+            play: 'Reproducir',
+            next: 'Siguiente',
+            shuffle: 'Aleatorio',
+            mute: 'Silencio',
+            track: '1.',
+            loadingTitle: 'Cargando título...',
+            myX: 'Mi X',
+            simpCity: 'SimpCity',
+            megaFolder: 'Carpeta Mega',
+            ansiArt: 'Arte ANSI (Haz clic para reproducir)',
+            copyright: '© QuizSongPlayer 2025',
+            notAffiliated: 'No estamos afiliados con la ciudad de Minneapolis',
+            option2: 'Opción 2',
+            option3: 'Opción 3'
         },
         it: {
             menu: 'Menu',
@@ -112,7 +192,27 @@ document.addEventListener('DOMContentLoaded', () => {
             login: 'Accedi',
             createAccount: 'Crea Account',
             recentPosts: 'Post Recenti',
-            quickLinks: 'Collegamenti Rapidi'
+            quickLinks: 'Collegamenti Rapidi',
+            welcome: 'Benvenuto su QuizSongPlayer',
+            keepTrack: 'Tieni traccia dei miei post qui sotto!',
+            loadingPosts: 'Caricamento post...',
+            musicPlayer: 'Lettore musicale',
+            loadingPlaylist: 'Caricamento playlist...',
+            previous: 'Precedente',
+            play: 'Riproduci',
+            next: 'Successivo',
+            shuffle: 'Casuale',
+            mute: 'Muto',
+            track: '1.',
+            loadingTitle: 'Caricamento titolo...',
+            myX: 'Il mio X',
+            simpCity: 'SimpCity',
+            megaFolder: 'Cartella Mega',
+            ansiArt: 'Arte ANSI (Clicca per riprodurre)',
+            copyright: '© QuizSongPlayer 2025',
+            notAffiliated: 'Non siamo affiliati con la città di Minneapolis',
+            option2: 'Opzione 2',
+            option3: 'Opzione 3'
         },
         pt: {
             menu: 'Menu',
@@ -122,7 +222,27 @@ document.addEventListener('DOMContentLoaded', () => {
             login: 'Entrar',
             createAccount: 'Criar Conta',
             recentPosts: 'Publicações Recentes',
-            quickLinks: 'Links Rápidos'
+            quickLinks: 'Links Rápidos',
+            welcome: 'Bem-vindo ao QuizSongPlayer',
+            keepTrack: 'Acompanhe minhas postagens abaixo!',
+            loadingPosts: 'Carregando postagens...',
+            musicPlayer: 'Reprodutor de música',
+            loadingPlaylist: 'Carregando playlist...',
+            previous: 'Anterior',
+            play: 'Tocar',
+            next: 'Próximo',
+            shuffle: 'Aleatório',
+            mute: 'Mudo',
+            track: '1.',
+            loadingTitle: 'Carregando título...',
+            myX: 'Meu X',
+            simpCity: 'SimpCity',
+            megaFolder: 'Pasta Mega',
+            ansiArt: 'Arte ANSI (Clique para tocar)',
+            copyright: '© QuizSongPlayer 2025',
+            notAffiliated: 'Não somos afiliados à cidade de Minneapolis',
+            option2: 'Opção 2',
+            option3: 'Opção 3'
         },
         ja: {
             menu: 'メニュー',
@@ -132,28 +252,93 @@ document.addEventListener('DOMContentLoaded', () => {
             login: 'ログイン',
             createAccount: 'アカウント作成',
             recentPosts: '最近の投稿',
-            quickLinks: 'クイックリンク'
+            quickLinks: 'クイックリンク',
+            welcome: 'QuizSongPlayerへようこそ',
+            keepTrack: '以下で私のブログ投稿をチェック！',
+            loadingPosts: '投稿を読み込み中...',
+            musicPlayer: 'ミュージックプレーヤー',
+            loadingPlaylist: 'プレイリストを読み込み中...',
+            previous: '前へ',
+            play: '再生',
+            next: '次へ',
+            shuffle: 'シャッフル',
+            mute: 'ミュート',
+            track: '1.',
+            loadingTitle: 'タイトルを読み込み中...',
+            myX: '私のX',
+            simpCity: 'SimpCity',
+            megaFolder: 'Megaフォルダー',
+            ansiArt: 'ANSIアート（クリックで再生）',
+            copyright: '© QuizSongPlayer 2025',
+            notAffiliated: '私たちはミネアポリス市とは関係ありません',
+            option2: 'オプション2',
+            option3: 'オプション3'
         }
     };
 
-    function applyTranslations(lang) {
-        const translation = translations[lang] || translations.en;
-        
-        // Translate all elements with data-translate attribute
-        document.querySelectorAll('[data-translate]').forEach(element => {
-            const key = element.getAttribute('data-translate');
-            if (translation[key]) {
-                element.textContent = translation[key];
-            }
-        });
-        
-        // Store selected language
-        localStorage.setItem('selectedLanguage', lang);
+    // Utility: get all visible text nodes in the DOM (excluding script/style/hidden)
+    function getVisibleTextNodes(root) {
+        const walker = document.createTreeWalker(
+            root,
+            NodeFilter.SHOW_TEXT,
+            {
+                acceptNode: function(node) {
+                    // Ignore whitespace-only, script/style, and hidden
+                    if (!node.parentElement) return NodeFilter.FILTER_REJECT;
+                    const parent = node.parentElement;
+                    if (
+                        parent.tagName === 'SCRIPT' ||
+                        parent.tagName === 'STYLE' ||
+                        parent.tagName === 'NOSCRIPT' ||
+                        parent.hasAttribute('data-no-translate') ||
+                        parent.offsetParent === null // hidden
+                    ) {
+                        return NodeFilter.FILTER_REJECT;
+                    }
+                    if (!node.textContent.trim()) return NodeFilter.FILTER_REJECT;
+                    return NodeFilter.FILTER_ACCEPT;
+                }
+            },
+            false
+        );
+        const nodes = [];
+        let n;
+        while ((n = walker.nextNode())) {
+            nodes.push(n);
+        }
+        return nodes;
     }
 
-    // Load saved language or default to English
-    const savedLanguage = localStorage.getItem('selectedLanguage') || 'en';
-    applyTranslations(savedLanguage);
+    // Map original English text to translation keys
+    const englishTextToKey = {};
+    Object.entries(translations.en).forEach(([key, value]) => {
+        englishTextToKey[value] = key;
+    });
+
+    function autoTranslate(lang) {
+        const translation = translations[lang] || translations.en;
+        // Special case: Menu chevron
+        const menuLink = document.getElementById('menu-link');
+        if (menuLink) {
+            const chevron = menuLink.querySelector('i');
+            menuLink.innerHTML = (translation.menu || 'Menu') + (chevron ? ' ' + chevron.outerHTML : ''); // non-breaking space
+        }
+        // Translate all visible text nodes
+        getVisibleTextNodes(document.body).forEach(node => {
+            const original = node.textContent.trim();
+            if (englishTextToKey[original] && translation[englishTextToKey[original]]) {
+                node.textContent = translation[englishTextToKey[original]];
+            }
+        });
+    }
+
+    // Replace applyTranslations with autoTranslate
+    function applyTranslations(lang) {
+        autoTranslate(lang);
+    }
+
+    // Always default to English on page load (no localStorage persistence)
+    applyTranslations('en');
 
     // Add click listeners to language links
     document.querySelectorAll('[data-lang]').forEach(link => {
@@ -161,6 +346,8 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const selectedLang = link.getAttribute('data-lang');
             applyTranslations(selectedLang);
+            // Optionally, update <html lang="...">
+            document.documentElement.lang = selectedLang;
         });
     });
 
