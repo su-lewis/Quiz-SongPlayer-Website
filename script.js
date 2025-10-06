@@ -3,6 +3,108 @@
 document.addEventListener('DOMContentLoaded', () => {
     // console.log("Consolidated script.js: DOM Content Loaded.");
 
+    // --- Translation System ---
+    const translations = {
+        en: {
+            menu: 'Menu',
+            language: 'Language',
+            darkMode: 'Dark Mode',
+            create: 'Create',
+            login: 'Login',
+            createAccount: 'Create Account',
+            recentPosts: 'Recent Posts',
+            quickLinks: 'Quick Links'
+        },
+        fr: {
+            menu: 'Menu',
+            language: 'Langue',
+            darkMode: 'Mode Sombre',
+            create: 'Créer',
+            login: 'Connexion',
+            createAccount: 'Créer un Compte',
+            recentPosts: 'Publications Récentes',
+            quickLinks: 'Liens Rapides'
+        },
+        de: {
+            menu: 'Menü',
+            language: 'Sprache',
+            darkMode: 'Dunkler Modus',
+            create: 'Erstellen',
+            login: 'Anmelden',
+            createAccount: 'Konto Erstellen',
+            recentPosts: 'Neueste Beiträge',
+            quickLinks: 'Schnelllinks'
+        },
+        es: {
+            menu: 'Menú',
+            language: 'Idioma',
+            darkMode: 'Modo Oscuro',
+            create: 'Crear',
+            login: 'Iniciar Sesión',
+            createAccount: 'Crear Cuenta',
+            recentPosts: 'Publicaciones Recientes',
+            quickLinks: 'Enlaces Rápidos'
+        },
+        it: {
+            menu: 'Menu',
+            language: 'Lingua',
+            darkMode: 'Modalità Scura',
+            create: 'Crea',
+            login: 'Accedi',
+            createAccount: 'Crea Account',
+            recentPosts: 'Post Recenti',
+            quickLinks: 'Collegamenti Rapidi'
+        },
+        pt: {
+            menu: 'Menu',
+            language: 'Idioma',
+            darkMode: 'Modo Escuro',
+            create: 'Criar',
+            login: 'Entrar',
+            createAccount: 'Criar Conta',
+            recentPosts: 'Publicações Recentes',
+            quickLinks: 'Links Rápidos'
+        },
+        ja: {
+            menu: 'メニュー',
+            language: '言語',
+            darkMode: 'ダークモード',
+            create: '作成',
+            login: 'ログイン',
+            createAccount: 'アカウント作成',
+            recentPosts: '最近の投稿',
+            quickLinks: 'クイックリンク'
+        }
+    };
+
+    function applyTranslations(lang) {
+        const translation = translations[lang] || translations.en;
+        
+        // Translate all elements with data-translate attribute
+        document.querySelectorAll('[data-translate]').forEach(element => {
+            const key = element.getAttribute('data-translate');
+            if (translation[key]) {
+                element.textContent = translation[key];
+            }
+        });
+        
+        // Store selected language
+        localStorage.setItem('selectedLanguage', lang);
+    }
+
+    // Load saved language or default to English
+    const savedLanguage = localStorage.getItem('selectedLanguage') || 'en';
+    applyTranslations(savedLanguage);
+
+    // Add click listeners to language links
+    document.querySelectorAll('[data-lang]').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const selectedLang = link.getAttribute('data-lang');
+            applyTranslations(selectedLang);
+        });
+    });
+
     // --- Global DOM Element References ---
     const signupButton = document.getElementById('signup-button');
     const loginButton = document.getElementById('login-button');
@@ -1145,6 +1247,51 @@ if (quickLinksToggle && quickLinksList) {
          // console.log("Dark mode toggle element not found.");
     }
     // --- End Dark Mode Logic --
+
+    // --- Language Submenu Logic ---
+    const languageMenuItem = document.querySelector('.language-menu-item');
+    const dropdownMenu = document.querySelector('.dropdown-menu');
+    const menuItems = dropdownMenu ? Array.from(dropdownMenu.querySelectorAll('a, .dropdown-item-label')) : [];
+    const languageSubmenu = document.querySelector('.language-submenu');
+
+    if (languageMenuItem && dropdownMenu && languageSubmenu) {
+        let leaveTimeout;
+
+        const showSubMenu = () => {
+            clearTimeout(leaveTimeout);
+            languageSubmenu.style.display = 'block';
+        };
+
+        const hideSubMenu = () => {
+            languageSubmenu.style.display = 'none';
+        };
+
+        const scheduleHide = () => {
+            leaveTimeout = setTimeout(hideSubMenu, 200); // A small delay to allow moving to the submenu
+        };
+
+        languageMenuItem.addEventListener('mouseenter', showSubMenu);
+        languageMenuItem.addEventListener('mouseleave', scheduleHide);
+
+        languageSubmenu.addEventListener('mouseenter', showSubMenu); // Keep it open when mouse enters submenu
+        languageSubmenu.addEventListener('mouseleave', hideSubMenu); // Hide when leaving submenu
+
+        // Hide when hovering over other main menu items
+        menuItems.forEach(item => {
+            if (!languageMenuItem.contains(item)) {
+                item.addEventListener('mouseenter', hideSubMenu);
+            }
+        });
+
+        // Hide when clicking outside the main dropdown menu
+        document.addEventListener('click', (event) => {
+            if (!dropdownMenu.contains(event.target)) {
+                hideSubMenu();
+            }
+        });
+    }
+    // --- End Language Submenu Logic ---
+
 
     console.log("Consolidated script.js: DOM Content Loaded setup finished.");
 
