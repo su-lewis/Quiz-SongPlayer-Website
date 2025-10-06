@@ -4,6 +4,65 @@ document.addEventListener('DOMContentLoaded', () => {
     // console.log("Consolidated script.js: DOM Content Loaded.");
 
     // --- Translation System ---
+    // --- Language Submenu Persistent Activation Logic ---
+    const dropdownMenu = document.querySelector('.dropdown-menu');
+    const languageMenuItem = document.querySelector('.language-menu-item');
+    const languageSubmenu = document.querySelector('.language-submenu');
+    let submenuActive = false;
+
+    // Helper: deactivate submenu
+    function deactivateLanguageSubmenu() {
+        submenuActive = false;
+        languageMenuItem?.classList.remove('language-active');
+    }
+
+    // Helper: activate submenu
+    function activateLanguageSubmenu() {
+        submenuActive = true;
+        languageMenuItem?.classList.add('language-active');
+    }
+
+    // Mouse enter/leave for persistent submenu
+    if (languageMenuItem && languageSubmenu) {
+        // Activate on hover over parent or submenu
+        languageMenuItem.addEventListener('mouseenter', activateLanguageSubmenu);
+        languageSubmenu.addEventListener('mouseenter', activateLanguageSubmenu);
+
+        // Deactivate only on click-off or hover another menu item
+        // Prevent deactivation on mouseleave
+        languageMenuItem.addEventListener('mouseleave', (e) => {
+            // If moving to submenu, do not deactivate
+            if (!languageSubmenu.contains(e.relatedTarget)) {
+                // Do not deactivate here; only on click-off or hover another menu item
+            }
+        });
+        languageSubmenu.addEventListener('mouseleave', (e) => {
+            // If moving to parent, do not deactivate
+            if (!languageMenuItem.contains(e.relatedTarget)) {
+                // Do not deactivate here; only on click-off or hover another menu item
+            }
+        });
+
+        // Deactivate on click outside
+        document.addEventListener('click', (e) => {
+            if (
+                submenuActive &&
+                !languageMenuItem.contains(e.target) &&
+                !languageSubmenu.contains(e.target)
+            ) {
+                deactivateLanguageSubmenu();
+            }
+        });
+
+        // Deactivate when hovering another top-level menu item in .dropdown-menu
+        dropdownMenu?.querySelectorAll(':scope > a:not(.language-menu-item > a)').forEach((item) => {
+            item.addEventListener('mouseenter', () => {
+                if (submenuActive) {
+                    deactivateLanguageSubmenu();
+                }
+            });
+        });
+    }
     const translations = {
         en: {
             menu: 'Menu',
@@ -1248,48 +1307,7 @@ if (quickLinksToggle && quickLinksList) {
     }
     // --- End Dark Mode Logic --
 
-    // --- Language Submenu Logic ---
-    const languageMenuItem = document.querySelector('.language-menu-item');
-    const dropdownMenu = document.querySelector('.dropdown-menu');
-    const menuItems = dropdownMenu ? Array.from(dropdownMenu.querySelectorAll('a, .dropdown-item-label')) : [];
-    const languageSubmenu = document.querySelector('.language-submenu');
 
-    if (languageMenuItem && dropdownMenu && languageSubmenu) {
-        let leaveTimeout;
-
-        const showSubMenu = () => {
-            clearTimeout(leaveTimeout);
-            languageSubmenu.style.display = 'block';
-        };
-
-        const hideSubMenu = () => {
-            languageSubmenu.style.display = 'none';
-        };
-
-        const scheduleHide = () => {
-            leaveTimeout = setTimeout(hideSubMenu, 200); // A small delay to allow moving to the submenu
-        };
-
-        languageMenuItem.addEventListener('mouseenter', showSubMenu);
-        languageMenuItem.addEventListener('mouseleave', scheduleHide);
-
-        languageSubmenu.addEventListener('mouseenter', showSubMenu); // Keep it open when mouse enters submenu
-        languageSubmenu.addEventListener('mouseleave', hideSubMenu); // Hide when leaving submenu
-
-        // Hide when hovering over other main menu items
-        menuItems.forEach(item => {
-            if (!languageMenuItem.contains(item)) {
-                item.addEventListener('mouseenter', hideSubMenu);
-            }
-        });
-
-        // Hide when clicking outside the main dropdown menu
-        document.addEventListener('click', (event) => {
-            if (!dropdownMenu.contains(event.target)) {
-                hideSubMenu();
-            }
-        });
-    }
     // --- End Language Submenu Logic ---
 
 

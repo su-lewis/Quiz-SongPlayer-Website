@@ -331,17 +331,22 @@ nav.header-menu a:hover {
     border: 1px solid #8F99A3;
     width: 230px;
     padding: 0 0;
+    box-sizing: border-box;
+    min-height: 270px;
+    height: 270px;
 }
 
 .dropdown-menu a {
     color: var(--text-color) !important;
     padding: 5px 6px;
     text-decoration: none;
-    display: block;
+    display: flex;
     justify-content: space-between;
+    align-items: center;
     text-align: left;
     margin: 0 !important;
-    font-size: 16px;
+    font-size: 15px;
+    min-height: 36px;
 }
 
 .dropdown-menu a:hover,
@@ -370,27 +375,35 @@ nav.header-menu a:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 16px;
+    font-size: 15px;
+    min-height: 36px;
 }
 
 .language-menu-item > a i {
     transition: transform 0.2s ease;
 }
 
-.language-menu-item:hover > a,
-.language-submenu:hover ~ a,
-.dropdown-menu:hover .language-menu-item.active > a,
-.dropdown-menu:has(.language-submenu:hover) .language-menu-item > a,
-.dropdown-menu:hover:not(:has(> a:not(.language-menu-item > a):hover, > .dropdown-item-label:hover)) .language-menu-item > a {
+
+/* Always show hovered background if .language-active is present */
+.language-menu-item.language-active > a {
     background-color: #d3d7db;
     font-weight: bold;
 }
 
-.language-menu-item:hover > a i,
-.language-submenu:hover ~ a i,
-.dropdown-menu:hover .language-menu-item.active > a i,
-.dropdown-menu:has(.language-submenu:hover) .language-menu-item > a i,
-.dropdown-menu:hover:not(:has(> a:not(.language-menu-item > a):hover, > .dropdown-item-label:hover)) .language-menu-item > a i {
+.language-menu-item > a {
+    transition: background-color 0.15s;
+}
+
+/* Remove background if another dropdown-menu > a is hovered */
+.dropdown-menu > a:hover:not(.language-menu-item > a),
+.dropdown-menu > a:focus:not(.language-menu-item > a) {
+    background-color: #d3d7db;
+    font-weight: bold;
+}
+
+
+/* Always rotate chevron if .language-active is present */
+.language-menu-item.language-active > a i {
     transform: rotate(90deg);
 }
 
@@ -400,25 +413,40 @@ nav.header-menu a:hover {
     font-weight: bold;
 }
 
+
 .language-submenu {
     display: none;
     position: absolute;
-    left: 102%;
+    left: calc(100% + 4px); /* slightly smaller gap */
     top: -1px;
+    min-height: 270px;
+    height: 270px;
     background-color: #fff;
     box-shadow: 0px 3px 6px 6px rgba(0, 0, 0, 0.25);
     border: 1px solid #8F99A3;
-    width: 180px;
-    padding: 0;
+    width: 230px;
+    padding: 0 0;
     z-index: 101;
+    box-sizing: border-box;
 }
 
 .language-submenu a {
     color: var(--text-color) !important;
     padding: 5px 6px;
     text-decoration: none;
-    display: block;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-align: left;
+    margin: 0 !important;
     font-size: 15px;
+    min-height: 36px;
+    background-color: #fff;
+    border-bottom: none;
+}
+
+.language-submenu a:last-child {
+    border-bottom: none;
 }
 
 .language-submenu a:hover {
@@ -429,7 +457,8 @@ nav.header-menu a:hover {
 
 .dropdown-menu:hover .language-menu-item .language-submenu,
 .language-menu-item:hover .language-submenu,
-.language-submenu:hover {
+.language-submenu:hover,
+.language-menu-item.language-active .language-submenu {
     display: block;
 }
 
