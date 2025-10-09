@@ -1,6 +1,25 @@
 // FILE: script.js (Consolidated Logic)
 
-document.addEventListener('DOMContentLoaded', () => {
+async function initializePage() {
+    // --- Shared Component Loading ---
+    // Load the sidebar content into its placeholder
+    const sidebarPlaceholder = document.getElementById('sidebar-placeholder');
+    if (sidebarPlaceholder) {
+        try {
+            const response = await fetch('_includes/sidebar.html');
+            if (!response.ok) throw new Error(`Failed to fetch sidebar: ${response.status}`);
+            const sidebarHtml = await response.text();
+            sidebarPlaceholder.innerHTML = sidebarHtml;
+        } catch (error) {
+            console.error("Error loading shared sidebar:", error);
+            if (sidebarPlaceholder) sidebarPlaceholder.innerHTML = "<p>Error loading sidebar content.</p>";
+        }
+    }
+
+    // Now that the sidebar is loaded, the rest of the initialization can proceed.
+    // All the code that was previously in DOMContentLoaded is now here.
+    // This ensures that elements from the loaded sidebar (like the music player) exist before scripts try to access them.
+
     // console.log("Consolidated script.js: DOM Content Loaded.");
 
     // --- Translation System ---
@@ -369,6 +388,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 setTimeout(() => applyTranslations(selectedLang), 0);
             }
             // Optionally, update <html lang="...">
+            // Apply the selected language. The function handles reverting to original text.
+            applyTranslations(selectedLang);
             document.documentElement.lang = selectedLang;
         });
     });
@@ -404,15 +425,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const createPostForm = document.getElementById('create-post-form');
     const titleInput = document.getElementById('post-title'); // Element for title input/textarea
     const contentInput = document.getElementById('post-content'); // Element for content textarea
-    const loginPrompt = document.getElementById('login-prompt');
-    const formMessage = document.getElementById('form-message');
-    const submitButton = document.getElementById('submit-button');
-    const postsContainer = document.getElementById('posts-container');
-    const viewPostsArea = document.getElementById('view-posts-area');
-
-    // --- Character Counter References ---
-    const titleCharCount = document.getElementById('title-char-count'); // Span for title count
-    const contentCharCount = document.getElementById('content-char-count'); // Span for content count
 
     // --- HTML5 Video Embed References ---
     const videoEmbedContainer = document.getElementById('video-embed-container'); // Container for the video
@@ -422,10 +434,21 @@ document.addEventListener('DOMContentLoaded', () => {
     let videoElementRef = null; // Reference to the <video> element
     let isVideoActive = false; // Flag to prevent multiple clicks/plays
 
-    // --- Quick Links References ---
+    // --- Page-Specific Element References (initialized after sidebar load) ---
+    const loginPrompt = document.getElementById('login-prompt');
+    const formMessage = document.getElementById('form-message');
+    const submitButton = document.getElementById('submit-button');
+    const postsContainer = document.getElementById('posts-container');
+    const viewPostsArea = document.getElementById('view-posts-area');
+    const titleCharCount = document.getElementById('title-char-count');
+    const contentCharCount = document.getElementById('content-char-count');
     const quickLinksToggle = document.querySelector('.quick-links-toggle');
     const quickLinksList = document.getElementById('quick-links-list');
-    // ---------------------------------
+    const musicPlayerContainer = document.querySelector('.mini-music-player');
+
+
+
+
 
     // --- Netlify Identity & UI Updates ---
     function updateUserStatusUI() {
@@ -561,7 +584,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Fetch and Display Posts Logic ---
     async function fetchAndDisplayPosts() {
         if (!postsContainer) { return; }
-        // console.log("Fetching and displaying posts...");
         postsContainer.innerHTML = '<p>Loading posts...</p>';
         try {
             const response = await fetch('/.netlify/functions/posts');
@@ -574,8 +596,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     const postElement = document.createElement('article'); postElement.className = 'post';
                     const titleElement = document.createElement('h3'); titleElement.textContent = post.title;
                     const contentElement = document.createElement('p');
-                    const sanitizedContent = post.content.replace(/</g, "<").replace(/>/g, ">"); 
-					contentElement.innerHTML = sanitizedContent.replace(/\n/g, '<br>');
+                    contentElement.innerHTML = post.content.replace(/\n/g, '<br>');
                     const username = post.username || 'Anonymous';
                     const postDate = new Date(post.created_at);
                     const formattedDateTime = postDate.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
@@ -587,14 +608,11 @@ document.addEventListener('DOMContentLoaded', () => {
             } else { postsContainer.innerHTML = '<p>No posts found.</p>'; }
         } catch (error) { console.error("Error fetching/displaying posts:", error); postsContainer.innerHTML = `<p style="color: red;">Error loading posts: ${error.message}</p>`; }
     }
-    if (postsContainer) {
-        fetchAndDisplayPosts(); // Initial fetch
-    }
-    // --- End Fetch and Display Posts ---
+    fetchAndDisplayPosts(); // Call the function to fetch posts
+
 
 
     // --- Mini Music Player Logic ---
-    const musicPlayerContainer = document.querySelector('.mini-music-player');
     let player; // Holds the YT.Player instance for the music player - make it accessible outside the block if needed
     let isPlayerReady = false; // Make accessible for random button
     let playlistLoaded = false; // Make accessible for shuffle button
@@ -642,7 +660,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let currentPlaylistIndex = 738; // Default to track 739
 
         // --- State Management ---
-        function savePlayerState() { if (!isPlayerReady || !player || typeof player.getPlayerState !== 'function') { return; } try { let apiState = player.getPlayerState(); let isCurrentlyPlaying = (apiState === YT.PlayerState.PLAYING || apiState === YT.PlayerState.BUFFERING); let playlistIndex = player.getPlaylistIndex(); if (playlistIndex === -1 || playlistIndex === null || playlistIndex === undefined) { playlistIndex = currentPlaylistIndex; } const state = { playlistId: youtubePlaylistId, index: playlistIndex, time: player.getCurrentTime() || 0, volume: player.getVolume(), muted: player.isMuted(), playing: isCurrentlyPlaying, timestamp: Date.now() }; sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(state)); } catch (e) { console.error("[Music Player] Error saving state:", e); } }
+        function savePlayerState() { if (!isPlayerReady || !player || typeof player.getPlayerState !== 'function') { return; } try { let apiState = player.getPlayerState(); let isCurrentlyPlaying = (apiState === YT.PlayerState.PLAYING || apiState === YT.PlayerState.BUFFERING); let playlistIndex = player.getPlaylistIndex(); if (playlistIndex === -1 || playlistIndex === null || playlistIndex === undefined) { playlistIndex = currentPlaylistIndex; } const state = { playlistId: youtubePlaylistId, index: playlistIndex, time: player.getCurrentTime() || 0, duration: player.getDuration() || 0, volume: player.getVolume(), muted: player.isMuted(), playing: isCurrentlyPlaying, timestamp: Date.now() }; sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(state)); } catch (e) { console.error("[Music Player] Error saving state:", e); } }
         function loadPlayerState() { try { const savedStateString = sessionStorage.getItem(SESSION_STORAGE_KEY); if (savedStateString) { return JSON.parse(savedStateString); } } catch (e) { console.error("[Music Player] Error loading state:", e); sessionStorage.removeItem(SESSION_STORAGE_KEY); } return null; }
 
         // --- Player Event Handlers ---
@@ -677,12 +695,27 @@ document.addEventListener('DOMContentLoaded', () => {
             }
             
             if (savedState) { 
-                player.setVolume(currentVolume); 
-                if (internalIsMuted) player.mute(); 
-                pendingSeekTime = savedState.time; 
-                pendingPlay = savedState.playing; 
-                internalIsPlaying = pendingPlay; 
-                updatePlayPauseIcon(); 
+                player.setVolume(currentVolume);
+                if (internalIsMuted) player.mute();
+
+                // Calculate if the song would have finished during page load
+                const timeSinceSave = (Date.now() - savedState.timestamp) / 1000;
+                const remainingTime = savedState.duration ? savedState.duration - savedState.time : Infinity;
+
+                if (savedState.playing && timeSinceSave < remainingTime) {
+                    // Song is still playing, resume from calculated time
+                    pendingSeekTime = savedState.time + timeSinceSave; 
+                    pendingPlay = true;
+                } else if (savedState.playing) {
+                    // Song would have ended, so just load the next one
+                    pendingPlay = true; // Will trigger 'ended' state logic to play next
+                } else {
+                    // It was paused, so restore the exact time and keep it paused
+                    pendingSeekTime = savedState.time;
+                    pendingPlay = false;
+                }
+                internalIsPlaying = pendingPlay;
+                updatePlayPauseIcon();
             } else { 
                 // First time or no saved state - start unmuted
                 player.setVolume(initialVolume);
@@ -703,13 +736,13 @@ document.addEventListener('DOMContentLoaded', () => {
             updateThumbnail(null); 
             
             // Load playlist at the determined index
-            if (savedState && savedState.playing) {
+            if (pendingPlay) {
                 player.loadPlaylist({ 
                     list: youtubePlaylistId, 
                     listType: 'playlist', 
                     index: currentPlaylistIndex 
                 });
-            } else {
+            } else { // If paused or first visit
                 player.cuePlaylist({
                     list: youtubePlaylistId,
                     listType: 'playlist',
@@ -734,16 +767,109 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.addEventListener('keydown', startPlayingOnInteraction);
             }
             
-            setupPlayerEventListeners(); 
+            setupPlayerEventListeners();
+            // Event listeners are now set up in initializeAndLoadPlayer
         }
-        function onPlayerStateChange(event) { const state = event.data; const stateNames = { '-1': 'UNSTARTED', 0: 'ENDED', 1: 'PLAYING', 2: 'PAUSED', 3: 'BUFFERING', 5: 'CUED' }; /* console.log(`[Music Player] Event: onStateChange - ${stateNames[state] || state}`); */ if (!isPlayerReady) return; if (!restoreAttempted && (state === YT.PlayerState.CUED || state === YT.PlayerState.BUFFERING || state === YT.PlayerState.PLAYING)) { playlistLoaded = true; restoreAttempted = true; 
-        
-        // Load full playlist data immediately for track numbers and shuffle
-        if (!isPlaylistLoaded) {
-            populatePlaylist();
+
+        function onPlayerStateChange(event) {
+            const state = event.data;
+            // const stateNames = { '-1': 'UNSTARTED', 0: 'ENDED', 1: 'PLAYING', 2: 'PAUSED', 3: 'BUFFERING', 5: 'CUED' };
+            // console.log(`[Music Player] Event: onStateChange - ${stateNames[state] || state}`);
+
+            if (!isPlayerReady) return;
+
+            // This block handles restoring the player's state (e.g., after a page reload)
+            if (!restoreAttempted && (state === YT.PlayerState.CUED || state === YT.PlayerState.BUFFERING || state === YT.PlayerState.PLAYING)) {
+                playlistLoaded = true;
+                restoreAttempted = true;
+
+                // Load full playlist data immediately for track numbers and shuffle
+                if (!isPlaylistLoaded) {
+                    populatePlaylist();
+                }
+
+                const savedState = loadPlayerState();
+                if (pendingSeekTime !== null && pendingSeekTime > 0.1) {
+                    player.seekTo(pendingSeekTime, true);
+                }
+
+                if (pendingPlay) {
+                    setTimeout(() => {
+                        if (player && isPlayerReady) {
+                            try {
+                                player.playVideo();
+                                // This handles a specific edge case where a muted session is restored
+                                if (internalIsMuted && !savedState?.muted) {
+                                    setTimeout(() => {
+                                        player.unMute();
+                                        player.setVolume(currentVolume);
+                                        internalIsMuted = false;
+                                        updateVolumeIcon(currentVolume);
+                                    }, 1000);
+                                }
+                            } catch (e) {
+                                console.error("[Music Player] Error calling playVideo during restore:", e);
+                            }
+                        }
+                    }, 100);
+                } else {
+                    if (pendingSeekTime !== null && pendingSeekTime > 0.1) {
+                        setTimeout(updateSeekBar, 150);
+                    }
+                }
+                pendingSeekTime = null;
+                pendingPlay = false;
+            }
+
+            // Update internal state and UI based on player's actual state
+            const actualPlayerState = player.getPlayerState();
+            internalIsPlaying = (actualPlayerState === YT.PlayerState.PLAYING || actualPlayerState === YT.PlayerState.BUFFERING);
+            updatePlayPauseIcon();
+
+            // When the video changes, update details and save state
+            if (state === YT.PlayerState.CUED || state === YT.PlayerState.PLAYING || state === YT.PlayerState.BUFFERING) {
+                let newIndex = player.getPlaylistIndex();
+                if (newIndex !== -1 && newIndex !== null && (newIndex !== currentPlaylistIndex || videoTitleElement.textContent.includes("Loading"))) {
+                    currentPlaylistIndex = newIndex;
+                    updateVideoDetails();
+                    savePlayerState();
+                }
+            }
+
+            // Manage the seek bar updates
+            if (internalIsPlaying) {
+                startSeekBarUpdate();
+            } else {
+                if (seekBarInterval) clearInterval(seekBarInterval);
+                seekBarInterval = null;
+                if (state === YT.PlayerState.PAUSED || state === YT.PlayerState.ENDED) {
+                    setTimeout(updateSeekBar, 50); // Final update
+                    savePlayerState();
+                }
+            }
+
+            // When a track ends, play the next one (shuffled or in order)
+            if (state === YT.PlayerState.ENDED) {
+                if (seekBarProgress) seekBarProgress.style.width = '0%';
+                internalIsPlaying = false;
+                updatePlayPauseIcon();
+                savePlayerState();
+
+                if (shuffleMode && playlistLoaded) {
+                    setTimeout(() => {
+                        if (shuffleMode && player && isPlayerReady) {
+                            playShuffledVideo();
+                        }
+                    }, 500);
+                } else {
+                    setTimeout(() => {
+                        if (player && isPlayerReady) {
+                            playNextVideo();
+                        }
+                    }, 500);
+                }
+            }
         }
-        
-        const savedState = loadPlayerState(); if (pendingSeekTime !== null && pendingSeekTime > 0.1) { player.seekTo(pendingSeekTime, true); } if (pendingPlay) { setTimeout(() => { if (player && isPlayerReady) { try { player.playVideo(); if (internalIsMuted && !savedState?.muted) { setTimeout(() => { player.unMute(); player.setVolume(currentVolume); internalIsMuted = false; updateVolumeIcon(currentVolume); }, 1000); } } catch (e) { console.error("[Music Player] Error calling playVideo during restore:", e); } } }, 100); } else { if (pendingSeekTime !== null && pendingSeekTime > 0.1) { setTimeout(updateSeekBar, 150); } } pendingSeekTime = null; pendingPlay = false; } const actualPlayerState = player.getPlayerState(); internalIsPlaying = (actualPlayerState === YT.PlayerState.PLAYING || actualPlayerState === YT.PlayerState.BUFFERING); updatePlayPauseIcon(); if (state === YT.PlayerState.CUED || state === YT.PlayerState.PLAYING || state === YT.PlayerState.BUFFERING) { let newIndex = player.getPlaylistIndex(); if (newIndex !== -1 && newIndex !== null && (newIndex !== currentPlaylistIndex || videoTitleElement.textContent.includes("Loading"))) { currentPlaylistIndex = newIndex; updateVideoDetails(); savePlayerState(); } } if (internalIsPlaying) { startSeekBarUpdate(); } else { if (seekBarInterval) clearInterval(seekBarInterval); seekBarInterval = null; if (state === YT.PlayerState.PAUSED || state === YT.PlayerState.ENDED) { setTimeout(updateSeekBar, 50); savePlayerState(); } } if (state === YT.PlayerState.ENDED) { if(seekBarProgress) seekBarProgress.style.width = '0%'; internalIsPlaying = false; updatePlayPauseIcon(); savePlayerState(); if (shuffleMode && playlistLoaded) { setTimeout(() => { if (shuffleMode && player && isPlayerReady) { playShuffledVideo(); } }, 500); } } }
         function onPlayerError(event) { console.error(`[Music Player] Event: onPlayerError. Code: ${event.data}`); const errorMessages = { 2: "Invalid parameter", 5: "HTML5 player error", 100: "Video not found", 101: "Playback disallowed", 150: "Playback disallowed" }; console.error(`[Music Player] Error: ${errorMessages[event.data] || 'Unknown error.'}`); 
         
         // For deleted/unavailable videos (100, 101, 150), skip to next
@@ -944,6 +1070,8 @@ document.addEventListener('DOMContentLoaded', () => {
         updateVideoTitle("Initializing...");
         if (seekBarProgress) seekBarProgress.style.width = '0%';
 
+        // Set up the click listener for play/pause
+        playPauseBtn?.addEventListener('click', togglePlayPause);
     } else {
         // console.log("Music player container not found on this page.");
     }
@@ -1224,7 +1352,7 @@ if (quickLinksToggle && quickLinksList) {
     let isPlaylistLoaded = false;
 
     async function populatePlaylist() {
-        if (!player || !isPlayerReady || !playlistLoaded || isPlaylistLoaded) return;
+        if (!player || !isPlayerReady || isPlaylistLoaded) return;
         
         try {
             const dropdownContent = playlistDropdown.querySelector('.playlist-dropdown-content');
@@ -1450,18 +1578,13 @@ if (quickLinksToggle && quickLinksList) {
     // Video trigger listeners added if element exists (handled above).
 
     // Initial setup for video trigger text (redundant safety check)
+    // Initial setup for video trigger text
     if (videoTriggerInfo && !isVideoActive) {
          videoTriggerInfo.textContent = "ANSI Art (Click to play)";
          videoTriggerInfo.style.cursor = 'pointer';
          videoTriggerInfo.setAttribute('aria-disabled', 'false');
          videoTriggerInfo.classList.remove('video-active');
     }
-
-// --- Dark Mode Logic ---
-    const darkModeToggle = document.getElementById('dark-mode-toggle');
-    const darkModeLabel = document.querySelector('.dropdown-item-label[for="dark-mode-toggle"]');
-    const bodyElement = document.body;
-    const DARK_MODE_KEY = 'darkModePreference_v1';
 
     function applyDarkMode(isDark) {
         // ... (applyDarkMode function remains the same) ...
@@ -1487,46 +1610,33 @@ if (quickLinksToggle && quickLinksList) {
         }
     }
 
+    // --- Dark Mode Logic ---
+    const darkModeToggle = document.getElementById('dark-mode-toggle'); // Keep this one
+    const bodyElement = document.body;
+    const DARK_MODE_KEY = 'darkModePreference_v1';
+
     // Initialize Dark Mode on Load
     if (darkModeToggle) {
         let savedPreference = null;
         try {
             savedPreference = localStorage.getItem(DARK_MODE_KEY);
         } catch (e) {
-           console.warn("Could not read dark mode preference from localStorage:", e);
+            console.warn("Could not read dark mode preference from localStorage:", e);
         }
 
-        // Determine initial state: saved pref >>>> DEFAULT LIGHT <<<<
-        let initialDarkMode = false; // Start assuming light mode is the default
-
-        if (savedPreference === 'dark') {
-            initialDarkMode = true; // Saved preference is dark, override default
-        } else if (savedPreference === 'light') {
-            initialDarkMode = false; // Saved preference is light, confirm default
-        }
-        // REMOVED/COMMENTED OUT: System Preference Check
-        /*
-        else {
-             // If no saved preference, CHECK system preference (REMOVED THIS BEHAVIOR)
-             if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-                 initialDarkMode = true; // System prefers dark
-                 // console.log("Using system preference: dark");
-             } else {
-                 // System prefers light or doesn't specify, stick with initialDarkMode = false
-                 // console.log("Defaulting to light mode (no saved pref, system not dark)");
-             }
-        }
-        */
-
-        // console.log(`Applying initial dark mode state: ${initialDarkMode}`);
-        applyDarkMode(initialDarkMode); // Apply the determined initial state (will be false/light if no 'dark' saved pref)
+        // Default to light mode unless 'dark' is explicitly saved.
+        const initialDarkMode = savedPreference === 'dark';
+        applyDarkMode(initialDarkMode);
 
         // Add the change listener
         darkModeToggle.addEventListener('change', handleDarkModeToggleChange);
 
-        // Prevent dropdown closing logic (remains the same)
+        // Prevent dropdown from closing when clicking the dark mode label/switch
+        const darkModeLabel = document.querySelector('.dropdown-item-label[for="dark-mode-toggle"]');
         if (darkModeLabel) {
-            // ... (event listener for label click) ...
+            darkModeLabel.addEventListener('click', (e) => {
+                e.stopPropagation();
+            });
         }
 
     } else {
@@ -1541,4 +1651,7 @@ if (quickLinksToggle && quickLinksList) {
     console.log("Consolidated script.js: DOM Content Loaded setup finished.");
 
 
-}); // --- END OF MASTER DOMContentLoaded LISTENER ---
+}
+
+// --- Main Entry Point ---
+document.addEventListener('DOMContentLoaded', initializePage);
