@@ -1,24 +1,15 @@
 // FILE: script.js (Consolidated Logic)
 
-async function initializePage() {
+function initializePage() {
     // --- Shared Component Loading ---
     // Load the sidebar content into its placeholder
     const sidebarPlaceholder = document.getElementById('sidebar-placeholder');
-    if (sidebarPlaceholder) {
-        try {
-            const response = await fetch('_includes/sidebar.html');
-            if (!response.ok) throw new Error(`Failed to fetch sidebar: ${response.status}`);
-            const sidebarHtml = await response.text();
-            sidebarPlaceholder.innerHTML = sidebarHtml;
-        } catch (error) {
-            console.error("Error loading shared sidebar:", error);
-            if (sidebarPlaceholder) sidebarPlaceholder.innerHTML = "<p>Error loading sidebar content.</p>";
-        }
+    if (sidebarPlaceholder && typeof sidebarContent !== 'undefined') {
+        sidebarPlaceholder.innerHTML = sidebarContent;
+    } else if (sidebarPlaceholder) {
+        console.error("Error loading shared sidebar: The 'sidebarContent' variable was not found. Ensure '_includes/sidebar.js' is loaded before 'script.js' in your HTML.");
+        sidebarPlaceholder.innerHTML = "<p>Error loading sidebar content.</p>";
     }
-
-    // Now that the sidebar is loaded, the rest of the initialization can proceed.
-    // All the code that was previously in DOMContentLoaded is now here.
-    // This ensures that elements from the loaded sidebar (like the music player) exist before scripts try to access them.
 
     // console.log("Consolidated script.js: DOM Content Loaded.");
 
