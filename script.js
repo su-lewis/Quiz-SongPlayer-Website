@@ -84,7 +84,7 @@ function initializePage() {
             recentPosts: 'Recent Posts',
             quickLinks: 'Quick Links',
             welcome: 'Welcome to QuizSongPlayer',
-            keepTrack: 'Keep track of my blog posts below!',
+            keepTrack: 'Keep track of my blog posts in the sidebar!',
             loadingPosts: 'Loading posts...',
             musicPlayer: 'Music Player',
             loadingPlaylist: 'Loading playlist...',
@@ -114,7 +114,7 @@ function initializePage() {
             recentPosts: 'Publications Récentes',
             quickLinks: 'Liens Rapides',
             welcome: 'Bienvenue à QuizSongPlayer',
-            keepTrack: 'Suivez mes articles de blog ci-dessous !',
+            keepTrack: 'Suivez mes articles de blog dans la barre latérale !',
             loadingPosts: 'Chargement des articles...',
             musicPlayer: 'Lecteur de musique',
             loadingPlaylist: 'Chargement de la playlist...',
@@ -144,7 +144,7 @@ function initializePage() {
             recentPosts: 'Neueste Beiträge',
             quickLinks: 'Schnelllinks',
             welcome: 'Willkommen bei QuizSongPlayer',
-            keepTrack: 'Behalte meine Blogbeiträge unten im Blick!',
+            keepTrack: 'Behalte meine Blogbeiträge in der Seitenleiste im Blick!',
             loadingPosts: 'Beiträge werden geladen...',
             musicPlayer: 'Musikspieler',
             loadingPlaylist: 'Playlist wird geladen...',
@@ -174,7 +174,7 @@ function initializePage() {
             recentPosts: 'Publicaciones Recientes',
             quickLinks: 'Enlaces Rápidos',
             welcome: 'Bienvenido a QuizSongPlayer',
-            keepTrack: '¡Sigue mis publicaciones de blog a continuación!',
+            keepTrack: '¡Sigue mis publicaciones de blog en la barra lateral!',
             loadingPosts: 'Cargando publicaciones...',
             musicPlayer: 'Reproductor de música',
             loadingPlaylist: 'Cargando lista de reproducción...',
@@ -204,7 +204,7 @@ function initializePage() {
             recentPosts: 'Post Recenti',
             quickLinks: 'Collegamenti Rapidi',
             welcome: 'Benvenuto su QuizSongPlayer',
-            keepTrack: 'Tieni traccia dei miei post qui sotto!',
+            keepTrack: 'Tieni traccia dei miei post nella barra laterale!',
             loadingPosts: 'Caricamento post...',
             musicPlayer: 'Lettore musicale',
             loadingPlaylist: 'Caricamento playlist...',
@@ -234,7 +234,7 @@ function initializePage() {
             recentPosts: 'Publicações Recentes',
             quickLinks: 'Links Rápidos',
             welcome: 'Bem-vindo ao QuizSongPlayer',
-            keepTrack: 'Acompanhe minhas postagens abaixo!',
+            keepTrack: 'Acompanhe minhas postagens na barra lateral!',
             loadingPosts: 'Carregando postagens...',
             musicPlayer: 'Reprodutor de música',
             loadingPlaylist: 'Carregando playlist...',
@@ -264,7 +264,7 @@ function initializePage() {
             recentPosts: '最近の投稿',
             quickLinks: 'クイックリンク',
             welcome: 'QuizSongPlayerへようこそ',
-            keepTrack: '以下で私のブログ投稿をチェック！',
+            keepTrack: 'サイドバーで私のブログ投稿をチェック！',
             loadingPosts: '投稿を読み込み中...',
             musicPlayer: 'ミュージックプレーヤー',
             loadingPlaylist: 'プレイリストを読み込み中...',
@@ -608,7 +608,7 @@ function initializePage() {
     let isPlayerReady = false; // Make accessible for random button
     let playlistLoaded = false; // Make accessible for shuffle button
     let playedVideos = []; // Track played videos for shuffle functionality
-    let shuffleMode = false; // Track if shuffle is active
+    let shuffleMode = true; // Track if shuffle is active - DEFAULT: ON
     let shuffleButton = null; // Reference to shuffle button
     let updatePlaylistActiveState = () => {}; // Placeholder for playlist dropdown update
     let internalIsPlaying = false; // Music player's internal state
@@ -1249,6 +1249,12 @@ if (quickLinksToggle && quickLinksList) {
 
     // --- Shuffle Button Logic ---
     shuffleButton = document.getElementById('player-shuffle');
+    
+    // Set shuffle button as active by default since shuffleMode starts as true
+    if (shuffleButton) {
+        shuffleButton.classList.add('shuffle-active');
+        console.log('[Shuffle] Shuffle mode enabled by default');
+    }
     
     // Helper function to play a shuffled video
     function playShuffledVideo() {
