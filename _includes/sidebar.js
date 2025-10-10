@@ -36,6 +36,15 @@ const sidebarContent = `
 </div>
 <!-- End Mini Music Player -->
 
+<!-- ========== START: Recent Posts Section ========== -->
+<div class="recent-posts-container content-box">
+    <h4 data-translate="recentPosts">Recent Posts</h4>
+    <div id="posts-container">
+        <p data-translate="loadingPosts">Loading posts...</p>
+    </div>
+</div>
+<!-- ========== END: Recent Posts Section ========== -->
+
 <!-- ========== START: Quick Links Section ========== -->
 <div class="quick-links-container content-box">
     <h4 data-translate="quickLinks">Quick Links</h4>
@@ -52,13 +61,4 @@ const sidebarContent = `
     </div>
 </div>
 <!-- ========== END: Quick Links Section ========== -->
-
-<!-- ========== START: Recent Posts Section ========== -->
-<div class="recent-posts-container content-box">
-    <h4 data-translate="recentPosts">Recent Posts</h4>
-    <div id="posts-container">
-        <p data-translate="loadingPosts">Loading posts...</p>
-    </div>
-</div>
-<!-- ========== END: Recent Posts Section ========== -->
 `;

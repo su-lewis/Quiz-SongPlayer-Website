@@ -619,9 +619,15 @@ function initializePage() {
         // console.log('[Music Player] Initializing...');
 
         // --- Constants & Config ---
-        const SESSION_STORAGE_KEY = 'musicPlayerState_v1';
-        const youtubePlaylistId = 'PLC1tH2RPEXpQqF8cQvQYGy1Z6JwpLyG3a'; // Your 946-video playlist
-        const initialVolume = 75;
+    const SESSION_STORAGE_KEY = 'musicPlayerState_v1';
+    const LOCAL_STORAGE_KEY = 'musicPlayerState_v1'; // Fallback across some navigations/tabs
+    const youtubePlaylistId = 'PLC1tH2RPEXpQqF8cQvQYGy1Z6JwpLyG3a'; // Your playlist (size can grow)
+    const AUTOPLAY_ON_LOAD = true; // Enable muted autoplay on first page load
+    const ALWAYS_RANDOM_AFTER_FIRST = true; // After first-ever visit, start a random song on each load
+    const initialVolume = 100;
+    // Default-first-track config: if you know the videoId, set it here; otherwise we'll try to match by title
+    const DEFAULT_FIRST_VIDEO_ID = 'vIOSkVRSgWY';
+    const DEFAULT_FIRST_VIDEO_TITLE_MATCH = /Like a Bird/i;
 
         // --- DOM Elements (Music Player Specific) ---
         const playPauseBtn = document.getElementById('player-play-pause');
@@ -645,14 +651,81 @@ function initializePage() {
         let internalIsMuted = false;
         let currentVolume = initialVolume;
         let seekBarInterval = null;
-        let restoreAttempted = false;
+    let restoreAttempted = false;
+    let didLoadSavedVideoById = false; // Ensure restore-by-videoId only happens once
         let pendingSeekTime = null;
         let pendingPlay = false;
         let currentPlaylistIndex = 738; // Default to track 739
+    let applyDefaultOnFirstVisit = false; // Decide in onPlayerReady
+    let defaultApplied = false; // Ensure we only force default once
+    let chooseRandomOnLoad = false; // After first visit, pick a random track
+    let randomApplied = false; // Ensure random is only applied once per load
+    let hasMarkedPlayedFlag = false; // Ensure we set the hasPlayed flag once
+    let wantAutoplayAfterDefault = false; // For first-ever visit, autoplay after default is applied
 
         // --- State Management ---
-        function savePlayerState() { if (!isPlayerReady || !player || typeof player.getPlayerState !== 'function') { return; } try { let apiState = player.getPlayerState(); let isCurrentlyPlaying = (apiState === YT.PlayerState.PLAYING || apiState === YT.PlayerState.BUFFERING); let playlistIndex = player.getPlaylistIndex(); if (playlistIndex === -1 || playlistIndex === null || playlistIndex === undefined) { playlistIndex = currentPlaylistIndex; } const state = { playlistId: youtubePlaylistId, index: playlistIndex, time: player.getCurrentTime() || 0, duration: player.getDuration() || 0, volume: player.getVolume(), muted: player.isMuted(), playing: isCurrentlyPlaying, timestamp: Date.now() }; sessionStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(state)); } catch (e) { console.error("[Music Player] Error saving state:", e); } }
-        function loadPlayerState() { try { const savedStateString = sessionStorage.getItem(SESSION_STORAGE_KEY); if (savedStateString) { return JSON.parse(savedStateString); } } catch (e) { console.error("[Music Player] Error loading state:", e); sessionStorage.removeItem(SESSION_STORAGE_KEY); } return null; }
+        function savePlayerState() {
+            if (!isPlayerReady || !player || typeof player.getPlayerState !== 'function') { return; }
+            try {
+                const apiState = player.getPlayerState();
+                const isCurrentlyPlaying = (apiState === YT.PlayerState.PLAYING || apiState === YT.PlayerState.BUFFERING);
+
+                // Prefer mapping current videoId to our known playlist for stable index
+                let playlistIndex = currentPlaylistIndex;
+                let currentVideoId = null;
+                try {
+                    const vd = typeof player.getVideoData === 'function' ? player.getVideoData() : null;
+                    currentVideoId = vd && vd.video_id ? vd.video_id : null;
+                } catch (_) {}
+
+                if (fullPlaylistData && fullPlaylistData.videos && currentVideoId) {
+                    const foundIdx = fullPlaylistData.videos.findIndex(v => v.videoId === currentVideoId);
+                    if (foundIdx >= 0) playlistIndex = foundIdx;
+                } else {
+                    try {
+                        const apiIndex = player.getPlaylistIndex();
+                        if (apiIndex !== -1 && apiIndex !== null && apiIndex !== undefined) {
+                            playlistIndex = apiIndex;
+                        }
+                    } catch (_) {}
+                }
+
+                const state = {
+                    playlistId: youtubePlaylistId,
+                    index: playlistIndex,
+                    videoId: currentVideoId || null,
+                    time: (typeof player.getCurrentTime === 'function' ? (player.getCurrentTime() || 0) : 0),
+                    duration: (typeof player.getDuration === 'function' ? (player.getDuration() || 0) : 0),
+                    volume: (typeof player.getVolume === 'function' ? player.getVolume() : currentVolume),
+                    muted: (typeof player.isMuted === 'function' ? player.isMuted() : false),
+                    playing: isCurrentlyPlaying,
+                    timestamp: Date.now(),
+                };
+
+                const json = JSON.stringify(state);
+                try { sessionStorage.setItem(SESSION_STORAGE_KEY, json); } catch (_) {}
+                try { localStorage.setItem(LOCAL_STORAGE_KEY, json); } catch (_) {}
+            } catch (e) {
+                console.error("[Music Player] Error saving state:", e);
+            }
+        }
+
+        function loadPlayerState() {
+            try {
+                const s = sessionStorage.getItem(SESSION_STORAGE_KEY);
+                if (s) return JSON.parse(s);
+            } catch (e) {
+                console.error("[Music Player] Error loading state (session):", e);
+                try { sessionStorage.removeItem(SESSION_STORAGE_KEY); } catch (_) {}
+            }
+            try {
+                const l = localStorage.getItem(LOCAL_STORAGE_KEY);
+                if (l) return JSON.parse(l);
+            } catch (e) {
+                console.error("[Music Player] Error loading state (local):", e);
+            }
+            return null;
+        }
 
         // --- Player Event Handlers ---
         function onPlayerReady(event) { 
@@ -664,7 +737,8 @@ function initializePage() {
             pendingPlay = false; 
             
             const savedState = loadPlayerState(); 
-            const hasPlayedBefore = localStorage.getItem('musicPlayerHasPlayed');
+            // Treat any truthy 'true' string as played before
+            const hasPlayedBefore = localStorage.getItem('musicPlayerHasPlayed') === 'true';
             
             // Determine the correct index to load
             // True first visit (no flag): index 738, Otherwise use saved index or 738
@@ -672,7 +746,10 @@ function initializePage() {
                 // Genuine first visit - start with Like a Bird
                 currentPlaylistIndex = 738;
                 currentVolume = initialVolume;
-                internalIsMuted = false;
+                internalIsMuted = AUTOPLAY_ON_LOAD ? true : false;
+                applyDefaultOnFirstVisit = true;
+                // We'll handle autoplay after switching to default video explicitly
+                wantAutoplayAfterDefault = !!AUTOPLAY_ON_LOAD;
             } else if (savedState && savedState.index !== null && savedState.index !== undefined) {
                 // Has played before and we have saved state - use it
                 currentPlaylistIndex = savedState.index;
@@ -684,8 +761,16 @@ function initializePage() {
                 currentVolume = initialVolume;
                 internalIsMuted = false;
             }
+
+            // Policy: After first-ever visit, start random only when there is no session state (new session/tab)
+            // If a session state exists (refresh or same-tab navigation), restore that instead.
+            if (ALWAYS_RANDOM_AFTER_FIRST && hasPlayedBefore && !savedState) {
+                chooseRandomOnLoad = true;
+            } else {
+                chooseRandomOnLoad = false;
+            }
             
-            if (savedState) { 
+            if (savedState && !chooseRandomOnLoad) { 
                 player.setVolume(currentVolume);
                 if (internalIsMuted) player.mute();
 
@@ -708,16 +793,42 @@ function initializePage() {
                 internalIsPlaying = pendingPlay;
                 updatePlayPauseIcon();
             } else { 
-                // First time or no saved state - start unmuted
-                player.setVolume(initialVolume);
-                player.unMute();
-                internalIsMuted = false; 
-                
-                // Don't autoplay on first visit - just load paused
-                internalIsPlaying = false;
-                pendingPlay = false;
-                
-                pendingSeekTime = null; 
+                // First time or we are intentionally ignoring saved state (random on load)
+                if (applyDefaultOnFirstVisit) {
+                    // Defer autoplay until after we switch to the default video by ID
+                    player.setVolume(initialVolume);
+                    if (AUTOPLAY_ON_LOAD) {
+                        try { player.mute(); } catch (_) {}
+                        internalIsMuted = true;
+                    } else {
+                        try { player.unMute(); } catch (_) {}
+                        internalIsMuted = false;
+                    }
+                    internalIsPlaying = false;
+                    pendingPlay = false;
+                    pendingSeekTime = null;
+                } else if (AUTOPLAY_ON_LOAD) {
+                    // To satisfy autoplay policies, start muted and playing
+                    internalIsMuted = true;
+                    try { player.mute(); } catch (_) {}
+                    player.setVolume(initialVolume);
+                    internalIsPlaying = true;
+                    pendingPlay = true;
+                    pendingSeekTime = null;
+                } else {
+                    // Start paused and unmuted
+                    player.setVolume(initialVolume);
+                    try { player.unMute(); } catch (_) {}
+                    internalIsMuted = false; 
+                    internalIsPlaying = false;
+                    pendingPlay = false;
+                    pendingSeekTime = null; 
+                }
+                // When we plan to pick a random track on load, do not auto-play the cued playlist first item
+                if (chooseRandomOnLoad) {
+                    pendingPlay = false;
+                    internalIsPlaying = false;
+                }
                 updatePlayPauseIcon(); 
             } 
             
@@ -726,25 +837,21 @@ function initializePage() {
             updateVideoTitle("Loading..."); 
             updateThumbnail(null); 
             
-            // Load playlist at the determined index
-            if (pendingPlay) {
-                player.loadPlaylist({ 
-                    list: youtubePlaylistId, 
-                    listType: 'playlist', 
-                    index: currentPlaylistIndex 
-                });
-            } else { // If paused or first visit
+            // Cue the playlist (paused) for both first and returning visits so iframe API fallback is available
+            try {
                 player.cuePlaylist({
                     list: youtubePlaylistId,
                     listType: 'playlist',
-                    index: currentPlaylistIndex
+                    index: 0
                 });
-            }
+                // Ensure we remain paused until we pick/load our intended item
+                internalIsPlaying = false;
+            } catch (_) { /* ignore */ }
             
             // Add click listener to start playing on first interaction (only if never played before)
-            if (!hasPlayedBefore) {
+            if (!hasPlayedBefore && !AUTOPLAY_ON_LOAD) {
                 const startPlayingOnInteraction = () => {
-                    if (!localStorage.getItem('musicPlayerHasPlayed')) {
+                    if (localStorage.getItem('musicPlayerHasPlayed') !== 'true') {
                         localStorage.setItem('musicPlayerHasPlayed', 'true');
                         if (player && isPlayerReady && !internalIsPlaying) {
                             player.playVideo();
@@ -757,8 +864,60 @@ function initializePage() {
                 document.addEventListener('click', startPlayingOnInteraction);
                 document.addEventListener('keydown', startPlayingOnInteraction);
             }
+
+            // If autoplay is enabled (muted), unmute on the first user interaction anywhere on the page
+            if (AUTOPLAY_ON_LOAD) {
+                const unmuteOnInteraction = () => {
+                    try {
+                        if (player && isPlayerReady && internalIsMuted) {
+                            // If user hasn't manually set a volume, unmute to 100%
+                            if (typeof currentVolume !== 'number' || currentVolume <= 0) {
+                                currentVolume = 100;
+                            }
+                            if (volumeSlider) volumeSlider.value = currentVolume;
+                            player.unMute();
+                            player.setVolume(currentVolume);
+                            internalIsMuted = false;
+                            updateVolumeIcon(currentVolume);
+                            savePlayerState();
+                        }
+                    } catch (_) { /* ignore */ }
+                    document.removeEventListener('click', unmuteOnInteraction, true);
+                    document.removeEventListener('keydown', unmuteOnInteraction, true);
+                };
+                // Capture phase to catch clicks on any element
+                document.addEventListener('click', unmuteOnInteraction, true);
+                document.addEventListener('keydown', unmuteOnInteraction, true);
+            }
             
             setupPlayerEventListeners();
+
+            // Immediately load default video on true first visit
+            if (applyDefaultOnFirstVisit && DEFAULT_FIRST_VIDEO_ID) {
+                try {
+                    player.loadVideoById(DEFAULT_FIRST_VIDEO_ID);
+                    if (AUTOPLAY_ON_LOAD) {
+                        try { player.mute(); } catch (_) {}
+                        internalIsMuted = true;
+                        internalIsPlaying = true;
+                    } else {
+                        try { player.unMute(); } catch (_) {}
+                        internalIsMuted = false;
+                        internalIsPlaying = false;
+                    }
+                    defaultApplied = true;
+                    updateThumbnail(DEFAULT_FIRST_VIDEO_ID);
+                    updateTrackNumber(DEFAULT_FIRST_VIDEO_ID);
+                    // Prompt early title/details refresh
+                    setTimeout(() => { try { updateVideoDetails(); } catch(_){} }, 200);
+                    savePlayerState();
+                } catch (e) {
+                    console.warn('[Music Player] Could not load default video immediately:', e);
+                }
+            }
+
+            // Populate playlist data immediately to enable random selection or track number updates
+            try { populatePlaylist(); } catch (_) {}
             // Event listeners are now set up in initializeAndLoadPlayer
         }
 
@@ -780,31 +939,58 @@ function initializePage() {
                 }
 
                 const savedState = loadPlayerState();
-                if (pendingSeekTime !== null && pendingSeekTime > 0.1) {
-                    player.seekTo(pendingSeekTime, true);
-                }
-
-                if (pendingPlay) {
-                    setTimeout(() => {
-                        if (player && isPlayerReady) {
-                            try {
-                                player.playVideo();
-                                // This handles a specific edge case where a muted session is restored
-                                if (internalIsMuted && !savedState?.muted) {
-                                    setTimeout(() => {
-                                        player.unMute();
-                                        player.setVolume(currentVolume);
-                                        internalIsMuted = false;
-                                        updateVolumeIcon(currentVolume);
-                                    }, 1000);
-                                }
-                            } catch (e) {
-                                console.error("[Music Player] Error calling playVideo during restore:", e);
+                // Restore sequence: switch to saved video (if needed) with start time, then play if needed
+                if (!chooseRandomOnLoad && savedState) {
+                    try {
+                        const vd = typeof player.getVideoData === 'function' ? player.getVideoData() : null;
+                        const currentId = vd && vd.video_id ? vd.video_id : null;
+                        // Compute target start time if we had a pendingSeekTime or can derive from timestamp
+                        let targetStart = null;
+                        if (pendingSeekTime !== null && pendingSeekTime > 0.1) {
+                            targetStart = pendingSeekTime;
+                        } else if (typeof savedState.time === 'number') {
+                            // Adjust by elapsed time if it was playing when saved
+                            const timeSinceSave = (Date.now() - (savedState.timestamp || Date.now())) / 1000;
+                            if (savedState.playing && typeof savedState.duration === 'number' && savedState.duration > 0) {
+                                const maybe = savedState.time + timeSinceSave;
+                                targetStart = Math.min(Math.max(maybe, 0), savedState.duration - 0.2);
+                            } else {
+                                targetStart = savedState.time;
                             }
                         }
-                    }, 100);
-                } else {
-                    if (pendingSeekTime !== null && pendingSeekTime > 0.1) {
+
+                        // If different video, switch using startSeconds
+                        if (savedState.videoId && currentId !== savedState.videoId) {
+                            if (fullPlaylistData && fullPlaylistData.videos) {
+                                const idx = fullPlaylistData.videos.findIndex(v => v.videoId === savedState.videoId);
+                                if (idx >= 0) currentPlaylistIndex = idx;
+                            } else if (typeof savedState.index === 'number') {
+                                currentPlaylistIndex = savedState.index;
+                            }
+                            if (pendingPlay) {
+                                player.loadVideoById({ videoId: savedState.videoId, startSeconds: Math.max(0, targetStart || 0) });
+                            } else {
+                                player.cueVideoById({ videoId: savedState.videoId, startSeconds: Math.max(0, targetStart || 0) });
+                            }
+                            didLoadSavedVideoById = true;
+                            pendingSeekTime = null;
+                        } else if (targetStart !== null && targetStart > 0.1) {
+                            // Same video, just seek
+                            player.seekTo(targetStart, true);
+                            pendingSeekTime = null;
+                        }
+                    } catch (e) {
+                        console.warn('[Music Player] Restore by video/time encountered an issue:', e);
+                    }
+
+                    // Finally, play if needed (and not choosing random)
+                    if (pendingPlay) {
+                        setTimeout(() => {
+                            if (player && isPlayerReady) {
+                                try { player.playVideo(); } catch (e) { console.error('[Music Player] Error calling playVideo during restore:', e); }
+                            }
+                        }, 120);
+                    } else {
                         setTimeout(updateSeekBar, 150);
                     }
                 }
@@ -815,15 +1001,44 @@ function initializePage() {
             // Update internal state and UI based on player's actual state
             const actualPlayerState = player.getPlayerState();
             internalIsPlaying = (actualPlayerState === YT.PlayerState.PLAYING || actualPlayerState === YT.PlayerState.BUFFERING);
+
+            // On first successful PLAYING event, mark that the user has played before
+            if (actualPlayerState === YT.PlayerState.PLAYING && !hasMarkedPlayedFlag) {
+                try {
+                    if (localStorage.getItem('musicPlayerHasPlayed') !== 'true') {
+                        localStorage.setItem('musicPlayerHasPlayed', 'true');
+                    }
+                } catch (_) { /* ignore */ }
+                hasMarkedPlayedFlag = true;
+            }
             updatePlayPauseIcon();
 
             // When the video changes, update details and save state
             if (state === YT.PlayerState.CUED || state === YT.PlayerState.PLAYING || state === YT.PlayerState.BUFFERING) {
-                let newIndex = player.getPlaylistIndex();
-                if (newIndex !== -1 && newIndex !== null && (newIndex !== currentPlaylistIndex || videoTitleElement.textContent.includes("Loading"))) {
-                    currentPlaylistIndex = newIndex;
+                let computedIndex = null;
+                try {
+                    const vd = typeof player.getVideoData === 'function' ? player.getVideoData() : null;
+                    const vid = vd && vd.video_id ? vd.video_id : null;
+                    if (vid && fullPlaylistData && fullPlaylistData.videos) {
+                        const idx = fullPlaylistData.videos.findIndex(v => v.videoId === vid);
+                        if (idx >= 0) computedIndex = idx;
+                    }
+                } catch (_) {}
+                if (computedIndex === null) {
+                    try {
+                        const apiIndex = player.getPlaylistIndex();
+                        if (apiIndex !== -1 && apiIndex !== null && apiIndex !== undefined) computedIndex = apiIndex;
+                    } catch (_) {}
+                }
+                if (computedIndex !== null && (computedIndex !== currentPlaylistIndex || (videoTitleElement && videoTitleElement.textContent.includes("Loading")))) {
+                    currentPlaylistIndex = computedIndex;
                     updateVideoDetails();
                     savePlayerState();
+                } else {
+                    // Even if we don't know the index yet, update the title/thumbnail when available
+                    if (videoTitleElement && (videoTitleElement.textContent.includes("Loading") || !videoTitleElement.getAttribute('data-title'))) {
+                        updateVideoDetails();
+                    }
                 }
             }
 
@@ -846,18 +1061,19 @@ function initializePage() {
                 updatePlayPauseIcon();
                 savePlayerState();
 
+                const delayMs = 120; // Shorter delay to reduce visible gap
                 if (shuffleMode && playlistLoaded) {
                     setTimeout(() => {
                         if (shuffleMode && player && isPlayerReady) {
                             playShuffledVideo();
                         }
-                    }, 500);
+                    }, delayMs);
                 } else {
                     setTimeout(() => {
                         if (player && isPlayerReady) {
                             playNextVideo();
                         }
-                    }, 500);
+                    }, delayMs);
                 }
             }
         }
@@ -986,7 +1202,23 @@ function initializePage() {
         // --- Player UI Update Functions ---
         function updatePlayPauseIcon() { if (!playPauseBtn) return; const iconElement = playPauseBtn.querySelector('i'); if (!iconElement) return; iconElement.classList.remove(playIconClass, pauseIconClass); if (internalIsPlaying) { iconElement.classList.add(pauseIconClass); playPauseBtn.title = "Pause"; } else { iconElement.classList.add(playIconClass); playPauseBtn.title = "Play"; } }
         function updateVolumeIcon(volume) { if (!volumeIcon || !volumeIconBtn) return; volumeIcon.classList.remove('bi-volume-up-fill', 'bi-volume-down-fill', 'bi-volume-mute-fill'); if (internalIsMuted || volume === 0) { volumeIcon.classList.add('bi-volume-mute-fill'); volumeIconBtn.title = "Unmute"; } else if (volume < 50) { volumeIcon.classList.add('bi-volume-down-fill'); volumeIconBtn.title = "Mute"; } else { volumeIcon.classList.add('bi-volume-up-fill'); volumeIconBtn.title = "Mute"; } }
-        function updateThumbnail(videoId) { if (thumbnailImg && videoId) { thumbnailImg.src = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`; thumbnailImg.alt = `Thumbnail`; thumbnailImg.style.opacity = 1; } else if (thumbnailImg) { thumbnailImg.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 9'%3E%3Crect width='16' height='9' fill='%23e0e0e0'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' font-family='sans-serif' font-size='1.5px' fill='%23999'%3EWaiting...%3C/text%3E%3C/svg%3E"; thumbnailImg.alt = 'Video Thumbnail Loading'; } }
+        function updateThumbnail(videoId) {
+            if (!thumbnailImg) return;
+            if (videoId) {
+                const newSrc = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
+                if (thumbnailImg.src === newSrc) return;
+                const img = new Image();
+                img.onload = () => {
+                    thumbnailImg.src = newSrc;
+                    thumbnailImg.alt = 'Thumbnail';
+                    thumbnailImg.style.opacity = 1;
+                };
+                img.src = newSrc;
+            } else {
+                // Avoid clearing to a placeholder during transitions to prevent grey flash
+                // Keep the previous thumbnail until the next one is ready
+            }
+        }
         function updateTrackNumber(videoId) { if (!trackNumberElement) return; if (!fullPlaylistData || !fullPlaylistData.videos) { trackNumberElement.textContent = ''; return; } const index = fullPlaylistData.videos.findIndex(v => v.videoId === videoId); if (index !== -1) { trackNumberElement.textContent = `${index + 1}.`; } else { trackNumberElement.textContent = ''; } }
         function updateVideoTitle(title) { 
             if (videoTitleElement) { 
@@ -1022,14 +1254,64 @@ function initializePage() {
                 }, 100); 
             } 
         }
-        function updateVideoDetails() { if (!isPlayerReady || !player || typeof player.getVideoData !== 'function') return; try { const videoData = player.getVideoData(); if (videoData && videoData.title) { updateThumbnail(videoData.video_id); updateTrackNumber(videoData.video_id); updateVideoTitle(videoData.title); updatePlaylistActiveState(); } else { setTimeout(() => { try { const freshVideoData = player.getVideoData(); if (freshVideoData && freshVideoData.title){ updateThumbnail(freshVideoData.video_id); updateTrackNumber(freshVideoData.video_id); updateVideoTitle(freshVideoData.title); updatePlaylistActiveState(); } else { updateThumbnail(null); updateVideoTitle("Loading..."); } } catch(e) { /* ignore */ } }, 300); } } catch (error) { updateThumbnail(null); updateVideoTitle("Error"); } }
+        function updateVideoDetails() {
+            if (!isPlayerReady || !player || typeof player.getVideoData !== 'function') return;
+            try {
+                const videoData = player.getVideoData();
+                if (videoData && videoData.title) {
+                    updateThumbnail(videoData.video_id);
+                    updateTrackNumber(videoData.video_id);
+                    updateVideoTitle(videoData.title);
+                    updatePlaylistActiveState();
+                } else {
+                    // Retry shortly without clearing current UI to avoid flicker
+                    setTimeout(() => {
+                        try {
+                            const freshVideoData = player.getVideoData();
+                            if (freshVideoData && freshVideoData.title){
+                                updateThumbnail(freshVideoData.video_id);
+                                updateTrackNumber(freshVideoData.video_id);
+                                updateVideoTitle(freshVideoData.title);
+                                updatePlaylistActiveState();
+                            }
+                        } catch(e) { /* ignore */ }
+                    }, 200);
+                }
+            } catch (error) {
+                // Keep current UI on transient errors
+            }
+        }
 
         // --- Seek Bar Update ---
         function startSeekBarUpdate() { if (!isPlayerReady || !player || !seekBarProgress) return; if (seekBarInterval) clearInterval(seekBarInterval); updateSeekBar(); seekBarInterval = setInterval(() => { updateSeekBar(); savePlayerState(); }, 1000); }
         function updateSeekBar() { if (!isPlayerReady || !player || typeof player.getCurrentTime !== 'function' || typeof player.getDuration !== 'function') { if (seekBarInterval) { clearInterval(seekBarInterval); seekBarInterval = null; } return; } let currentTime = 0; let duration = 0; try { currentTime = player.getCurrentTime(); duration = player.getDuration(); } catch (e) { if (seekBarInterval) { clearInterval(seekBarInterval); seekBarInterval = null; } return; } if (duration && duration > 0) { const progressPercentage = (currentTime / duration) * 100; if (seekBarProgress) { seekBarProgress.style.width = Math.min(100, Math.max(0, progressPercentage)) + '%'; } } else { if (seekBarProgress) { seekBarProgress.style.width = '0%'; } } }
 
         // --- YouTube API Loading and Player Creation ---
-        function createYouTubePlayer() { const playerDiv = document.getElementById(playerContainerId); if (!playerDiv) { console.error(`[Music Player] ERROR: Player container div '#${playerContainerId}' not found!`); return; } if (!youtubePlaylistId) { console.warn("[Music Player] No Playlist ID configured."); updateVideoTitle("No Playlist"); disablePlayerControls(); return; } try { /* Use the global 'player' variable */ player = new YT.Player(playerContainerId, { height: '1', width: '1', playerVars: { 'playsinline': 1 }, events: { 'onReady': onPlayerReady, 'onStateChange': onPlayerStateChange, 'onError': onPlayerError } }); } catch (error) { console.error("[Music Player] CRITICAL ERROR creating YT.Player:", error); disablePlayerControls(); } }
+        function createYouTubePlayer() {
+            const playerDiv = document.getElementById(playerContainerId);
+            if (!playerDiv) { console.error(`[Music Player] ERROR: Player container div '#${playerContainerId}' not found!`); return; }
+            if (!youtubePlaylistId) { console.warn("[Music Player] No Playlist ID configured."); updateVideoTitle("No Playlist"); disablePlayerControls(); return; }
+            try {
+                // Determine if we've played before to control initial autoplay
+                let hasPlayedBefore = false;
+                try { hasPlayedBefore = localStorage.getItem('musicPlayerHasPlayed') === 'true'; } catch (_) {}
+                /* Use the global 'player' variable */
+                player = new YT.Player(playerContainerId, {
+                    height: '1',
+                    width: '1',
+                    playerVars: {
+                        playsinline: 1,
+                        // Disable autoplay on true first visit to prevent track #1 from starting
+                        autoplay: 0, // We will control autoplay manually to avoid track #1 starting
+                        mute: 0
+                    },
+                    events: { 'onReady': onPlayerReady, 'onStateChange': onPlayerStateChange, 'onError': onPlayerError }
+                });
+            } catch (error) {
+                console.error("[Music Player] CRITICAL ERROR creating YT.Player:", error);
+                disablePlayerControls();
+            }
+        }
 
         // Store the original (if any) onYouTubeIframeAPIReady function
         const existingApiReadyCallback = window.onYouTubeIframeAPIReady;
@@ -1352,7 +1634,17 @@ if (quickLinksToggle && quickLinksList) {
         if (!player || !isPlayerReady || isPlaylistLoaded) return;
         
         try {
-            const dropdownContent = playlistDropdown.querySelector('.playlist-dropdown-content');
+            if (!playlistDropdown) {
+                console.warn('[Playlist] Dropdown element not found. Skipping populate.');
+                return;
+            }
+            let dropdownContent = playlistDropdown.querySelector('.playlist-dropdown-content');
+            if (!dropdownContent) {
+                // Create the content container if it doesn't exist
+                dropdownContent = document.createElement('div');
+                dropdownContent.className = 'playlist-dropdown-content';
+                playlistDropdown.appendChild(dropdownContent);
+            }
             dropdownContent.innerHTML = '<p class="playlist-loading">Loading playlist...</p>';
 
             // Check for cached playlist data (24 hour cache)
@@ -1375,39 +1667,37 @@ if (quickLinksToggle && quickLinksList) {
 
             // Fetch fresh data if no cache or expired
             if (!playlistData) {
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
                 try {
-                    const response = await fetch('/.netlify/functions/youtube-playlist');
-                    
+                    const response = await fetch('/.netlify/functions/youtube-playlist', { signal: controller.signal });
+                    clearTimeout(timeoutId);
                     if (!response.ok) {
                         throw new Error(`API error: ${response.status}`);
                     }
-                    
                     const data = await response.json();
-                    
                     if (data.error) {
                         console.error('[Playlist] API error:', data.error);
                         throw new Error(data.error);
                     }
-                    
                     playlistData = data;
-                    
                     // Store globally for track number display
                     fullPlaylistData = data;
-                    
                     // Cache the data
                     localStorage.setItem(cacheKey, JSON.stringify(data));
                     localStorage.setItem(cacheTimestampKey, Date.now().toString());
-                    
                 } catch (apiError) {
-                    console.error('[Playlist] Failed to fetch from API, falling back to iframe API:', apiError);
-                    
-                    // Fallback to old method using iframe API (limited to first 200)
-                    const playlist = player.getPlaylist();
+                    clearTimeout(timeoutId);
+                    console.error('[Playlist] Failed to fetch from API (or timed out), falling back to iframe API:', apiError);
+                    // Fallback to old method using iframe API (limited to first ~200)
+                    let playlist = [];
+                    try { playlist = player.getPlaylist() || []; } catch(_) { playlist = []; }
                     if (!playlist || playlist.length === 0) {
-                        dropdownContent.innerHTML = '<p class="playlist-error">Failed to load playlist</p>';
+                        dropdownContent.innerHTML = '<p class="playlist-error">Failed to load playlist. Please refresh.</p>';
+                        // Ensure the loading message is cleared even on failure
+                        isPlaylistLoaded = false;
                         return;
                     }
-                    
                     playlistData = {
                         videos: playlist.map((videoId, index) => ({
                             videoId,
@@ -1487,6 +1777,81 @@ if (quickLinksToggle && quickLinksList) {
             isPlaylistLoaded = true;
             updatePlaylistActiveState();
             
+            // If this is the user's true first visit and we haven't applied the default yet,
+            // switch to the desired default track by ID or title match.
+            if (applyDefaultOnFirstVisit && !defaultApplied && fullPlaylistData && fullPlaylistData.videos && fullPlaylistData.videos.length > 0) {
+                let targetVideoId = null;
+                if (DEFAULT_FIRST_VIDEO_ID) {
+                    targetVideoId = DEFAULT_FIRST_VIDEO_ID;
+                } else {
+                    // Try to find by title match (case-insensitive regex)
+                    const matchIdx = fullPlaylistData.videos.findIndex(v => v.title && DEFAULT_FIRST_VIDEO_TITLE_MATCH.test(v.title));
+                    if (matchIdx >= 0) {
+                        targetVideoId = fullPlaylistData.videos[matchIdx].videoId;
+                        currentPlaylistIndex = matchIdx;
+                    }
+                }
+
+                if (targetVideoId) {
+                    try {
+                        // On true first visit, play the default video immediately (muted if autoplay)
+                        if (wantAutoplayAfterDefault) {
+                            player.loadVideoById(targetVideoId);
+                            try { player.mute(); } catch (_) {}
+                            internalIsMuted = true;
+                            internalIsPlaying = true;
+                        } else {
+                            player.cueVideoById(targetVideoId);
+                        }
+                        // Update UI hints immediately
+                        updateThumbnail(targetVideoId);
+                        updateTrackNumber(targetVideoId);
+                        // Title will update via updateVideoDetails once YT data is ready
+                        defaultApplied = true;
+                        savePlayerState();
+                    } catch (e) {
+                        console.warn('[Playlist] Failed to switch to default video by id/title:', e);
+                    }
+                }
+            }
+            
+            // After first visit: choose random on each load if configured
+            if (chooseRandomOnLoad && !randomApplied && fullPlaylistData && fullPlaylistData.videos && fullPlaylistData.videos.length > 0) {
+                try {
+                    const videos = fullPlaylistData.videos;
+                    const randomIndex = Math.floor(Math.random() * videos.length);
+                    const randomVideo = videos[randomIndex];
+                    if (randomVideo && randomVideo.videoId) {
+                        // Always start playing (muted) on load when randomizing
+                        player.loadVideoById(randomVideo.videoId);
+                        if (AUTOPLAY_ON_LOAD) {
+                            try { player.mute(); } catch (_) {}
+                            internalIsMuted = true;
+                        } else {
+                            try { player.unMute(); } catch (_) {}
+                            internalIsMuted = false;
+                        }
+                        internalIsPlaying = true;
+                        currentPlaylistIndex = randomIndex;
+                        updateThumbnail(randomVideo.videoId);
+                        updateTrackNumber(randomVideo.videoId);
+                        if (randomVideo.title) {
+                            updateVideoTitle(randomVideo.title);
+                        } else {
+                            // Prompt early details refresh to fetch title from YT API
+                            setTimeout(() => { try { updateVideoDetails(); } catch(_){} }, 200);
+                        }
+                        // Clear any pending restore flags to avoid jumping back to index 1
+                        pendingSeekTime = null;
+                        pendingPlay = false;
+                        randomApplied = true;
+                        savePlayerState();
+                    }
+                } catch (e) {
+                    console.warn('[Playlist] Failed to apply random-on-load:', e);
+                }
+            }
+
             // Update track number for currently playing video now that fullPlaylistData is available
             if (player && isPlayerReady) {
                 try {
@@ -1501,8 +1866,17 @@ if (quickLinksToggle && quickLinksList) {
             
         } catch (e) {
             console.error('[Playlist] Error populating:', e);
-            const dropdownContent = playlistDropdown.querySelector('.playlist-dropdown-content');
-            dropdownContent.innerHTML = '<p class="playlist-error">Failed to load playlist. Please refresh.</p>';
+            if (playlistDropdown) {
+                let dropdownContent = playlistDropdown.querySelector('.playlist-dropdown-content');
+                if (!dropdownContent) {
+                    dropdownContent = document.createElement('div');
+                    dropdownContent.className = 'playlist-dropdown-content';
+                    playlistDropdown.appendChild(dropdownContent);
+                }
+                dropdownContent.innerHTML = '<p class="playlist-error">Failed to load playlist. Please refresh.</p>';
+            } else {
+                console.error('[Playlist] Dropdown element missing; cannot display error message.');
+            }
         }
     }
 
