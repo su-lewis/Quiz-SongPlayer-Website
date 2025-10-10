@@ -740,12 +740,8 @@ function initializePage() {
     function applyTranslations(lang) {
         currentLang = lang;
         autoTranslate(lang);
-        // Set document direction for RTL languages
-        if (lang === 'ar') {
-            document.documentElement.setAttribute('dir', 'rtl');
-        } else {
-            document.documentElement.setAttribute('dir', 'ltr');
-        }
+        // Keep site layout LTR for all languages (do not flip layout for Arabic)
+        document.documentElement.setAttribute('dir', 'ltr');
     }
 
     // Load preferred language from localStorage if available

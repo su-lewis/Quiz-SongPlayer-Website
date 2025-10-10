@@ -484,7 +484,7 @@ body.dark-mode .dropdown-item-label:hover {
 /* Always show hovered background if .language-active is present */
 .language-menu-item.language-active > a {
     background-color: #d3d7db;
-    font-weight: bold;
+    font-weight: normal;
 }
 
 .language-menu-item > a {
@@ -521,7 +521,7 @@ body.dark-mode .dropdown-item-label:hover {
 .language-submenu {
     display: none;
     position: absolute;
-    left: 100%; /* flush against parent */
+    left: calc(100% + 5px); /* move submenu 5px to the right */
     top: -1px;
     height: auto;         /* auto height to fit all items */
     background-color: #fff;
@@ -1613,7 +1613,7 @@ body.dark-mode .language-submenu a {
 
 body.dark-mode .language-submenu a:hover {
     background-color: var(--dark-mode-navhover);
-    font-weight: bold;
+    font-weight: normal;
 }
 
 /* Form Messages & Login Prompt */
