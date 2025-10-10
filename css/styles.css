@@ -363,6 +363,27 @@ nav.header-menu a:hover {
     display: block;
 }
 
+/* Read more link styling */
+.read-more-link {
+    color: var(--blue-link);
+    text-decoration: none;
+    margin-left: 4px;
+}
+
+.read-more-link:hover {
+    text-decoration: underline;
+}
+
+/* Highlight a post briefly when navigated via hash */
+.highlight-post {
+    animation: highlightFade 2s ease-out;
+}
+
+@keyframes highlightFade {
+    0% { background-color: #fffbcc; }
+    100% { background-color: transparent; }
+}
+
 /* Language submenu */
 .language-menu-item {
     position: relative;

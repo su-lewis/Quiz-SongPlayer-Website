@@ -2,6 +2,12 @@
 
 function initializePage() {
     // --- Shared Component Loading ---
+    // Load the shared header if placeholder exists
+    const headerPlaceholder = document.getElementById('header-placeholder');
+    if (headerPlaceholder && typeof headerContent !== 'undefined') {
+        headerPlaceholder.innerHTML = headerContent;
+    }
+
     // Load the sidebar content into its placeholder
     const sidebarPlaceholder = document.getElementById('sidebar-placeholder');
     if (sidebarPlaceholder && typeof sidebarContent !== 'undefined') {
@@ -11,7 +17,19 @@ function initializePage() {
         sidebarPlaceholder.innerHTML = "<p>Error loading sidebar content.</p>";
     }
 
-    // console.log("Consolidated script.js: DOM Content Loaded.");
+    // Wire up header dropdown toggle consistently (works for injected header or static)
+    const headerMenuLink = document.getElementById('menu-link');
+    if (headerMenuLink) {
+        headerMenuLink.addEventListener('click', function(event) {
+            event.preventDefault();
+            document.querySelector('.dropdown-menu')?.classList.toggle('show');
+        });
+        window.addEventListener('click', function(event) {
+            if (!event.target?.closest('.dropdown-toggle')) {
+                document.querySelectorAll('.dropdown-menu').forEach(dd => dd.classList.remove('show'));
+            }
+        });
+    }
 
     // --- Translation System ---
     // --- Language Submenu Persistent Activation Logic ---
@@ -430,6 +448,7 @@ function initializePage() {
     const formMessage = document.getElementById('form-message');
     const submitButton = document.getElementById('submit-button');
     const postsContainer = document.getElementById('posts-container');
+    const fullPostsContainer = document.getElementById('full-posts-container');
     const viewPostsArea = document.getElementById('view-posts-area');
     const titleCharCount = document.getElementById('title-char-count');
     const contentCharCount = document.getElementById('content-char-count');
@@ -574,30 +593,103 @@ function initializePage() {
 
     // --- Fetch and Display Posts Logic ---
     async function fetchAndDisplayPosts() {
-        if (!postsContainer) { return; }
-        postsContainer.innerHTML = '<p>Loading posts...</p>';
+        if (!postsContainer && !fullPostsContainer) { return; }
+        if (postsContainer) postsContainer.innerHTML = '<p>Loading posts...</p>';
         try {
             const response = await fetch('/.netlify/functions/posts');
             if (!response.ok) { const errorData = await response.json().catch(() => ({})); throw new Error(`Fetch failed: ${errorData.error || response.statusText} (${response.status})`); }
             const posts = await response.json();
-            postsContainer.innerHTML = '';
+            // Sort newest first
             if (posts && posts.length > 0) {
                 posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-                posts.forEach(post => {
-                    const postElement = document.createElement('article'); postElement.className = 'post';
-                    const titleElement = document.createElement('h3'); titleElement.textContent = post.title;
-                    const contentElement = document.createElement('p');
-                    contentElement.innerHTML = post.content.replace(/\n/g, '<br>');
-                    const username = post.username || 'Anonymous';
-                    const postDate = new Date(post.created_at);
-                    const formattedDateTime = postDate.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
-                    const metadataElement = document.createElement('small'); metadataElement.className = 'post-metadata';
-                    metadataElement.textContent = `${username} · ${formattedDateTime}`;
-                    postElement.appendChild(titleElement); postElement.appendChild(contentElement); postElement.appendChild(metadataElement);
-                    postsContainer.appendChild(postElement);
-                });
-            } else { postsContainer.innerHTML = '<p>No posts found.</p>'; }
-        } catch (error) { console.error("Error fetching/displaying posts:", error); postsContainer.innerHTML = `<p style="color: red;">Error loading posts: ${error.message}</p>`; }
+                // Render into sidebar/truncated list
+                if (postsContainer) {
+                    postsContainer.innerHTML = '';
+                    posts.forEach(post => {
+                        const postElement = document.createElement('article');
+                        postElement.className = 'post';
+                        postElement.id = `post-${post.id}`;
+
+                        const titleElement = document.createElement('h3');
+                        titleElement.textContent = post.title;
+
+                        const contentElement = document.createElement('p');
+                        // Truncate to 220 chars for sidebar
+                        const plain = post.content;
+                        const limit = 220;
+                        const needsMore = plain.length > limit;
+                        const preview = needsMore ? plain.slice(0, limit).trim() + '… ' : plain;
+                        contentElement.innerHTML = preview.replace(/\n/g, '<br>');
+
+                        // [more] link
+                        if (needsMore) {
+                            const moreLink = document.createElement('a');
+                            moreLink.href = `/posts.html#post-${post.id}`;
+                            moreLink.textContent = '[more]';
+                            moreLink.className = 'read-more-link';
+                            contentElement.appendChild(moreLink);
+                        }
+
+                        const username = post.username || 'Anonymous';
+                        const postDate = new Date(post.created_at);
+                        const formattedDateTime = postDate.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+                        const metadataElement = document.createElement('small');
+                        metadataElement.className = 'post-metadata';
+                        metadataElement.textContent = `${username} • ${formattedDateTime}`;
+
+                        postElement.appendChild(titleElement);
+                        postElement.appendChild(contentElement);
+                        postElement.appendChild(metadataElement);
+                        postsContainer.appendChild(postElement);
+                    });
+                }
+
+                // Render full posts on posts.html
+                if (fullPostsContainer) {
+                    fullPostsContainer.innerHTML = '';
+                    posts.forEach(post => {
+                        const postElement = document.createElement('article');
+                        postElement.className = 'post full';
+                        postElement.id = `post-${post.id}`;
+
+                        const titleElement = document.createElement('h3');
+                        titleElement.textContent = post.title;
+
+                        const contentElement = document.createElement('p');
+                        contentElement.innerHTML = post.content.replace(/\n/g, '<br>');
+
+                        const username = post.username || 'Anonymous';
+                        const postDate = new Date(post.created_at);
+                        const formattedDateTime = postDate.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+                        const metadataElement = document.createElement('small');
+                        metadataElement.className = 'post-metadata';
+                        metadataElement.textContent = `${username} • ${formattedDateTime}`;
+
+                        postElement.appendChild(titleElement);
+                        postElement.appendChild(contentElement);
+                        postElement.appendChild(metadataElement);
+                        fullPostsContainer.appendChild(postElement);
+                    });
+
+                    // If URL has a hash to a post id, scroll to it
+                    if (location.hash) {
+                        const el = document.querySelector(location.hash);
+                        if (el) {
+                            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                            el.classList.add('highlight-post');
+                            setTimeout(() => el.classList.remove('highlight-post'), 2000);
+                        }
+                    }
+                }
+            } else {
+                if (postsContainer) postsContainer.innerHTML = '<p>No posts found.</p>';
+                if (fullPostsContainer) fullPostsContainer.innerHTML = '<p>No posts found.</p>';
+            }
+        } catch (error) {
+            console.error("Error fetching/displaying posts:", error);
+            if (postsContainer) postsContainer.innerHTML = `<p style="color: red;">Error loading posts: ${error.message}</p>`;
+            if (fullPostsContainer) fullPostsContainer.innerHTML = `<p style=\"color: red;\">Error loading posts: ${error.message}</p>`;
+        }
     }
     fetchAndDisplayPosts(); // Call the function to fetch posts
 
