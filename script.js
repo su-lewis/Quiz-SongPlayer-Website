@@ -145,9 +145,50 @@ function initializePage() {
             notAffiliated: 'We are not affiliated with the city Minneapolis',
             option2: 'Option 2',
             option3: 'Option 3',
-            random: 'Random'
+            random: 'Random',
+            readMore: '[more]',
+            noPostsFound: 'No posts found.',
+            errorLoadingPosts: 'Error loading posts:',
+            logout: 'Log Out',
+            searchPlaceholder: 'Search...'
         },
-        fr: {
+    ja: {
+            menu: 'メニュー ',
+            language: '言語',
+            darkMode: 'ダークモード',
+            create: '作成',
+            login: 'ログイン',
+            createAccount: 'アカウント作成',
+            recentPosts: '最新の投稿',
+            quickLinks: 'クイックリンク',
+            welcome: 'QuizSongPlayer へようこそ',
+            keepTrack: 'サイドバーでブログ投稿をチェック！',
+            loadingPosts: '投稿を読み込み中...',
+            musicPlayer: 'ミュージックプレーヤー',
+            loadingPlaylist: 'プレイリストを読み込み中...',
+            previous: '前へ',
+            play: '再生',
+            next: '次へ',
+            shuffle: 'シャッフル',
+            mute: 'ミュート',
+            track: '1.',
+            loadingTitle: 'タイトルを読み込み中...',
+            myX: '私のX',
+            simpCity: 'SimpCity',
+            megaFolder: 'Mega フォルダ',
+            ansiArt: 'ANSIアート（クリックで再生）',
+            copyright: '© QuizSongPlayer 2025',
+            notAffiliated: 'ミネアポリス市とは提携していません',
+            option2: 'オプション 2',
+            option3: 'オプション 3',
+            random: 'ランダム',
+            readMore: '［もっと読む］',
+            noPostsFound: '投稿が見つかりません。',
+            errorLoadingPosts: '投稿の読み込みエラー:',
+            logout: 'ログアウト',
+            searchPlaceholder: '検索...'
+        },
+    fr: {
             menu: 'Menu ',
             language: 'Langue',
             darkMode: 'Mode Sombre',
@@ -176,9 +217,14 @@ function initializePage() {
             notAffiliated: 'Nous ne sommes pas affiliés à la ville de Minneapolis',
             option2: 'Option 2',
             option3: 'Option 3',
-            random: 'Aléatoire'
+            random: 'Aléatoire',
+            readMore: '[plus]',
+            noPostsFound: 'Aucun article trouvé.',
+            errorLoadingPosts: 'Erreur lors du chargement des articles :',
+            logout: 'Se déconnecter',
+            searchPlaceholder: 'Rechercher...'
         },
-        de: {
+    de: {
             menu: 'Menü ',
             language: 'Sprache',
             darkMode: 'Dunkler Modus',
@@ -207,9 +253,50 @@ function initializePage() {
             notAffiliated: 'Wir sind nicht mit der Stadt Minneapolis verbunden',
             option2: 'Option 2',
             option3: 'Option 3',
-            random: 'Zufall'
+            random: 'Zufall',
+            readMore: '[mehr]',
+            noPostsFound: 'Keine Beiträge gefunden.',
+            errorLoadingPosts: 'Fehler beim Laden der Beiträge:',
+            logout: 'Abmelden',
+            searchPlaceholder: 'Suchen...'
         },
-        es: {
+    it: {
+            menu: 'Menu ',
+            language: 'Lingua',
+            darkMode: 'Modalità scura',
+            create: 'Crea',
+            login: 'Accedi',
+            createAccount: 'Crea account',
+            recentPosts: 'Post recenti',
+            quickLinks: 'Link rapidi',
+            welcome: 'Benvenuto su QuizSongPlayer',
+            keepTrack: 'Tieni traccia dei miei post nel sidebar!',
+            loadingPosts: 'Caricamento dei post...',
+            musicPlayer: 'Lettore musicale',
+            loadingPlaylist: 'Caricamento playlist...',
+            previous: 'Precedente',
+            play: 'Riproduci',
+            next: 'Successivo',
+            shuffle: 'Casuale',
+            mute: 'Muto',
+            track: '1.',
+            loadingTitle: 'Caricamento titolo...',
+            myX: 'Il mio X',
+            simpCity: 'SimpCity',
+            megaFolder: 'Cartella Mega',
+            ansiArt: 'Arte ANSI (Clicca per riprodurre)',
+            copyright: '© QuizSongPlayer 2025',
+            notAffiliated: 'Non siamo affiliati con la città di Minneapolis',
+            option2: 'Opzione 2',
+            option3: 'Opzione 3',
+            random: 'Casuale',
+            readMore: '[altro]',
+            noPostsFound: 'Nessun post trovato.',
+            errorLoadingPosts: 'Errore nel caricamento dei post:',
+            logout: 'Esci',
+            searchPlaceholder: 'Cerca...'
+        },
+    es: {
             menu: 'Menú ',
             language: 'Idioma',
             darkMode: 'Modo Oscuro',
@@ -238,9 +325,50 @@ function initializePage() {
             notAffiliated: 'No estamos afiliados con la ciudad de Minneapolis',
             option2: 'Opción 2',
             option3: 'Opción 3',
-            random: 'Aleatorio'
+            random: 'Aleatorio',
+            readMore: '[más]',
+            noPostsFound: 'No se encontraron publicaciones.',
+            errorLoadingPosts: 'Error al cargar las publicaciones:',
+            logout: 'Cerrar sesión',
+            searchPlaceholder: 'Buscar...'
         },
-        ru: {
+    pt: {
+            menu: 'Menu ',
+            language: 'Idioma',
+            darkMode: 'Modo Escuro',
+            create: 'Criar',
+            login: 'Entrar',
+            createAccount: 'Criar Conta',
+            recentPosts: 'Postagens Recentes',
+            quickLinks: 'Links Rápidos',
+            welcome: 'Bem-vindo ao QuizSongPlayer',
+            keepTrack: 'Acompanhe minhas postagens no sidebar!',
+            loadingPosts: 'Carregando postagens...',
+            musicPlayer: 'Reprodutor de música',
+            loadingPlaylist: 'Carregando playlist...',
+            previous: 'Anterior',
+            play: 'Reproduzir',
+            next: 'Próximo',
+            shuffle: 'Aleatório',
+            mute: 'Mudo',
+            track: '1.',
+            loadingTitle: 'Carregando título...',
+            myX: 'Meu X',
+            simpCity: 'SimpCity',
+            megaFolder: 'Pasta Mega',
+            ansiArt: 'Arte ANSI (Clique para reproduzir)',
+            copyright: '© QuizSongPlayer 2025',
+            notAffiliated: 'Não somos afiliados à cidade de Minneapolis',
+            option2: 'Opção 2',
+            option3: 'Opção 3',
+            random: 'Aleatório',
+            readMore: '[mais]',
+            noPostsFound: 'Nenhuma postagem encontrada.',
+            errorLoadingPosts: 'Erro ao carregar postagens:',
+            logout: 'Sair',
+            searchPlaceholder: 'Pesquisar...'
+        },
+    ru: {
             menu: 'Меню ',
             language: 'Язык',
             darkMode: 'Тёмная тема',
@@ -269,9 +397,14 @@ function initializePage() {
             notAffiliated: 'Мы не связаны с городом Миннеаполис',
             option2: 'Опция 2',
             option3: 'Опция 3',
-            random: 'Случайно'
+            random: 'Случайно',
+            readMore: '[ещё]',
+            noPostsFound: 'Записей не найдено.',
+            errorLoadingPosts: 'Ошибка загрузки записей:',
+            logout: 'Выйти',
+            searchPlaceholder: 'Поиск...'
         },
-        zh: {
+    zh: {
             menu: '菜单 ',
             language: '语言',
             darkMode: '深色模式',
@@ -300,9 +433,14 @@ function initializePage() {
             notAffiliated: '我们与明尼阿波利斯市无关联',
             option2: '选项 2',
             option3: '选项 3',
-            random: '随机'
+            random: '随机',
+            readMore: '[更多]',
+            noPostsFound: '未找到文章。',
+            errorLoadingPosts: '加载文章时出错：',
+            logout: '退出登录',
+            searchPlaceholder: '搜索...'
         },
-        ko: {
+    ko: {
             menu: '메뉴 ',
             language: '언어',
             darkMode: '다크 모드',
@@ -331,9 +469,14 @@ function initializePage() {
             notAffiliated: '우리는 미니애폴리스 시와 관련이 없습니다',
             option2: '옵션 2',
             option3: '옵션 3',
-            random: '무작위'
+            random: '무작위',
+            readMore: '[더보기]',
+            noPostsFound: '게시물이 없습니다.',
+            errorLoadingPosts: '게시물 로딩 오류:',
+            logout: '로그아웃',
+            searchPlaceholder: '검색...'
         },
-        el: {
+    el: {
             menu: 'Μενού ',
             language: 'Γλώσσα',
             darkMode: 'Σκούρο θέμα',
@@ -362,9 +505,14 @@ function initializePage() {
             notAffiliated: 'Δεν συνδεόμαστε με τον δήμο της Μινεάπολης',
             option2: 'Επιλογή 2',
             option3: 'Επιλογή 3',
-            random: 'Τυχαίο'
+            random: 'Τυχαίο',
+            readMore: '[περισσότερα]',
+            noPostsFound: 'Δεν βρέθηκαν αναρτήσεις.',
+            errorLoadingPosts: 'Σφάλμα κατά τη φόρτωση αναρτήσεων:',
+            logout: 'Αποσύνδεση',
+            searchPlaceholder: 'Αναζήτηση...'
         },
-        ar: {
+    ar: {
             menu: 'القائمة ',
             language: 'اللغة',
             darkMode: 'الوضع الداكن',
@@ -393,9 +541,14 @@ function initializePage() {
             notAffiliated: 'لسنا مرتبطين بمدينة مينيابوليس',
             option2: 'الخيار 2',
             option3: 'الخيار 3',
-            random: 'عشوائي'
+            random: 'عشوائي',
+            readMore: '[المزيد]',
+            noPostsFound: 'لم يتم العثور على منشورات.',
+            errorLoadingPosts: 'خطأ في تحميل المنشورات:',
+            logout: 'تسجيل الخروج',
+            searchPlaceholder: 'بحث...'
         },
-        af: {
+    af: {
             menu: 'Kieslys ',
             language: 'Taal',
             darkMode: 'Donker modus',
@@ -424,9 +577,14 @@ function initializePage() {
             notAffiliated: 'Ons is nie geaffilieer met die stad Minneapolis nie',
             option2: 'Opsie 2',
             option3: 'Opsie 3',
-            random: 'Lukraak'
+            random: 'Lukraak',
+            readMore: '[meer]',
+            noPostsFound: 'Geen plasings gevind nie.',
+            errorLoadingPosts: 'Fout met laai van plasings:',
+            logout: 'Teken uit',
+            searchPlaceholder: 'Soek...'
         },
-        haw: {
+    haw: {
             menu: 'Papa kuhikuhi ',
             language: 'ʻŌlelo',
             darkMode: 'ʻAno pouli',
@@ -455,9 +613,14 @@ function initializePage() {
             notAffiliated: 'ʻAʻole mākou i pili me ke kūlanakauhale ʻo Minneapolis',
             option2: 'Koho 2',
             option3: 'Koho 3',
-            random: 'Kau wale'
+            random: 'Kau wale',
+            readMore: '[hou aʻe]',
+            noPostsFound: 'ʻAʻohe pou i loaʻa.',
+            errorLoadingPosts: 'Kuhi hewa i ka hoʻouka ʻana i nā pou:',
+            logout: 'Lele i waho',
+            searchPlaceholder: 'Huli...'
         },
-        hi: {
+    hi: {
             menu: 'मेन्यू ',
             language: 'भाषा',
             darkMode: 'डार्क मोड',
@@ -486,9 +649,14 @@ function initializePage() {
             notAffiliated: 'हम Minneapolis शहर से संबद्ध नहीं हैं',
             option2: 'विकल्प 2',
             option3: 'विकल्प 3',
-            random: 'यादृच्छिक'
+            random: 'यादृच्छिक',
+            readMore: '[और]',
+            noPostsFound: 'कोई पोस्ट नहीं मिली।',
+            errorLoadingPosts: 'पोस्ट लोड करने में त्रुटि:',
+            logout: 'लॉग आउट',
+            searchPlaceholder: 'खोजें...'
         },
-        la: {
+    la: {
             menu: 'Index ',
             language: 'Lingua',
             darkMode: 'Modus Obscurus',
@@ -517,7 +685,12 @@ function initializePage() {
             notAffiliated: 'Cum urbe Minneapolis non cohaeremus',
             option2: 'Optio 2',
             option3: 'Optio 3',
-            random: 'Fortuitus'
+            random: 'Fortuitus',
+            readMore: '[plura]',
+            noPostsFound: 'Nulla scripta inventa.',
+            errorLoadingPosts: 'Error in onerandis scriptis:',
+            logout: 'Exi',
+            searchPlaceholder: 'Quaere...'
         }
     };
 
@@ -548,18 +721,44 @@ function initializePage() {
                 el.textContent = value;
             }
         });
+
+        // Translate placeholders
+        document.querySelectorAll('[data-translate-placeholder]').forEach(el => {
+            const key = el.getAttribute('data-translate-placeholder');
+            const value = translation[key];
+            if (typeof value === 'string') {
+                if ('placeholder' in el) {
+                    el.setAttribute('placeholder', value);
+                }
+            }
+        });
     }
 
 
-    // Track the current language
+    // Track the current language (persist across pages)
     let currentLang = 'en';
     function applyTranslations(lang) {
         currentLang = lang;
         autoTranslate(lang);
+        // Set document direction for RTL languages
+        if (lang === 'ar') {
+            document.documentElement.setAttribute('dir', 'rtl');
+        } else {
+            document.documentElement.setAttribute('dir', 'ltr');
+        }
     }
 
-    // Always default to English on page load (no localStorage persistence)
-    applyTranslations('en');
+    // Load preferred language from localStorage if available
+    try {
+        const savedLang = localStorage.getItem('preferredLang');
+        if (savedLang && translations[savedLang]) {
+            applyTranslations(savedLang);
+        } else {
+            applyTranslations('en');
+        }
+    } catch (_) {
+        applyTranslations('en');
+    }
 
     // Add click listeners to language links
     document.querySelectorAll('[data-lang]').forEach(link => {
@@ -576,12 +775,33 @@ function initializePage() {
             // Apply the selected language. The function handles reverting to original text.
             applyTranslations(selectedLang);
             document.documentElement.lang = selectedLang;
+            try { localStorage.setItem('preferredLang', selectedLang); } catch (_) {}
         });
     });
 
     // Helper: re-apply translations after posts or nav items are loaded/changed
     function retranslateDynamicContent() {
         applyTranslations(currentLang);
+    }
+
+    // Small helper to fetch translated strings safely
+    function t(key) {
+        try {
+            const pack = (translations[currentLang] || translations.en) || {};
+            return pack[key] || (translations.en && translations.en[key]) || key;
+        } catch (_) {
+            return key;
+        }
+    }
+
+    // Map app language to a locale for date formatting
+    function mapLangToLocale(lang) {
+        const map = {
+            en: 'en-US', fr: 'fr-FR', de: 'de-DE', es: 'es-ES', it: 'it-IT', pt: 'pt-PT',
+            ja: 'ja-JP', ru: 'ru-RU', zh: 'zh-CN', ko: 'ko-KR', el: 'el-GR', ar: 'ar',
+            af: 'af-ZA', haw: 'en-US', hi: 'hi-IN', la: 'en-US'
+        };
+        return map[lang] || undefined;
     }
 
     // Example: If you load posts dynamically, call retranslateDynamicContent() after loading
@@ -802,18 +1022,25 @@ function initializePage() {
                         const preview = needsMore ? plain.slice(0, limit).trim() + '… ' : plain;
                         contentElement.innerHTML = preview.replace(/\n/g, '<br>');
 
-                        // [more] link
+                        // [more] link (translated now; also marked for translation updates)
                         if (needsMore) {
                             const moreLink = document.createElement('a');
                             moreLink.href = `/posts.html#post-${post.id}`;
-                            moreLink.textContent = '[more]';
+                            moreLink.textContent = t('readMore') || '[more]';
+                            moreLink.setAttribute('data-translate', 'readMore');
                             moreLink.className = 'read-more-link';
                             contentElement.appendChild(moreLink);
                         }
 
                         const username = post.username || 'Anonymous';
                         const postDate = new Date(post.created_at);
-                        const formattedDateTime = postDate.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+                        let formattedDateTime = '';
+                        try {
+                            const loc = mapLangToLocale(currentLang);
+                            formattedDateTime = postDate.toLocaleString(loc, { dateStyle: 'medium', timeStyle: 'short' });
+                        } catch (_) {
+                            formattedDateTime = postDate.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+                        }
                         const metadataElement = document.createElement('small');
                         metadataElement.className = 'post-metadata';
                         metadataElement.textContent = `${username} • ${formattedDateTime}`;
@@ -842,7 +1069,13 @@ function initializePage() {
 
                         const username = post.username || 'Anonymous';
                         const postDate = new Date(post.created_at);
-                        const formattedDateTime = postDate.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+                        let formattedDateTime = '';
+                        try {
+                            const loc = mapLangToLocale(currentLang);
+                            formattedDateTime = postDate.toLocaleString(loc, { dateStyle: 'medium', timeStyle: 'short' });
+                        } catch (_) {
+                            formattedDateTime = postDate.toLocaleString(undefined, { dateStyle: 'medium', timeStyle: 'short' });
+                        }
                         const metadataElement = document.createElement('small');
                         metadataElement.className = 'post-metadata';
                         metadataElement.textContent = `${username} • ${formattedDateTime}`;
@@ -852,6 +1085,9 @@ function initializePage() {
                         postElement.appendChild(metadataElement);
                         fullPostsContainer.appendChild(postElement);
                     });
+
+                    // Translate any new dynamic nodes
+                    retranslateDynamicContent();
 
                     // If URL has a hash to a post id, scroll to it
                     if (location.hash) {
@@ -864,13 +1100,15 @@ function initializePage() {
                     }
                 }
             } else {
-                if (postsContainer) postsContainer.innerHTML = '<p>No posts found.</p>';
-                if (fullPostsContainer) fullPostsContainer.innerHTML = '<p>No posts found.</p>';
+                if (postsContainer) postsContainer.innerHTML = `<p data-translate="noPostsFound">${t('noPostsFound') || 'No posts found.'}</p>`;
+                if (fullPostsContainer) fullPostsContainer.innerHTML = `<p data-translate="noPostsFound">${t('noPostsFound') || 'No posts found.'}</p>`;
+                retranslateDynamicContent();
             }
         } catch (error) {
             console.error("Error fetching/displaying posts:", error);
-            if (postsContainer) postsContainer.innerHTML = `<p style="color: red;">Error loading posts: ${error.message}</p>`;
-            if (fullPostsContainer) fullPostsContainer.innerHTML = `<p style=\"color: red;\">Error loading posts: ${error.message}</p>`;
+            if (postsContainer) postsContainer.innerHTML = `<p style="color: red;"><span data-translate="errorLoadingPosts">${t('errorLoadingPosts') || 'Error loading posts:'}</span> ${error.message}</p>`;
+            if (fullPostsContainer) fullPostsContainer.innerHTML = `<p style=\"color: red;\"><span data-translate=\"errorLoadingPosts\">${t('errorLoadingPosts') || 'Error loading posts:'}</span> ${error.message}</p>`;
+            retranslateDynamicContent();
         }
     }
     fetchAndDisplayPosts(); // Call the function to fetch posts
@@ -1699,7 +1937,8 @@ function initializePage() {
             videoEmbedContainer.style.display = 'none'; // Hide container
         }
         if (videoTriggerInfo) {
-            videoTriggerInfo.textContent = "ANSI Art (Click to play)";
+            // Localize ANSI Art label
+            videoTriggerInfo.textContent = t('ansiArt') || "ANSI Art (Click to play)";
             videoTriggerInfo.style.cursor = 'pointer';
             videoTriggerInfo.setAttribute('aria-disabled', 'false');
             videoTriggerInfo.classList.remove('video-active'); // Remove styling class
@@ -1759,7 +1998,7 @@ function initializePage() {
 
     // console.log('Attempting to play ANSI video.');
         isVideoActive = true;
-        videoTriggerInfo.textContent = "ANSI Art (Loading...)";
+    videoTriggerInfo.textContent = t('ansiArt')?.replace('(Click to play)', '(Loading...)') || "ANSI Art (Loading...)";
         videoTriggerInfo.style.cursor = 'default';
         videoTriggerInfo.setAttribute('aria-disabled', 'true');
         videoTriggerInfo.classList.add('video-active');
@@ -1796,8 +2035,8 @@ function initializePage() {
             playPromise.then(() => {
                 // Playback started
                 // console.log("Video playback started.");
-                if (videoTriggerInfo && isVideoActive) { // Check isVideoActive in case of rapid events
-                     videoTriggerInfo.textContent = "ANSI Art (Playing...)";
+             if (videoTriggerInfo && isVideoActive) { // Check isVideoActive in case of rapid events
+                 videoTriggerInfo.textContent = (t('ansiArt') || 'ANSI Art (Click to play)').replace('(Click to play)', '(Playing...)');
                 }
             }).catch(error => {
                 // Playback failed
@@ -1821,7 +2060,7 @@ function initializePage() {
         });
         // Set initial text on load if not already active
         if (!isVideoActive) {
-            videoTriggerInfo.textContent = "ANSI Art (Click to play)";
+            videoTriggerInfo.textContent = t('ansiArt') || "ANSI Art (Click to play)";
             try { if (localStorage.getItem('ansiArtVisited') === '1') videoTriggerInfo.classList.add('visited'); } catch(e) {}
         }
     } else {

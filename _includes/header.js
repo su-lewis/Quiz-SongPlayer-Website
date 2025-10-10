@@ -16,22 +16,22 @@ const headerContent = `
                                 <span data-translate="language">Language</span> <i class="bi bi-chevron-right"></i>
                             </a>
                             <div class="language-submenu">
-                                <a href="#" data-lang="en">English</a>
-                                <a href="#" data-lang="fr">Français</a>
-                                <a href="#" data-lang="de">Deutsch</a>
-                                <a href="#" data-lang="es">Español</a>
-                                <a href="#" data-lang="it">Italiano</a>
-                                <a href="#" data-lang="pt">Português</a>
-                                <a href="#" data-lang="ru">Русский</a>
-                                <a href="#" data-lang="zh">中文</a>
-                                <a href="#" data-lang="ja">日本語</a>
-                                <a href="#" data-lang="ko">한국어</a>
-                                <a href="#" data-lang="el">Ελληνικά</a>
-                                <a href="#" data-lang="ar">العربية</a>
-                                <a href="#" data-lang="af">Afrikaans</a>
-                                <a href="#" data-lang="haw">ʻŌlelo Hawaiʻi</a>
-                                <a href="#" data-lang="hi">हिन्दी</a>
-                                <a href="#" data-lang="la">Latina</a>
+                                <a href="#" data-lang="en"><span>English</span><span class="lang-english-name">(English)</span></a>
+                                <a href="#" data-lang="zh"><span>中文</span><span class="lang-english-name">(Chinese)</span></a>
+                                <a href="#" data-lang="hi"><span>हिन्दी</span><span class="lang-english-name">(Hindi)</span></a>
+                                <a href="#" data-lang="es"><span>Español</span><span class="lang-english-name">(Spanish)</span></a>
+                                <a href="#" data-lang="fr"><span>Français</span><span class="lang-english-name">(French)</span></a>
+                                <a href="#" data-lang="ar"><span>العربية</span><span class="lang-english-name">(Arabic)</span></a>
+                                <a href="#" data-lang="pt"><span>Português</span><span class="lang-english-name">(Portuguese)</span></a>
+                                <a href="#" data-lang="ru"><span>Русский</span><span class="lang-english-name">(Russian)</span></a>
+                                <a href="#" data-lang="de"><span>Deutsch</span><span class="lang-english-name">(German)</span></a>
+                                <a href="#" data-lang="ja"><span>日本語</span><span class="lang-english-name">(Japanese)</span></a>
+                                <a href="#" data-lang="ko"><span>한국어</span><span class="lang-english-name">(Korean)</span></a>
+                                <a href="#" data-lang="it"><span>Italiano</span><span class="lang-english-name">(Italian)</span></a>
+                                <a href="#" data-lang="el"><span>Ελληνικά</span><span class="lang-english-name">(Greek)</span></a>
+                                <a href="#" data-lang="af"><span>Afrikaans</span><span class="lang-english-name">(Afrikaans)</span></a>
+                                <a href="#" data-lang="haw"><span>ʻŌlelo Hawaiʻi</span><span class="lang-english-name">(Hawaiian)</span></a>
+                                <a href="#" data-lang="la"><span>Latina</span><span class="lang-english-name">(Latin)</span></a>
                             </div>
                         </div>
                         <a href="#">Option 2</a>
@@ -48,7 +48,7 @@ const headerContent = `
             </nav>
             <div class="search-bar">
                 <div class="search-container">
-                    <input type="text" placeholder="Search...">
+                    <input type="text" placeholder="Search..." data-translate-placeholder="searchPlaceholder">
                     <button type="submit">
                         <i class="bi bi-search"></i>
                     </button>
@@ -62,7 +62,7 @@ const headerContent = `
             </div>
             <div id="user-status" style="display: none;">
                 <span id="user-email"></span>
-                <button id="logout-button" class="auth-button">Log Out</button>
+                <button id="logout-button" class="auth-button" data-translate="logout">Log Out</button>
             </div>
         </div>
     </div>

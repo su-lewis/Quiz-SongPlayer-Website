@@ -329,12 +329,12 @@ nav.header-menu a:hover {
     display: none;
     position: absolute;
     top: 41px;
-    left: 5px;
+    left: -6px; /* move a few more pixels left */
     background-color: #fff;
     box-shadow: 0px 3px 6px 6px rgba(0, 0, 0, 0.25);
     z-index: 100;
     border: 1px solid #8F99A3;
-    width: 230px;
+    width: 230px; /* parent width */
     padding: 0 0;
     box-sizing: border-box;
     min-height: 300px; /* slightly taller to feel balanced with submenu */
@@ -521,14 +521,14 @@ body.dark-mode .dropdown-item-label:hover {
 .language-submenu {
     display: none;
     position: absolute;
-    left: calc(100% + 5px); /* compensate +5px so it stays visually in the same place */
+    left: 100%; /* flush against parent */
     top: -1px;
     height: auto;         /* auto height to fit all items */
     background-color: #fff;
     box-shadow: 0px 3px 6px 6px rgba(0, 0, 0, 0.25);
     border: 1px solid #8F99A3;
-    width: max-content;  /* perfectly fit the longest item */
-    min-width: 280px;    /* but don’t go narrower than baseline */
+    width: 230px;  /* match parent width */
+    min-width: 230px;
     padding: 0 0;
     z-index: 101;
     box-sizing: border-box;
@@ -589,7 +589,15 @@ body.dark-mode .playlist-retry-btn {
 .language-submenu a:hover {
     background-color: #d3d7db;
     font-weight: bold;
+    text-decoration: underline; /* underline on hover in submenu */
     transform: none;
+}
+
+/* Right-aligned English names in submenu */
+.language-submenu a .lang-english-name {
+    margin-left: auto;
+    text-align: right;
+    opacity: 0.75;
 }
 
 .language-menu-item:hover .language-submenu,
@@ -626,10 +634,17 @@ body.dark-mode .playlist-retry-btn {
 
 /* Visited state for ANSI Art quick link (span emulation) */
 #video-trigger-info.visited {
-    color: #551A8B; /* classic visited purple */
+    color: #551A8B !important; /* classic visited purple */
 }
 body.dark-mode #video-trigger-info.visited {
-    color: #b19cd9; /* lighter purple in dark mode */
+    color: #b19cd9 !important; /* lighter purple in dark mode */
+}
+/* Ensure visited color still applies when active */
+#video-trigger-info.video-active.visited {
+    color: #551A8B !important;
+}
+body.dark-mode #video-trigger-info.video-active.visited {
+    color: #b19cd9 !important;
 }
 
 /* ==========================================
