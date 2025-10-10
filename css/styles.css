@@ -384,13 +384,23 @@ nav.header-menu a:hover {
     text-decoration: underline;
 }
 
+/* Recent posts section title link */
+.recent-posts-title-link {
+    color: var(--blue-link);
+    text-decoration: none;
+}
+
+.recent-posts-title-link:hover {
+    text-decoration: underline;
+}
+
 /* Highlight a post briefly when navigated via hash */
 .highlight-post {
     animation: highlightFade 2s ease-out;
 }
 
 @keyframes highlightFade {
-    0% { background-color: #fffbcc; }
+    0% { background-color: var(--header-bg-color); }
     100% { background-color: transparent; }
 }
 

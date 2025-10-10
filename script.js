@@ -607,7 +607,8 @@ function initializePage() {
                         const titleElement = document.createElement('h3');
                         const titleLink = document.createElement('a');
                         titleLink.href = `/posts.html#post-${post.id}`;
-                        titleLink.textContent = post.title;
+                        const safeTitle = (post.title || '').trim();
+                        titleLink.textContent = safeTitle.length > 0 ? safeTitle : '.';
                         titleLink.className = 'post-title-link';
                         titleElement.appendChild(titleLink);
 
@@ -651,7 +652,8 @@ function initializePage() {
                         postElement.id = `post-${post.id}`;
 
                         const titleElement = document.createElement('h3');
-                        titleElement.textContent = post.title;
+                        const safeTitle = (post.title || '').trim();
+                        titleElement.textContent = safeTitle.length > 0 ? safeTitle : '.';
 
                         const contentElement = document.createElement('p');
                         contentElement.innerHTML = post.content.replace(/\n/g, '<br>');
