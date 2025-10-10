@@ -27,6 +27,12 @@ function initializePage() {
         window.addEventListener('click', function(event) {
             if (!event.target?.closest('.dropdown-toggle')) {
                 document.querySelectorAll('.dropdown-menu').forEach(dd => dd.classList.remove('show'));
+                // Clear any persisted hover state when closing
+                const openMenu = document.querySelector('.dropdown-menu');
+                openMenu?.querySelectorAll('.persist-hover').forEach(el => el.classList.remove('persist-hover'));
+                // Also deactivate the language submenu active state
+                const langItem = document.querySelector('.language-menu-item');
+                langItem?.classList.remove('language-active');
             }
         });
     }
@@ -37,6 +43,13 @@ function initializePage() {
     const languageMenuItem = document.querySelector('.language-menu-item');
     const languageSubmenu = document.querySelector('.language-submenu');
     let submenuActive = false;
+
+    // Persist last hovered item within dropdown
+    function setPersistHover(el) {
+        if (!dropdownMenu || !el) return;
+        dropdownMenu.querySelectorAll('.persist-hover').forEach(n => n.classList.remove('persist-hover'));
+        el.classList.add('persist-hover');
+    }
 
     // Helper: deactivate submenu
     function deactivateLanguageSubmenu() {
@@ -53,7 +66,7 @@ function initializePage() {
     // Mouse enter/leave for persistent submenu
     if (languageMenuItem && languageSubmenu) {
         // Activate on hover over parent or submenu
-        languageMenuItem.addEventListener('mouseenter', activateLanguageSubmenu);
+        languageMenuItem.addEventListener('mouseenter', (e) => { activateLanguageSubmenu(); const link = languageMenuItem.querySelector('a'); if (link) setPersistHover(link); });
         languageSubmenu.addEventListener('mouseenter', activateLanguageSubmenu);
 
         // Deactivate only on click-off or hover another menu item
@@ -84,6 +97,16 @@ function initializePage() {
 
         // Keep submenu open when hovering other items; close only on explicit click-away
         // (Removed hover-to-close on other top-level items per desired behavior)
+    }
+
+    // Attach persist-hover behavior to other top-level dropdown items (including dark mode label)
+    if (dropdownMenu) {
+        const children = Array.from(dropdownMenu.children);
+        children.forEach(child => {
+            if (child.matches('a, .dropdown-item-label')) {
+                child.addEventListener('mouseenter', () => setPersistHover(child));
+            }
+        });
     }
     const translations = {
         en: {
@@ -668,7 +691,6 @@ function initializePage() {
                 '/',
                 '/index.html',
                 '/create.html',
-                '/profile.html',
                 '/email.html',
                 '/posts.html'
             ];
