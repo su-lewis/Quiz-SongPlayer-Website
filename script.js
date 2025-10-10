@@ -65,9 +65,8 @@ function initializePage() {
 
     // Mouse enter/leave for persistent submenu
     if (languageMenuItem && languageSubmenu) {
-        // Activate on hover over parent or submenu
-        languageMenuItem.addEventListener('mouseenter', (e) => { activateLanguageSubmenu(); const link = languageMenuItem.querySelector('a'); if (link) setPersistHover(link); });
-        languageSubmenu.addEventListener('mouseenter', activateLanguageSubmenu);
+    // Activate on hover over parent; track hover state on parent link
+    languageMenuItem.addEventListener('mouseenter', (e) => { activateLanguageSubmenu(); const link = languageMenuItem.querySelector('a'); if (link) setPersistHover(link); });
 
         // Deactivate only on click-off or hover another menu item
         // Prevent deactivation on mouseleave
@@ -105,6 +104,13 @@ function initializePage() {
         children.forEach(child => {
             if (child.matches('a, .dropdown-item-label')) {
                 child.addEventListener('mouseenter', () => setPersistHover(child));
+            }
+        });
+        // If moving within the dropdown over whitespace, do nothing—keep last hovered
+        dropdownMenu.addEventListener('mouseleave', (e) => {
+            // If pointer leaves the dropdown entirely, clear persisted hover
+            if (!dropdownMenu.contains(e.relatedTarget)) {
+                dropdownMenu.querySelectorAll('.persist-hover').forEach(n => n.classList.remove('persist-hover'));
             }
         });
     }
@@ -342,7 +348,8 @@ function initializePage() {
             // Keep a normal space between text and the icon; fallback to fresh icon if missing
             const chevronHTML = chevron ? chevron.outerHTML : '<i class="bi bi-chevron-down"></i>';
             const text = (lang === 'en' ? originalMenu : (translation.menu || 'Menu')).replace(/\s+$/,'');
-            menuLink.innerHTML = text + ' ' + chevronHTML;
+            // Use a non-breaking space to ensure a visible gap regardless of collapsing
+            menuLink.innerHTML = text + '&nbsp;' + chevronHTML;
         }
         // Translate all elements with data-translate
         document.querySelectorAll('[data-translate]').forEach(el => {
@@ -1564,12 +1571,14 @@ function initializePage() {
             return;
         }
 
-        // console.log('Attempting to play ANSI video.');
+    // console.log('Attempting to play ANSI video.');
         isVideoActive = true;
         videoTriggerInfo.textContent = "ANSI Art (Loading...)";
         videoTriggerInfo.style.cursor = 'default';
         videoTriggerInfo.setAttribute('aria-disabled', 'true');
         videoTriggerInfo.classList.add('video-active');
+    try { localStorage.setItem('ansiArtVisited', '1'); } catch(e) {}
+    videoTriggerInfo.classList.add('visited');
 
         // Clear container and ensure it's visible
         videoEmbedContainer.innerHTML = '';
@@ -1627,6 +1636,7 @@ function initializePage() {
         // Set initial text on load if not already active
         if (!isVideoActive) {
             videoTriggerInfo.textContent = "ANSI Art (Click to play)";
+            try { if (localStorage.getItem('ansiArtVisited') === '1') videoTriggerInfo.classList.add('visited'); } catch(e) {}
         }
     } else {
         // console.warn("Element #video-trigger-info not found, local video feature inactive.");

@@ -144,6 +144,11 @@ header {
 
 }
 
+/* Ensure a visible space between Menu text and chevron */
+#menu-link i {
+    margin-left: 4px;
+}
+
 .header-top {
     display: flex;
     align-items: flex-start;
@@ -324,7 +329,7 @@ nav.header-menu a:hover {
     display: none;
     position: absolute;
     top: 41px;
-    left: 6px;
+    left: 1px;
     background-color: #fff;
     box-shadow: 0px 3px 6px 6px rgba(0, 0, 0, 0.25);
     z-index: 100;
@@ -508,7 +513,7 @@ body.dark-mode .dropdown-item-label:hover {
 .language-submenu {
     display: none;
     position: absolute;
-    left: calc(100% + 0px); /* shift left by same 4px as parent */
+    left: calc(100% + 5px); /* compensate +5px so it stays visually in the same place */
     top: -1px;
     min-height: 270px;
     height: 270px;
@@ -577,6 +582,8 @@ body.dark-mode .language-submenu a:hover {
     cursor: pointer;
     margin: 0;
     font-weight: normal;
+    font-size: 16px;   /* match menu items */
+    min-height: 36px;  /* match menu items */
     transition: background-color 0.15s ease-in-out;
     color: var(--text-color); /* <<< ADD OR ENSURE THIS LINE IS PRESENT */
 }
@@ -586,6 +593,15 @@ body.dark-mode .language-submenu a:hover {
     background-color: var(--dropdown-hovered); /* Use the light mode hover background */
     font-weight: bold;                     /* Make text bold on hover, like links */
     color: var(--text-color);              /* Keep standard text color on hover */
+    width: 228px;                          /* align with link hover width */
+}
+
+/* Visited state for ANSI Art quick link (span emulation) */
+#video-trigger-info.visited {
+    color: #551A8B; /* classic visited purple */
+}
+body.dark-mode #video-trigger-info.visited {
+    color: #b19cd9; /* lighter purple in dark mode */
 }
 
 /* ==========================================
