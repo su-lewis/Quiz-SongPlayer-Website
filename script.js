@@ -1736,14 +1736,18 @@ if (quickLinksToggle && quickLinksList) {
                             // Use loadVideoById instead of playVideoAt for better compatibility with large playlists
                             player.loadVideoById(video.videoId);
                             playlistDropdown.style.display = 'none';
-                            
-                            // Update UI immediately with cached data
+
+                            // Always update thumbnail and track number immediately
+                            updateThumbnail(video.videoId);
+                            updateTrackNumber(video.videoId);
+
+                            // Update title: use cached if available, else show placeholder
                             if (video.title) {
                                 updateVideoTitle(video.title);
-                                updateThumbnail(video.videoId);
-                                updateTrackNumber(video.videoId);
+                            } else {
+                                updateVideoTitle('Loading...');
                             }
-                            
+
                             // Then update playlist active state and fetch fresh details
                             setTimeout(() => {
                                 updatePlaylistActiveState();
