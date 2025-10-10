@@ -329,7 +329,7 @@ nav.header-menu a:hover {
     display: none;
     position: absolute;
     top: 41px;
-    left: -6px; /* move a few more pixels left */
+    left: 5px;
     background-color: #fff;
     box-shadow: 0px 3px 6px 6px rgba(0, 0, 0, 0.25);
     z-index: 100;
@@ -510,6 +510,7 @@ body.dark-mode .dropdown-item-label:hover {
 .language-menu-item.language-active > a i {
     transform: rotate(90deg);
 }
+
 
 .dropdown-menu a:hover:not(.language-menu-item > a),
 .dropdown-menu a:focus:not(.language-menu-item > a) {
@@ -1616,6 +1617,12 @@ body.dark-mode .language-submenu a:hover {
     font-weight: normal;
 }
 
+/* Make the parent Language item bold on hover (dark mode) */
+body.dark-mode .language-menu-item > a:hover {
+    background-color: var(--dark-mode-navhover);
+    font-weight: normal;
+}
+
 /* Form Messages & Login Prompt */
 /* Residing within a --dark-mode-headerbg content-box */
 body.dark-mode #form-message.success,
@@ -1811,6 +1818,7 @@ body {
     header {
         height: auto !important;
         min-height: auto !important;
+        min-width: 100% !important; /* allow header to shrink on small screens */
     }
 
     /* Logo first - top left */
@@ -1902,7 +1910,7 @@ body {
     }
 
     /* Hide search bar on mobile */
-    .search-container {
+    .search-bar, .search-container {
         display: none !important;
     }
 
@@ -1951,6 +1959,15 @@ body {
     }
     .language-menu-item > a {
         width: 100%;
+    }
+
+    /* Mobile-only hover emphasis */
+    .language-menu-item > a:hover {
+        background-color: #d3d7db;
+        font-weight: bold;
+    }
+    .language-submenu a:hover {
+        font-weight: bold;
     }
 
     /* Main container - stack sidebar below content */
@@ -2100,11 +2117,13 @@ body {
         max-height: 20px;
     }
 
-    nav.header-menu li a {
-        font-size: 0.7em;
-        padding: 2px 5px;
+    /* Our nav has direct anchors, ensure they shrink appropriately */
+    nav.header-menu a {
+        font-size: 0.75em;
+        padding: 2px 4px;
+        margin: 0 4px;
+        white-space: nowrap;
     }
-
     .auth-button {
         font-size: 0.75em;
         padding: 3px 8px;
