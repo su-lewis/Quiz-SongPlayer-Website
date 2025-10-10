@@ -478,8 +478,9 @@ body.dark-mode .dropdown-item-label:hover {
     font-weight: bold;
 }
 
-/* When any non-language item is hovered, remove the active background from the language parent link */
-.dropdown-menu:hover > .language-menu-item > a {
+/* When a non-language item is hovered, remove the active background from the language parent link */
+/* Requires modern browsers that support :has */
+.dropdown-menu:has(> a:hover:not(.language-menu-item > a), > .dropdown-item-label:hover) > .language-menu-item:not(:hover) > a {
     background-color: transparent;
     font-weight: normal;
 }
@@ -555,6 +556,10 @@ body.dark-mode .language-submenu a:hover {
 .language-submenu:hover,
 .language-menu-item.language-active .language-submenu {
     display: block;
+}
+/* Hide submenu when other items (not language) are hovered */
+.dropdown-menu:has(> a:hover:not(.language-menu-item > a), > .dropdown-item-label:hover) .language-submenu {
+    display: none;
 }
 
 .dropdown-item-label {

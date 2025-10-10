@@ -318,7 +318,8 @@ function initializePage() {
             const originalMenu = menuLink.getAttribute('data-original');
             // Keep a normal space between text and the icon; fallback to fresh icon if missing
             const chevronHTML = chevron ? chevron.outerHTML : '<i class="bi bi-chevron-down"></i>';
-            menuLink.innerHTML = (lang === 'en' ? originalMenu : (translation.menu || 'Menu')) + ' ' + chevronHTML;
+            const text = (lang === 'en' ? originalMenu : (translation.menu || 'Menu')).replace(/\s+$/,'');
+            menuLink.innerHTML = text + ' ' + chevronHTML;
         }
         // Translate all elements with data-translate
         document.querySelectorAll('[data-translate]').forEach(el => {
@@ -672,6 +673,12 @@ function initializePage() {
                 '/posts.html'
             ];
             let candidates = [...staticPages];
+            const normalizePath = (p) => {
+                if (!p || p === '/') return '/';
+                if (p === '/index.html') return '/';
+                return p;
+            };
+            const currentPath = normalizePath(location.pathname);
             try {
                 const resp = await fetch('/.netlify/functions/posts');
                 if (resp.ok) {
@@ -685,6 +692,24 @@ function initializePage() {
                 }
             } catch (err) {
                 // ignore and fallback to static pages only
+            }
+            // Filter out current page; allow posts anchors on posts.html (but avoid same anchor)
+            candidates = candidates.filter(target => {
+                const [path, hashPart] = target.split('#');
+                const normalized = normalizePath(path);
+                if (hashPart) {
+                    // It's an anchor (likely a post). Always allowed, except avoid same anchor when already on posts page.
+                    if (normalized === '/posts.html' && currentPath === '/posts.html') {
+                        return ('#' + hashPart) !== (location.hash || '');
+                    }
+                    return true;
+                }
+                // No hash: exclude if same page
+                return normalized !== currentPath;
+            });
+            if (candidates.length === 0) {
+                // Fallback: go to posts page to show something
+                candidates = ['/posts.html'];
             }
             // Pick a random target
             const target = candidates[Math.floor(Math.random() * candidates.length)];
