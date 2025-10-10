@@ -337,8 +337,8 @@ nav.header-menu a:hover {
     width: 230px;
     padding: 0 0;
     box-sizing: border-box;
-    min-height: 270px;
-    height: 270px;
+    min-height: 300px; /* slightly taller to feel balanced with submenu */
+    height: 300px;
 }
 
 .dropdown-menu a {
@@ -515,12 +515,12 @@ body.dark-mode .dropdown-item-label:hover {
     position: absolute;
     left: calc(100% + 5px); /* compensate +5px so it stays visually in the same place */
     top: -1px;
-    min-height: 270px;
-    height: 270px;
+    min-height: 480px; /* increased to fit more languages */
+    height: 480px;     /* fixed height to match parent look */
     background-color: #fff;
     box-shadow: 0px 3px 6px 6px rgba(0, 0, 0, 0.25);
     border: 1px solid #8F99A3;
-    width: 230px;
+    width: 260px;      /* a bit wider for longer names */
     padding: 0 0;
     z-index: 101;
     box-sizing: border-box;
@@ -537,6 +537,24 @@ body.dark-mode .language-submenu a {
 }
 body.dark-mode .language-submenu a:hover {
     background-color: var(--dark-mode-navhover);
+}
+
+/* Playlist dropdown error + retry */
+.playlist-error {
+    padding: 8px 10px;
+    color: #a94442;
+}
+.playlist-retry-btn {
+    margin-left: 6px;
+    background: transparent;
+    border: 1px solid #8F99A3;
+    border-radius: 3px;
+    padding: 2px 8px;
+    cursor: pointer;
+}
+body.dark-mode .playlist-retry-btn {
+    border-color: #606a75;
+    color: var(--dark-mode-text);
 }
 
 .language-submenu a {

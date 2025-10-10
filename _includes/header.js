@@ -22,7 +22,16 @@ const headerContent = `
                                 <a href="#" data-lang="es">Español</a>
                                 <a href="#" data-lang="it">Italiano</a>
                                 <a href="#" data-lang="pt">Português</a>
+                                <a href="#" data-lang="ru">Русский</a>
+                                <a href="#" data-lang="zh">中文</a>
                                 <a href="#" data-lang="ja">日本語</a>
+                                <a href="#" data-lang="ko">한국어</a>
+                                <a href="#" data-lang="el">Ελληνικά</a>
+                                <a href="#" data-lang="ar">العربية</a>
+                                <a href="#" data-lang="af">Afrikaans</a>
+                                <a href="#" data-lang="haw">ʻŌlelo Hawaiʻi</a>
+                                <a href="#" data-lang="hi">हिन्दी</a>
+                                <a href="#" data-lang="la">Latina</a>
                             </div>
                         </div>
                         <a href="#">Option 2</a>

@@ -103,7 +103,14 @@ function initializePage() {
         const children = Array.from(dropdownMenu.children);
         children.forEach(child => {
             if (child.matches('a, .dropdown-item-label')) {
-                child.addEventListener('mouseenter', () => setPersistHover(child));
+                child.addEventListener('mouseenter', () => {
+                    // Transfer persisted hover to the newly hovered item
+                    setPersistHover(child);
+                    // If we're hovering a non-language item, close the language submenu immediately
+                    if (languageMenuItem && !languageMenuItem.contains(child)) {
+                        deactivateLanguageSubmenu();
+                    }
+                });
             }
         });
         // If moving within the dropdown over whitespace, do nothing—keep last hovered
@@ -111,6 +118,8 @@ function initializePage() {
             // If pointer leaves the dropdown entirely, clear persisted hover
             if (!dropdownMenu.contains(e.relatedTarget)) {
                 dropdownMenu.querySelectorAll('.persist-hover').forEach(n => n.classList.remove('persist-hover'));
+                // Also ensure the language submenu is deactivated when leaving the menu
+                deactivateLanguageSubmenu();
             }
         });
     }
@@ -239,98 +248,284 @@ function initializePage() {
             option3: 'Opción 3',
             random: 'Aleatorio'
         },
-        it: {
-            menu: 'Menu ',
+        ru: {
+            menu: 'Меню ',
+            language: 'Язык',
+            darkMode: 'Тёмная тема',
+            create: 'Создать',
+            login: 'Войти',
+            createAccount: 'Создать аккаунт',
+            recentPosts: 'Недавние записи',
+            quickLinks: 'Быстрые ссылки',
+            welcome: 'Добро пожаловать в QuizSongPlayer',
+            keepTrack: 'Следите за моими записями в боковой панели!',
+            loadingPosts: 'Загрузка записей...',
+            musicPlayer: 'Музыкальный плеер',
+            loadingPlaylist: 'Загрузка плейлиста...',
+            previous: 'Назад',
+            play: 'Воспроизвести',
+            next: 'Вперёд',
+            shuffle: 'Перемешать',
+            mute: 'Без звука',
+            track: '1.',
+            loadingTitle: 'Загрузка названия...',
+            myX: 'Мой X',
+            simpCity: 'SimpCity',
+            megaFolder: 'Mega папка',
+            ansiArt: 'ANSI-арт (нажмите для воспроизведения)',
+            copyright: '© QuizSongPlayer 2025',
+            notAffiliated: 'Мы не связаны с городом Миннеаполис',
+            option2: 'Опция 2',
+            option3: 'Опция 3',
+            random: 'Случайно'
+        },
+        zh: {
+            menu: '菜单 ',
+            language: '语言',
+            darkMode: '深色模式',
+            create: '创建',
+            login: '登录',
+            createAccount: '创建账户',
+            recentPosts: '最新文章',
+            quickLinks: '快速链接',
+            welcome: '欢迎来到 QuizSongPlayer',
+            keepTrack: '在侧边栏查看我的博客文章！',
+            loadingPosts: '正在加载文章...',
+            musicPlayer: '音乐播放器',
+            loadingPlaylist: '正在加载播放列表...',
+            previous: '上一首',
+            play: '播放',
+            next: '下一首',
+            shuffle: '随机',
+            mute: '静音',
+            track: '1.',
+            loadingTitle: '正在加载标题...',
+            myX: '我的 X',
+            simpCity: 'SimpCity',
+            megaFolder: 'Mega 文件夹',
+            ansiArt: 'ANSI 艺术（点击播放）',
+            copyright: '© QuizSongPlayer 2025',
+            notAffiliated: '我们与明尼阿波利斯市无关联',
+            option2: '选项 2',
+            option3: '选项 3',
+            random: '随机'
+        },
+        ko: {
+            menu: '메뉴 ',
+            language: '언어',
+            darkMode: '다크 모드',
+            create: '만들기',
+            login: '로그인',
+            createAccount: '계정 만들기',
+            recentPosts: '최근 게시물',
+            quickLinks: '빠른 링크',
+            welcome: 'QuizSongPlayer에 오신 것을 환영합니다',
+            keepTrack: '사이드바에서 블로그 글을 확인하세요!',
+            loadingPosts: '게시물 불러오는 중...',
+            musicPlayer: '음악 플레이어',
+            loadingPlaylist: '재생목록 불러오는 중...',
+            previous: '이전',
+            play: '재생',
+            next: '다음',
+            shuffle: '셔플',
+            mute: '음소거',
+            track: '1.',
+            loadingTitle: '제목 불러오는 중...',
+            myX: '나의 X',
+            simpCity: 'SimpCity',
+            megaFolder: 'Mega 폴더',
+            ansiArt: 'ANSI 아트 (클릭하여 재생)',
+            copyright: '© QuizSongPlayer 2025',
+            notAffiliated: '우리는 미니애폴리스 시와 관련이 없습니다',
+            option2: '옵션 2',
+            option3: '옵션 3',
+            random: '무작위'
+        },
+        el: {
+            menu: 'Μενού ',
+            language: 'Γλώσσα',
+            darkMode: 'Σκούρο θέμα',
+            create: 'Δημιουργία',
+            login: 'Σύνδεση',
+            createAccount: 'Δημιουργία λογαριασμού',
+            recentPosts: 'Πρόσφατες αναρτήσεις',
+            quickLinks: 'Γρήγοροι σύνδεσμοι',
+            welcome: 'Καλώς ήρθατε στο QuizSongPlayer',
+            keepTrack: 'Παρακολουθήστε τα άρθρα μου στην πλαϊνή μπάρα!',
+            loadingPosts: 'Φόρτωση αναρτήσεων...',
+            musicPlayer: 'Μουσικός αναπαραγωγέας',
+            loadingPlaylist: 'Φόρτωση λίστας...',
+            previous: 'Προηγούμενο',
+            play: 'Αναπαραγωγή',
+            next: 'Επόμενο',
+            shuffle: 'Τυχαία',
+            mute: 'Σίγαση',
+            track: '1.',
+            loadingTitle: 'Φόρτωση τίτλου...',
+            myX: 'Το X μου',
+            simpCity: 'SimpCity',
+            megaFolder: 'Mega Φάκελος',
+            ansiArt: 'ANSI Τέχνη (Κλικ για αναπαραγωγή)',
+            copyright: '© QuizSongPlayer 2025',
+            notAffiliated: 'Δεν συνδεόμαστε με τον δήμο της Μινεάπολης',
+            option2: 'Επιλογή 2',
+            option3: 'Επιλογή 3',
+            random: 'Τυχαίο'
+        },
+        ar: {
+            menu: 'القائمة ',
+            language: 'اللغة',
+            darkMode: 'الوضع الداكن',
+            create: 'إنشاء',
+            login: 'تسجيل الدخول',
+            createAccount: 'إنشاء حساب',
+            recentPosts: 'أحدث المنشورات',
+            quickLinks: 'روابط سريعة',
+            welcome: 'مرحبًا بكم في QuizSongPlayer',
+            keepTrack: 'تابع منشوراتي على الشريط الجانبي!',
+            loadingPosts: 'جاري تحميل المنشورات...',
+            musicPlayer: 'مشغل الموسيقى',
+            loadingPlaylist: 'جاري تحميل قائمة التشغيل...',
+            previous: 'السابق',
+            play: 'تشغيل',
+            next: 'التالي',
+            shuffle: 'عشوائي',
+            mute: 'كتم الصوت',
+            track: '1.',
+            loadingTitle: 'جاري تحميل العنوان...',
+            myX: 'X الخاص بي',
+            simpCity: 'SimpCity',
+            megaFolder: 'مجلد Mega',
+            ansiArt: 'فن ANSI (انقر للتشغيل)',
+            copyright: '© QuizSongPlayer 2025',
+            notAffiliated: 'لسنا مرتبطين بمدينة مينيابوليس',
+            option2: 'الخيار 2',
+            option3: 'الخيار 3',
+            random: 'عشوائي'
+        },
+        af: {
+            menu: 'Kieslys ',
+            language: 'Taal',
+            darkMode: 'Donker modus',
+            create: 'Skep',
+            login: 'Meld aan',
+            createAccount: 'Skep Rekening',
+            recentPosts: 'Onlangse Plasings',
+            quickLinks: 'Vinnige Skakels',
+            welcome: 'Welkom by QuizSongPlayer',
+            keepTrack: 'Hou tred met my blogplasings in die sybalk!',
+            loadingPosts: 'Laai plasings...',
+            musicPlayer: 'Musiekspeler',
+            loadingPlaylist: 'Laai speellys...',
+            previous: 'Vorige',
+            play: 'Speel',
+            next: 'Volgende',
+            shuffle: 'Shuffle',
+            mute: 'Stil',
+            track: '1.',
+            loadingTitle: 'Laai titel...',
+            myX: 'My X',
+            simpCity: 'SimpCity',
+            megaFolder: 'Mega-lêergids',
+            ansiArt: 'ANSI-kuns (Klik om te speel)',
+            copyright: '© QuizSongPlayer 2025',
+            notAffiliated: 'Ons is nie geaffilieer met die stad Minneapolis nie',
+            option2: 'Opsie 2',
+            option3: 'Opsie 3',
+            random: 'Lukraak'
+        },
+        haw: {
+            menu: 'Papa kuhikuhi ',
+            language: 'ʻŌlelo',
+            darkMode: 'ʻAno pouli',
+            create: 'Hana',
+            login: 'Kāinoa',
+            createAccount: 'Hana moʻokāki',
+            recentPosts: 'Nā pou hou',
+            quickLinks: 'Nā loulou wikiwiki',
+            welcome: 'Welina i QuizSongPlayer',
+            keepTrack: 'E nānā i kaʻu mau pou ma ka pā ʻaoʻao!',
+            loadingPosts: 'Ke hoʻouka nei i nā pou...',
+            musicPlayer: 'Mea hoʻokani mele',
+            loadingPlaylist: 'Ke hoʻouka nei i ka papa mele...',
+            previous: 'Mua aku',
+            play: 'Hoʻokani',
+            next: 'Aʻe',
+            shuffle: 'Haohao',
+            mute: 'Hāmau',
+            track: '1.',
+            loadingTitle: 'Ke hoʻouka nei i ka poʻo inoa...',
+            myX: 'Kaʻu X',
+            simpCity: 'SimpCity',
+            megaFolder: 'Pāpale Mega',
+            ansiArt: 'Hana Noʻeau ANSI (Kaomi e pāʻani)',
+            copyright: '© QuizSongPlayer 2025',
+            notAffiliated: 'ʻAʻole mākou i pili me ke kūlanakauhale ʻo Minneapolis',
+            option2: 'Koho 2',
+            option3: 'Koho 3',
+            random: 'Kau wale'
+        },
+        hi: {
+            menu: 'मेन्यू ',
+            language: 'भाषा',
+            darkMode: 'डार्क मोड',
+            create: 'बनाएँ',
+            login: 'लॉगिन',
+            createAccount: 'खाता बनाएँ',
+            recentPosts: 'हाल की पोस्टें',
+            quickLinks: 'त्वरित लिंक',
+            welcome: 'QuizSongPlayer में आपका स्वागत है',
+            keepTrack: 'साइडबार में मेरी ब्लॉग पोस्ट देखें!',
+            loadingPosts: 'पोस्ट लोड हो रही हैं...',
+            musicPlayer: 'म्यूज़िक प्लेयर',
+            loadingPlaylist: 'प्लेलिस्ट लोड हो रही है...',
+            previous: 'पिछला',
+            play: 'चलाएँ',
+            next: 'अगला',
+            shuffle: 'शफल',
+            mute: 'म्यूट',
+            track: '1.',
+            loadingTitle: 'शीर्षक लोड हो रहा है...',
+            myX: 'मेरा X',
+            simpCity: 'SimpCity',
+            megaFolder: 'Mega फोल्डर',
+            ansiArt: 'ANSI कला (चलाने के लिए क्लिक करें)',
+            copyright: '© QuizSongPlayer 2025',
+            notAffiliated: 'हम Minneapolis शहर से संबद्ध नहीं हैं',
+            option2: 'विकल्प 2',
+            option3: 'विकल्प 3',
+            random: 'यादृच्छिक'
+        },
+        la: {
+            menu: 'Index ',
             language: 'Lingua',
-            darkMode: 'Modalità Scura',
-            create: 'Crea',
-            login: 'Accedi',
-            createAccount: 'Crea Account',
-            recentPosts: 'Post Recenti',
-            quickLinks: 'Collegamenti Rapidi',
-            welcome: 'Benvenuto su QuizSongPlayer',
-            keepTrack: 'Tieni traccia dei miei post nella barra laterale!',
-            loadingPosts: 'Caricamento post...',
-            musicPlayer: 'Lettore musicale',
-            loadingPlaylist: 'Caricamento playlist...',
-            previous: 'Precedente',
-            play: 'Riproduci',
-            next: 'Successivo',
-            shuffle: 'Casuale',
-            mute: 'Muto',
+            darkMode: 'Modus Obscurus',
+            create: 'Creare',
+            login: 'Ingredi',
+            createAccount: 'Create Rationem',
+            recentPosts: 'Recentia Scripta',
+            quickLinks: 'Nexus Celeres',
+            welcome: 'Gratum ad QuizSongPlayer',
+            keepTrack: 'In latere schedam scripta mea inspice!',
+            loadingPosts: 'Scripta onerantur...',
+            musicPlayer: 'Musicorum Ludius',
+            loadingPlaylist: 'Index cantuum oneratur...',
+            previous: 'Praecedens',
+            play: 'Ludere',
+            next: 'Proximus',
+            shuffle: 'Permiscere',
+            mute: 'Obmutescere',
             track: '1.',
-            loadingTitle: 'Caricamento titolo...',
-            myX: 'Il mio X',
+            loadingTitle: 'Titulus oneratur...',
+            myX: 'Meus X',
             simpCity: 'SimpCity',
-            megaFolder: 'Cartella Mega',
-            ansiArt: 'Arte ANSI (Clicca per riprodurre)',
+            megaFolder: 'Mega Folders',
+            ansiArt: 'Ars ANSI (Click ut ludas)',
             copyright: '© QuizSongPlayer 2025',
-            notAffiliated: 'Non siamo affiliati con la città di Minneapolis',
-            option2: 'Opzione 2',
-            option3: 'Opzione 3',
-            random: 'Casuale'
-        },
-        pt: {
-            menu: 'Menu ',
-            language: 'Idioma',
-            darkMode: 'Modo Escuro',
-            create: 'Criar',
-            login: 'Entrar',
-            createAccount: 'Criar Conta',
-            recentPosts: 'Publicações Recentes',
-            quickLinks: 'Links Rápidos',
-            welcome: 'Bem-vindo ao QuizSongPlayer',
-            keepTrack: 'Acompanhe minhas postagens na barra lateral!',
-            loadingPosts: 'Carregando postagens...',
-            musicPlayer: 'Reprodutor de música',
-            loadingPlaylist: 'Carregando playlist...',
-            previous: 'Anterior',
-            play: 'Tocar',
-            next: 'Próximo',
-            shuffle: 'Aleatório',
-            mute: 'Mudo',
-            track: '1.',
-            loadingTitle: 'Carregando título...',
-            myX: 'Meu X',
-            simpCity: 'SimpCity',
-            megaFolder: 'Pasta Mega',
-            ansiArt: 'Arte ANSI (Clique para tocar)',
-            copyright: '© QuizSongPlayer 2025',
-            notAffiliated: 'Não somos afiliados à cidade de Minneapolis',
-            option2: 'Opção 2',
-            option3: 'Opção 3',
-            random: 'Aleatório'
-        },
-        ja: {
-            menu: 'メニュー ',
-            language: '言語',
-            darkMode: 'ダークモード',
-            create: '作成',
-            login: 'ログイン',
-            createAccount: 'アカウント作成',
-            recentPosts: '最近の投稿',
-            quickLinks: 'クイックリンク',
-            welcome: 'QuizSongPlayerへようこそ',
-            keepTrack: 'サイドバーで私のブログ投稿をチェック！',
-            loadingPosts: '投稿を読み込み中...',
-            musicPlayer: 'ミュージックプレーヤー',
-            loadingPlaylist: 'プレイリストを読み込み中...',
-            previous: '前へ',
-            play: '再生',
-            next: '次へ',
-            shuffle: 'シャッフル',
-            mute: 'ミュート',
-            track: '1.',
-            loadingTitle: 'タイトルを読み込み中...',
-            myX: '私のX',
-            simpCity: 'SimpCity',
-            megaFolder: 'Megaフォルダー',
-            ansiArt: 'ANSIアート（クリックで再生）',
-            copyright: '© QuizSongPlayer 2025',
-            notAffiliated: '私たちはミネアポリス市とは関係ありません',
-            option2: 'オプション2',
-            option3: 'オプション3',
-            random: 'ランダム'
+            notAffiliated: 'Cum urbe Minneapolis non cohaeremus',
+            option2: 'Optio 2',
+            option3: 'Optio 3',
+            random: 'Fortuitus'
         }
     };
 
@@ -1795,6 +1990,81 @@ if (quickLinksToggle && quickLinksList) {
             }
             dropdownContent.innerHTML = '<p class="playlist-loading">Loading playlist...</p>';
 
+            // Helper to render the playlist UI from data
+            const renderFromData = (playlistData) => {
+                // Clear loading message
+                dropdownContent.innerHTML = '';
+
+                // Create playlist items from fetched data
+                playlistData.videos.forEach((video, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'playlist-item';
+                    item.dataset.index = index;
+                    item.dataset.videoId = video.videoId;
+                    
+                    // Create title element
+                    const titleSpan = document.createElement('span');
+                    titleSpan.className = 'playlist-item-title';
+                    titleSpan.textContent = video.title 
+                        ? `${index + 1}. ${video.title}`
+                        : `${index + 1}. Loading...`;
+                    
+                    item.appendChild(titleSpan);
+
+                    // Add click handler
+                    item.addEventListener('click', () => {
+                        if (player && isPlayerReady) {
+                            clearPendingRestoreFlags();
+                            try {
+                                // Use loadVideoById instead of playVideoAt for better compatibility with large playlists
+                                player.loadVideoById(video.videoId);
+                                playlistDropdown.style.display = 'none';
+
+                                // Always update thumbnail and track number immediately
+                                updateThumbnail(video.videoId);
+                                updateTrackNumber(video.videoId);
+
+                                // Update title: use cached if available, else show placeholder
+                                if (video.title) {
+                                    updateVideoTitle(video.title);
+                                } else {
+                                    updateVideoTitle('Loading...');
+                                }
+
+                                // Then update playlist active state and fetch fresh details
+                                setTimeout(() => {
+                                    updatePlaylistActiveState();
+                                    updateVideoDetails();
+                                }, 100);
+                            } catch(e) {
+                                console.error('[Playlist] Error playing video:', e);
+                            }
+                        }
+                    });
+
+                    dropdownContent.appendChild(item);
+
+                    // If title is missing (fallback mode), fetch it via oEmbed
+                    if (!video.title && video.videoId) {
+                        setTimeout(() => {
+                            fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${video.videoId}&format=json`)
+                                .then(response => response.ok ? response.json() : null)
+                                .then(data => {
+                                    if (data?.title) {
+                                        titleSpan.textContent = `${index + 1}. ${data.title}`;
+                                    }
+                                })
+                                .catch(() => {
+                                    titleSpan.textContent = `${index + 1}. Track ${index + 1}`;
+                                });
+                        }, index * 10); // Stagger requests to avoid rate limiting
+                    }
+                });
+
+                isPlaylistLoaded = true;
+                updatePlaylistActiveState();
+            };
+
             // Check for cached playlist data (24 hour cache)
             const cacheKey = 'youtube_playlist_cache';
             const cacheTimestampKey = 'youtube_playlist_cache_timestamp';
@@ -1838,96 +2108,58 @@ if (quickLinksToggle && quickLinksList) {
                     clearTimeout(timeoutId);
                     console.error('[Playlist] Failed to fetch from API (or timed out), falling back to iframe API:', apiError);
                     // Fallback to old method using iframe API (limited to first ~200)
-                    let playlist = [];
-                    try { playlist = player.getPlaylist() || []; } catch(_) { playlist = []; }
-                    if (!playlist || playlist.length === 0) {
-                        dropdownContent.innerHTML = '<p class="playlist-error">Failed to load playlist. Please refresh.</p>';
-                        // Ensure the loading message is cleared even on failure
-                        isPlaylistLoaded = false;
-                        return;
-                    }
-                    playlistData = {
-                        videos: playlist.map((videoId, index) => ({
-                            videoId,
-                            title: null, // Will fetch titles individually
-                            position: index
-                        })),
-                        totalVideos: playlist.length
+                    const pollStart = Date.now();
+                    const pollMaxMs = 6000; // up to 6 seconds
+                    const pollIntervalMs = 300;
+                    const tryRenderFromIframe = () => {
+                        let playlist = [];
+                        try { playlist = player.getPlaylist() || []; } catch(_) { playlist = []; }
+                        if (playlist && playlist.length > 0) {
+                            const pd = {
+                                videos: playlist.map((videoId, index) => ({
+                                    videoId,
+                                    title: null,
+                                    position: index
+                                })),
+                                totalVideos: playlist.length
+                            };
+                            renderFromData(pd);
+                            return true;
+                        }
+                        return false;
                     };
+                    // Try immediately; if empty, poll until available or timeout
+                    if (!tryRenderFromIframe()) {
+                        dropdownContent.innerHTML = '<p class="playlist-loading">Loading playlist...</p>';
+                        const poller = setInterval(() => {
+                            if (tryRenderFromIframe()) {
+                                clearInterval(poller);
+                            } else if (Date.now() - pollStart > pollMaxMs) {
+                                clearInterval(poller);
+                                dropdownContent.innerHTML = '<div class="playlist-error">Failed to load playlist. <button class="playlist-retry-btn" type="button">Retry</button></div>';
+                                const retryBtn = dropdownContent.querySelector('.playlist-retry-btn');
+                                if (retryBtn) {
+                                    retryBtn.addEventListener('click', (ev) => {
+                                        ev.stopPropagation();
+                                        // Reset state to allow repopulation
+                                        isPlaylistLoaded = false;
+                                        dropdownContent.innerHTML = '<p class="playlist-loading">Loading playlist...</p>';
+                                        // Try again
+                                        try { populatePlaylist(); } catch(_) {}
+                                    });
+                                }
+                                isPlaylistLoaded = false;
+                            }
+                        }, pollIntervalMs);
+                    }
+                    // After starting poll (or rendering), stop normal flow here
+                    return;
                 }
             }
-
-            // Clear loading message
-            dropdownContent.innerHTML = '';
-
-            // Create playlist items from fetched data
-            playlistData.videos.forEach((video, index) => {
-                const item = document.createElement('div');
-                item.className = 'playlist-item';
-                item.dataset.index = index;
-                item.dataset.videoId = video.videoId;
-                
-                // Create title element
-                const titleSpan = document.createElement('span');
-                titleSpan.className = 'playlist-item-title';
-                titleSpan.textContent = video.title 
-                    ? `${index + 1}. ${video.title}`
-                    : `${index + 1}. Loading...`;
-                
-                item.appendChild(titleSpan);
-
-                // Add click handler
-                item.addEventListener('click', () => {
-                    if (player && isPlayerReady) {
-                        clearPendingRestoreFlags();
-                        try {
-                            // Use loadVideoById instead of playVideoAt for better compatibility with large playlists
-                            player.loadVideoById(video.videoId);
-                            playlistDropdown.style.display = 'none';
-
-                            // Always update thumbnail and track number immediately
-                            updateThumbnail(video.videoId);
-                            updateTrackNumber(video.videoId);
-
-                            // Update title: use cached if available, else show placeholder
-                            if (video.title) {
-                                updateVideoTitle(video.title);
-                            } else {
-                                updateVideoTitle('Loading...');
-                            }
-
-                            // Then update playlist active state and fetch fresh details
-                            setTimeout(() => {
-                                updatePlaylistActiveState();
-                                updateVideoDetails();
-                            }, 100);
-                        } catch(e) {
-                            console.error('[Playlist] Error playing video:', e);
-                        }
-                    }
-                });
-
-                dropdownContent.appendChild(item);
-
-                // If title is missing (fallback mode), fetch it via oEmbed
-                if (!video.title && video.videoId) {
-                    setTimeout(() => {
-                        fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${video.videoId}&format=json`)
-                            .then(response => response.ok ? response.json() : null)
-                            .then(data => {
-                                if (data?.title) {
-                                    titleSpan.textContent = `${index + 1}. ${data.title}`;
-                                }
-                            })
-                            .catch(() => {
-                                titleSpan.textContent = `${index + 1}. Track ${index + 1}`;
-                            });
-                    }, index * 10); // Stagger requests to avoid rate limiting
-                }
-            });
-
-            isPlaylistLoaded = true;
-            updatePlaylistActiveState();
+            // Normal success path: render from API data
+            if (playlistData) {
+                renderFromData(playlistData);
+            }
             
             // If this is the user's true first visit and we haven't applied the default yet,
             // switch to the desired default track by ID or title match.
@@ -2025,7 +2257,17 @@ if (quickLinksToggle && quickLinksList) {
                     dropdownContent.className = 'playlist-dropdown-content';
                     playlistDropdown.appendChild(dropdownContent);
                 }
-                dropdownContent.innerHTML = '<p class="playlist-error">Failed to load playlist. Please refresh.</p>';
+                // Only show error if we truly can't recover (this catch shouldn't hit the polling branch)
+                dropdownContent.innerHTML = '<div class="playlist-error">Failed to load playlist. <button class="playlist-retry-btn" type="button">Retry</button></div>';
+                const retryBtn = dropdownContent.querySelector('.playlist-retry-btn');
+                if (retryBtn) {
+                    retryBtn.addEventListener('click', (ev) => {
+                        ev.stopPropagation();
+                        isPlaylistLoaded = false;
+                        dropdownContent.innerHTML = '<p class="playlist-loading">Loading playlist...</p>';
+                        try { populatePlaylist(); } catch(_) {}
+                    });
+                }
             } else {
                 console.error('[Playlist] Dropdown element missing; cannot display error message.');
             }
