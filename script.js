@@ -68,6 +68,23 @@ function initializePage() {
     // Activate on hover over parent; track hover state on parent link
     languageMenuItem.addEventListener('mouseenter', (e) => { activateLanguageSubmenu(); const link = languageMenuItem.querySelector('a'); if (link) setPersistHover(link); });
 
+        // On mobile (no hover), toggle submenu on click of the parent link
+        const langParentLink = languageMenuItem.querySelector('a');
+        if (langParentLink) {
+            langParentLink.addEventListener('click', (e) => {
+                if (window.matchMedia('(max-width: 768px)').matches) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (languageMenuItem.classList.contains('language-active')) {
+                        deactivateLanguageSubmenu();
+                    } else {
+                        activateLanguageSubmenu();
+                        setPersistHover(langParentLink);
+                    }
+                }
+            });
+        }
+
         // Keep submenu active when moving between parent and submenu or whitespace
         languageMenuItem.addEventListener('mouseleave', (e) => {
             // Intentionally no-op; submenu remains active

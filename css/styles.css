@@ -1906,6 +1906,53 @@ body {
         display: none !important;
     }
 
+    /* --- Mobile Dropdown: full-width sheet --- */
+    .dropdown {
+        position: static; /* let menu be positioned relative to viewport */
+    }
+    .dropdown-menu {
+        position: fixed;
+        top: 50px; /* header height */
+        left: 0;
+        right: 0;
+        width: 100%;
+        max-height: calc(100vh - 50px);
+        height: auto;
+        overflow-y: auto;
+        border-radius: 0;
+        border-left: none;
+        border-right: none;
+        box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+        z-index: 1000;
+    }
+    .dropdown-menu a,
+    .dropdown-item-label {
+        min-height: 44px; /* better tap target */
+        font-size: 1em;
+        padding: 10px 12px;
+        width: 100%;
+    }
+
+    /* Stack language submenu inline under Language item */
+    .language-submenu {
+        position: static;
+        left: auto;
+        top: auto;
+        width: 100%;
+        min-width: 0;
+        border: none;
+        box-shadow: none;
+        padding-left: 8px; /* slight indent */
+        margin: 0;
+        display: none;
+    }
+    .language-menu-item.language-active .language-submenu {
+        display: block;
+    }
+    .language-menu-item > a {
+        width: 100%;
+    }
+
     /* Main container - stack sidebar below content */
     .main-container {
         flex-direction: column;
