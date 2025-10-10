@@ -82,18 +82,12 @@ function initializePage() {
             }
         });
 
-        // Deactivate when hovering another top-level menu item in .dropdown-menu
-        dropdownMenu?.querySelectorAll(':scope > a:not(.language-menu-item > a)').forEach((item) => {
-            item.addEventListener('mouseenter', () => {
-                if (submenuActive) {
-                    deactivateLanguageSubmenu();
-                }
-            });
-        });
+        // Keep submenu open when hovering other items; close only on explicit click-away
+        // (Removed hover-to-close on other top-level items per desired behavior)
     }
     const translations = {
         en: {
-            menu: 'Menu',
+            menu: 'Menu ',
             language: 'Language',
             darkMode: 'Dark Mode',
             create: 'Create',
@@ -123,7 +117,7 @@ function initializePage() {
             option3: 'Option 3'
         },
         fr: {
-            menu: 'Menu',
+            menu: 'Menu ',
             language: 'Langue',
             darkMode: 'Mode Sombre',
             create: 'Créer',
@@ -153,7 +147,7 @@ function initializePage() {
             option3: 'Option 3'
         },
         de: {
-            menu: 'Menü',
+            menu: 'Menü ',
             language: 'Sprache',
             darkMode: 'Dunkler Modus',
             create: 'Erstellen',
@@ -183,7 +177,7 @@ function initializePage() {
             option3: 'Option 3'
         },
         es: {
-            menu: 'Menú',
+            menu: 'Menú ',
             language: 'Idioma',
             darkMode: 'Modo Oscuro',
             create: 'Crear',
@@ -213,7 +207,7 @@ function initializePage() {
             option3: 'Opción 3'
         },
         it: {
-            menu: 'Menu',
+            menu: 'Menu ',
             language: 'Lingua',
             darkMode: 'Modalità Scura',
             create: 'Crea',
@@ -243,7 +237,7 @@ function initializePage() {
             option3: 'Opzione 3'
         },
         pt: {
-            menu: 'Menu',
+            menu: 'Menu ',
             language: 'Idioma',
             darkMode: 'Modo Escuro',
             create: 'Criar',
@@ -273,7 +267,7 @@ function initializePage() {
             option3: 'Opção 3'
         },
         ja: {
-            menu: 'メニュー',
+            menu: 'メニュー ',
             language: '言語',
             darkMode: 'ダークモード',
             create: '作成',
@@ -611,7 +605,11 @@ function initializePage() {
                         postElement.id = `post-${post.id}`;
 
                         const titleElement = document.createElement('h3');
-                        titleElement.textContent = post.title;
+                        const titleLink = document.createElement('a');
+                        titleLink.href = `/posts.html#post-${post.id}`;
+                        titleLink.textContent = post.title;
+                        titleLink.className = 'post-title-link';
+                        titleElement.appendChild(titleLink);
 
                         const contentElement = document.createElement('p');
                         // Truncate to 220 chars for sidebar

@@ -374,6 +374,16 @@ nav.header-menu a:hover {
     text-decoration: underline;
 }
 
+/* Sidebar post title links */
+.post-title-link {
+    color: var(--blue-link);
+    text-decoration: none;
+}
+
+.post-title-link:hover {
+    text-decoration: underline;
+}
+
 /* Highlight a post briefly when navigated via hash */
 .highlight-post {
     animation: highlightFade 2s ease-out;
@@ -476,7 +486,6 @@ nav.header-menu a:hover {
     transform: none;
 }
 
-.dropdown-menu:hover .language-menu-item .language-submenu,
 .language-menu-item:hover .language-submenu,
 .language-submenu:hover,
 .language-menu-item.language-active .language-submenu {
