@@ -109,11 +109,10 @@ export const handler = async (event, context) => {
                 };
             }
             const { title, content } = payload;
-            if (!title || typeof title !== 'string' || title.trim() === '' || 
-                !content || typeof content !== 'string' || content.trim() === '') {
+            if (!content || typeof content !== 'string' || content.trim() === '') {
                 return { 
                     statusCode: 400, 
-                    body: JSON.stringify({ error: 'Title and content are required and cannot be empty.' }), 
+                    body: JSON.stringify({ error: 'Content is required and cannot be empty.' }), 
                     headers: { 'Content-Type': 'application/json', 'Allow': 'GET, POST' } 
                 };
             }
@@ -152,7 +151,7 @@ export const handler = async (event, context) => {
 
             // 4. Insert into Firestore
             const newPost = {
-                title: title.trim(),
+                title: (typeof title === 'string' ? title.trim() : ''),
                 content: content.trim(),
                 user_id: netlifyUserId,
                 username: username, // Store username directly in post

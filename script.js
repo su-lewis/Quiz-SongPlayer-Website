@@ -298,72 +298,25 @@ function initializePage() {
         }
     };
 
-    // Utility: get all visible text nodes in the DOM (excluding script/style/hidden)
-    function getVisibleTextNodes(root) {
-        const walker = document.createTreeWalker(
-            root,
-            NodeFilter.SHOW_TEXT,
-            {
-                acceptNode: function(node) {
-                    // Ignore whitespace-only, script/style, and hidden
-                    if (!node.parentElement) return NodeFilter.FILTER_REJECT;
-                    const parent = node.parentElement;
-                    if (
-                        parent.tagName === 'SCRIPT' ||
-                        parent.tagName === 'STYLE' ||
-                        parent.tagName === 'NOSCRIPT' ||
-                        parent.hasAttribute('data-no-translate') ||
-                        parent.offsetParent === null // hidden
-                    ) {
-                        return NodeFilter.FILTER_REJECT;
-                    }
-                    if (!node.textContent.trim()) return NodeFilter.FILTER_REJECT;
-                    return NodeFilter.FILTER_ACCEPT;
-                }
-            },
-            false
-        );
-        const nodes = [];
-        let n;
-        while ((n = walker.nextNode())) {
-            nodes.push(n);
-        }
-        return nodes;
-    }
-
-    // Map original English text to translation keys
-    const englishTextToKey = {};
-    Object.entries(translations.en).forEach(([key, value]) => {
-        englishTextToKey[value] = key;
-    });
-
-    // Store original English text for each node on first load
-    let originalTextMap = new WeakMap();
+    // Attribute-driven translation for stability
     function autoTranslate(lang) {
         const translation = translations[lang] || translations.en;
-        // Special case: Menu chevron
+        // Special case: Menu chevron keeps icon intact
         const menuLink = document.getElementById('menu-link');
         if (menuLink) {
             const chevron = menuLink.querySelector('i');
-            // Store original text if not already stored
             if (!menuLink.hasAttribute('data-original')) {
                 menuLink.setAttribute('data-original', menuLink.textContent.replace(/\s*$/, ''));
             }
-            // Always restore to original before translating
             const originalMenu = menuLink.getAttribute('data-original');
             menuLink.innerHTML = (lang === 'en' ? originalMenu : (translation.menu || 'Menu')) + (chevron ? ' ' + chevron.outerHTML : '');
         }
-        // Translate all visible text nodes
-        getVisibleTextNodes(document.body).forEach(node => {
-            // Store original text if not already stored
-            if (!originalTextMap.has(node)) {
-                originalTextMap.set(node, node.textContent);
-            }
-            // Always restore to original before translating
-            node.textContent = originalTextMap.get(node);
-            const original = node.textContent.trim();
-            if (lang !== 'en' && englishTextToKey[original] && translation[englishTextToKey[original]]) {
-                node.textContent = translation[englishTextToKey[original]];
+        // Translate all elements with data-translate
+        document.querySelectorAll('[data-translate]').forEach(el => {
+            const key = el.getAttribute('data-translate');
+            const value = translation[key];
+            if (typeof value === 'string') {
+                el.textContent = value;
             }
         });
     }
@@ -515,13 +468,13 @@ function initializePage() {
         const user = window.netlifyIdentity?.currentUser();
         if (!user || !user.token?.access_token) { updateUserStatusUI(); if (formMessage) { formMessage.textContent = 'Auth required.'; formMessage.className = 'message error'; } console.error("Create submit failed: User not authenticated."); return; }
         const token = user.token.access_token;
-        const title = titleInput?.value.trim();
+    const title = titleInput?.value.trim();
         const content = contentInput?.value.trim();
         const titleMaxLength = parseInt(titleInput?.getAttribute('maxlength') || '300', 10);
         const contentMaxLength = parseInt(contentInput?.getAttribute('maxlength') || '40000', 10);
 
-        if (!title || !content) { if (formMessage) { formMessage.textContent = "Title and content required."; formMessage.className = 'message error'; } return; }
-        if (title.length > titleMaxLength) { if (formMessage) { formMessage.textContent = `Title exceeds maximum length of ${titleMaxLength}.`; formMessage.className = 'message error'; } return; }
+    if (!content) { if (formMessage) { formMessage.textContent = "Content is required."; formMessage.className = 'message error'; } return; }
+    if (title && title.length > titleMaxLength) { if (formMessage) { formMessage.textContent = `Title exceeds maximum length of ${titleMaxLength}.`; formMessage.className = 'message error'; } return; }
         if (content.length > contentMaxLength) { if (formMessage) { formMessage.textContent = `Content exceeds maximum length of ${contentMaxLength}.`; formMessage.className = 'message error'; } return; }
 
         if (submitButton) submitButton.disabled = true;
@@ -588,7 +541,7 @@ function initializePage() {
     // --- Fetch and Display Posts Logic ---
     async function fetchAndDisplayPosts() {
         if (!postsContainer && !fullPostsContainer) { return; }
-        if (postsContainer) postsContainer.innerHTML = '<p>Loading posts...</p>';
+            if (postsContainer) postsContainer.innerHTML = '<p data-translate="loadingPosts">Loading posts...</p>';
         try {
             const response = await fetch('/.netlify/functions/posts');
             if (!response.ok) { const errorData = await response.json().catch(() => ({})); throw new Error(`Fetch failed: ${errorData.error || response.statusText} (${response.status})`); }
