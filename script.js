@@ -68,19 +68,12 @@ function initializePage() {
     // Activate on hover over parent; track hover state on parent link
     languageMenuItem.addEventListener('mouseenter', (e) => { activateLanguageSubmenu(); const link = languageMenuItem.querySelector('a'); if (link) setPersistHover(link); });
 
-        // Deactivate only on click-off or hover another menu item
-        // Prevent deactivation on mouseleave
+        // Keep submenu active when moving between parent and submenu or whitespace
         languageMenuItem.addEventListener('mouseleave', (e) => {
-            // If moving to submenu, do not deactivate
-            if (!languageSubmenu.contains(e.relatedTarget)) {
-                // Do not deactivate here; only on click-off or hover another menu item
-            }
+            // Intentionally no-op; submenu remains active
         });
         languageSubmenu.addEventListener('mouseleave', (e) => {
-            // If moving to parent, do not deactivate
-            if (!languageMenuItem.contains(e.relatedTarget)) {
-                // Do not deactivate here; only on click-off or hover another menu item
-            }
+            // Intentionally no-op; submenu remains active
         });
 
         // Deactivate on click outside
@@ -119,15 +112,8 @@ function initializePage() {
                 });
             }
         });
-        // If moving within the dropdown over whitespace, do nothing—keep last hovered
-        dropdownMenu.addEventListener('mouseleave', (e) => {
-            // If pointer leaves the dropdown entirely, clear persisted hover
-            if (!dropdownMenu.contains(e.relatedTarget)) {
-                dropdownMenu.querySelectorAll('.persist-hover').forEach(n => n.classList.remove('persist-hover'));
-                // Also ensure the language submenu is deactivated when leaving the menu
-                deactivateLanguageSubmenu();
-            }
-        });
+        // Do not clear persisted hover on mouseleave; keep the last hovered
+        // Item highlighted and submenu state intact until explicit close
     }
     const translations = {
         en: {

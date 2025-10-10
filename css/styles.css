@@ -422,6 +422,12 @@ body.dark-mode .dropdown-item-label:hover {
 .recent-posts-title-link:hover {
     text-decoration: underline;
 }
+/* Make sidebar recent posts headings match Music Player weight */
+.recent-posts-container .recent-posts-title-link,
+.recent-posts-container h3,
+.recent-posts-container .post-title-link {
+    font-weight: bold;
+}
 
 /* Highlight a post briefly when navigated via hash */
 .highlight-post {
@@ -1195,7 +1201,11 @@ footer {
 }
 
 .quick-links-list li a:visited {
-    color: #551A8B; /* Purple for visited links */
+    color: #551A8B !important; /* Purple for visited links */
+}
+/* Dark mode visited color for quick links */
+body.dark-mode .quick-links-list li a:visited {
+    color: #b19cd9 !important;
 }
 
 .quick-links-list li a:hover,
@@ -1529,6 +1539,15 @@ body.dark-mode .auth-button {
 }
 body.dark-mode .auth-button:hover {
     background-color: var(--dark-mode-navhover);
+}
+/* Ensure logout button has a clear background in dark mode */
+body.dark-mode #user-status #logout-button {
+    background-color: var(--dark-mode-navhover);
+    color: var(--dark-mode-text);
+    border: 1px solid #606a75;
+}
+body.dark-mode #user-status #logout-button:hover {
+    filter: brightness(1.05);
 }
 
 /* Disabled Submit Button */
