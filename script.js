@@ -103,12 +103,18 @@ function initializePage() {
         const children = Array.from(dropdownMenu.children);
         children.forEach(child => {
             if (child.matches('a, .dropdown-item-label')) {
+                // Persist hover when mouse enters the item
                 child.addEventListener('mouseenter', () => {
-                    // Transfer persisted hover to the newly hovered item
                     setPersistHover(child);
-                    // If we're hovering a non-language item, close the language submenu immediately
                     if (languageMenuItem && !languageMenuItem.contains(child)) {
                         deactivateLanguageSubmenu();
+                    }
+                });
+                // When leaving the item into whitespace inside the dropdown, keep highlight
+                child.addEventListener('mouseleave', (e) => {
+                    // If moving to an element inside the dropdown (whitespace or container), don't clear
+                    if (dropdownMenu.contains(e.relatedTarget)) {
+                        // do nothing; persist-hover stays
                     }
                 });
             }
@@ -893,7 +899,6 @@ function initializePage() {
                 '/',
                 '/index.html',
                 '/create.html',
-                '/email.html',
                 '/posts.html'
             ];
             let candidates = [...staticPages];
