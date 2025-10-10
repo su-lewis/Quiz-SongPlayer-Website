@@ -16,6 +16,7 @@ const headerContent = `
                                 <span data-translate="language">Language</span> <i class="bi bi-chevron-right"></i>
                             </a>
                             <div class="language-submenu">
+                                <a href="#" data-lang="en">English</a>
                                 <a href="#" data-lang="fr">Français</a>
                                 <a href="#" data-lang="de">Deutsch</a>
                                 <a href="#" data-lang="es">Español</a>
