@@ -114,7 +114,8 @@ function initializePage() {
             copyright: '© QuizSongPlayer 2025',
             notAffiliated: 'We are not affiliated with the city Minneapolis',
             option2: 'Option 2',
-            option3: 'Option 3'
+            option3: 'Option 3',
+            random: 'Random'
         },
         fr: {
             menu: 'Menu ',
@@ -144,7 +145,8 @@ function initializePage() {
             copyright: '© QuizSongPlayer 2025',
             notAffiliated: 'Nous ne sommes pas affiliés à la ville de Minneapolis',
             option2: 'Option 2',
-            option3: 'Option 3'
+            option3: 'Option 3',
+            random: 'Aléatoire'
         },
         de: {
             menu: 'Menü ',
@@ -174,7 +176,8 @@ function initializePage() {
             copyright: '© QuizSongPlayer 2025',
             notAffiliated: 'Wir sind nicht mit der Stadt Minneapolis verbunden',
             option2: 'Option 2',
-            option3: 'Option 3'
+            option3: 'Option 3',
+            random: 'Zufall'
         },
         es: {
             menu: 'Menú ',
@@ -204,7 +207,8 @@ function initializePage() {
             copyright: '© QuizSongPlayer 2025',
             notAffiliated: 'No estamos afiliados con la ciudad de Minneapolis',
             option2: 'Opción 2',
-            option3: 'Opción 3'
+            option3: 'Opción 3',
+            random: 'Aleatorio'
         },
         it: {
             menu: 'Menu ',
@@ -234,7 +238,8 @@ function initializePage() {
             copyright: '© QuizSongPlayer 2025',
             notAffiliated: 'Non siamo affiliati con la città di Minneapolis',
             option2: 'Opzione 2',
-            option3: 'Opzione 3'
+            option3: 'Opzione 3',
+            random: 'Casuale'
         },
         pt: {
             menu: 'Menu ',
@@ -264,7 +269,8 @@ function initializePage() {
             copyright: '© QuizSongPlayer 2025',
             notAffiliated: 'Não somos afiliados à cidade de Minneapolis',
             option2: 'Opção 2',
-            option3: 'Opção 3'
+            option3: 'Opção 3',
+            random: 'Aleatório'
         },
         ja: {
             menu: 'メニュー ',
@@ -294,7 +300,8 @@ function initializePage() {
             copyright: '© QuizSongPlayer 2025',
             notAffiliated: '私たちはミネアポリス市とは関係ありません',
             option2: 'オプション2',
-            option3: 'オプション3'
+            option3: 'オプション3',
+            random: 'ランダム'
         }
     };
 
@@ -309,10 +316,14 @@ function initializePage() {
                 menuLink.setAttribute('data-original', menuLink.textContent.replace(/\s*$/, ''));
             }
             const originalMenu = menuLink.getAttribute('data-original');
-            menuLink.innerHTML = (lang === 'en' ? originalMenu : (translation.menu || 'Menu')) + (chevron ? ' ' + chevron.outerHTML : '');
+            // Keep a normal space between text and the icon; fallback to fresh icon if missing
+            const chevronHTML = chevron ? chevron.outerHTML : '<i class="bi bi-chevron-down"></i>';
+            menuLink.innerHTML = (lang === 'en' ? originalMenu : (translation.menu || 'Menu')) + ' ' + chevronHTML;
         }
         // Translate all elements with data-translate
         document.querySelectorAll('[data-translate]').forEach(el => {
+            // Skip the menu link since it's handled specially (keeps chevron icon)
+            if (menuLink && el === menuLink) return;
             const key = el.getAttribute('data-translate');
             const value = translation[key];
             if (typeof value === 'string') {
@@ -549,10 +560,10 @@ function initializePage() {
             // Sort newest first
             if (posts && posts.length > 0) {
                 posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-                // Render into sidebar/truncated list
+                // Render into sidebar/truncated list (latest 4)
                 if (postsContainer) {
                     postsContainer.innerHTML = '';
-                    posts.forEach(post => {
+                    posts.slice(0, 4).forEach(post => {
                         const postElement = document.createElement('article');
                         postElement.className = 'post';
                         postElement.id = `post-${post.id}`;
@@ -645,6 +656,41 @@ function initializePage() {
         }
     }
     fetchAndDisplayPosts(); // Call the function to fetch posts
+
+    // --- Random Link Logic ---
+    const randomLink = document.getElementById('random-link');
+    if (randomLink) {
+        randomLink.addEventListener('click', async (e) => {
+            e.preventDefault();
+            // Static pages in the site
+            const staticPages = [
+                '/',
+                '/index.html',
+                '/create.html',
+                '/profile.html',
+                '/email.html',
+                '/posts.html'
+            ];
+            let candidates = [...staticPages];
+            try {
+                const resp = await fetch('/.netlify/functions/posts');
+                if (resp.ok) {
+                    const posts = await resp.json();
+                    if (Array.isArray(posts) && posts.length > 0) {
+                        // Optionally limit to a reasonable number to avoid huge arrays
+                        posts.forEach(p => {
+                            if (p && p.id) candidates.push(`/posts.html#post-${p.id}`);
+                        });
+                    }
+                }
+            } catch (err) {
+                // ignore and fallback to static pages only
+            }
+            // Pick a random target
+            const target = candidates[Math.floor(Math.random() * candidates.length)];
+            window.location.href = target;
+        });
+    }
 
 
 

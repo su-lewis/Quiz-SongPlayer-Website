@@ -35,6 +35,7 @@ const headerContent = `
                     </div>
                 </div>
                 <a href="/create.html" id="create-link" data-translate="create">Create</a>
+                <a href="#" id="random-link" data-translate="random">Random</a>
             </nav>
             <div class="search-bar">
                 <div class="search-container">

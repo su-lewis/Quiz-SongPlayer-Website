@@ -345,7 +345,7 @@ nav.header-menu a:hover {
     align-items: center;
     text-align: left;
     margin: 0 !important;
-    font-size: 15px;
+    font-size: 16px;
     min-height: 36px;
 }
 
@@ -361,6 +361,21 @@ nav.header-menu a:hover {
 
 .dropdown-menu.show {
     display: block;
+}
+
+/* Dark mode dropdown background and borders */
+body.dark-mode .dropdown-menu {
+    background-color: var(--dark-mode-mainbg);
+    border-color: #606a75;
+}
+body.dark-mode .dropdown-menu a,
+body.dark-mode .dropdown-item-label {
+    color: var(--dark-mode-text) !important;
+}
+body.dark-mode .dropdown-menu a:hover,
+body.dark-mode .dropdown-menu a.hovered,
+body.dark-mode .dropdown-item-label:hover {
+    background-color: var(--dark-mode-navhover);
 }
 
 /* Read more link styling */
@@ -437,7 +452,7 @@ nav.header-menu a:hover {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    font-size: 15px;
+    font-size: 16px;
     min-height: 36px;
 }
 
@@ -461,6 +476,12 @@ nav.header-menu a:hover {
 .dropdown-menu > a:focus:not(.language-menu-item > a) {
     background-color: #d3d7db;
     font-weight: bold;
+}
+
+/* When any non-language item is hovered, remove the active background from the language parent link */
+.dropdown-menu:hover > .language-menu-item > a {
+    background-color: transparent;
+    font-weight: normal;
 }
 
 
@@ -492,6 +513,19 @@ nav.header-menu a:hover {
     box-sizing: border-box;
 }
 
+/* Dark mode for language submenu */
+body.dark-mode .language-submenu {
+    background-color: var(--dark-mode-mainbg);
+    border-color: #606a75;
+}
+body.dark-mode .language-submenu a {
+    color: var(--dark-mode-text) !important;
+    background-color: var(--dark-mode-mainbg);
+}
+body.dark-mode .language-submenu a:hover {
+    background-color: var(--dark-mode-navhover);
+}
+
 .language-submenu a {
     color: var(--text-color) !important;
     padding: 5px 6px;
@@ -501,7 +535,7 @@ nav.header-menu a:hover {
     align-items: center;
     text-align: left;
     margin: 0 !important;
-    font-size: 15px;
+    font-size: 16px;
     min-height: 36px;
     background-color: #fff;
     border-bottom: none;
