@@ -2217,7 +2217,8 @@ if (quickLinksToggle && quickLinksList) {
     let isPlaylistLoaded = false;
 
     async function populatePlaylist() {
-        if (!player || !isPlayerReady || isPlaylistLoaded) return;
+        // Allow populate to run even if player is not yet ready; API fetch doesn't depend on the iframe
+        if (isPlaylistLoaded) return;
         
         try {
             if (!playlistDropdown) {
@@ -2350,11 +2351,12 @@ if (quickLinksToggle && quickLinksList) {
                 } catch (apiError) {
                     clearTimeout(timeoutId);
                     console.error('[Playlist] Failed to fetch from API (or timed out), falling back to iframe API:', apiError);
-                    // Fallback to old method using iframe API (limited to first ~200)
+                    // Fallback to old method using iframe API (limited to first ~200) if player is available
                     const pollStart = Date.now();
                     const pollMaxMs = 6000; // up to 6 seconds
                     const pollIntervalMs = 300;
                     const tryRenderFromIframe = () => {
+                        if (!player || !isPlayerReady) return false;
                         let playlist = [];
                         try { playlist = player.getPlaylist() || []; } catch(_) { playlist = []; }
                         if (playlist && playlist.length > 0) {
@@ -2387,7 +2389,7 @@ if (quickLinksToggle && quickLinksList) {
                                         // Reset state to allow repopulation
                                         isPlaylistLoaded = false;
                                         dropdownContent.innerHTML = '<p class="playlist-loading">Loading playlist...</p>';
-                                        // Try again
+                                        // Try again (API first, then iframe if available)
                                         try { populatePlaylist(); } catch(_) {}
                                     });
                                 }
@@ -2539,9 +2541,9 @@ if (quickLinksToggle && quickLinksList) {
             
             // Toggle dropdown visibility
             if (playlistDropdown.style.display === 'none' || !playlistDropdown.style.display) {
-                // Try to populate if not already done
-                if (!isPlaylistLoaded && player && isPlayerReady && playlistLoaded) {
-                    populatePlaylist();
+                // Try to populate if not already done (API fetch can run before iframe is ready)
+                if (!isPlaylistLoaded) {
+                    try { populatePlaylist(); } catch(_) {}
                 }
                 playlistDropdown.style.display = 'block';
                 updatePlaylistActiveState();
