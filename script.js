@@ -2214,6 +2214,7 @@ if (quickLinksToggle && quickLinksList) {
     const playlistBtn = document.getElementById('player-playlist-btn');
     const playlistDropdown = document.getElementById('player-playlist-dropdown');
     let isPlaylistLoaded = false;
+    let lastPlaylistSource = null; // 'api' | 'iframe'
 
     async function populatePlaylist() {
         // Allow populate to run even if player is not yet ready; API fetch doesn't depend on the iframe
@@ -2234,7 +2235,7 @@ if (quickLinksToggle && quickLinksList) {
             dropdownContent.innerHTML = '<p class="playlist-loading">Loading playlist...</p>';
 
             // Helper to render the playlist UI from data
-            const renderFromData = (playlistData) => {
+            const renderFromData = (playlistData, source = 'api') => {
                 // Clear loading message
                 dropdownContent.innerHTML = '';
 
@@ -2305,7 +2306,16 @@ if (quickLinksToggle && quickLinksList) {
                 });
 
                 isPlaylistLoaded = true;
+                lastPlaylistSource = source;
                 updatePlaylistActiveState();
+
+                // Tiny status line for visibility
+                const status = document.createElement('div');
+                status.className = 'playlist-loading';
+                status.style.paddingTop = '8px';
+                status.style.fontSize = '0.8em';
+                status.textContent = source === 'api' ? 'Loaded via API' : 'Loaded via iframe';
+                dropdownContent.appendChild(status);
             };
 
             // Check for cached playlist data (24 hour cache)
@@ -2378,7 +2388,7 @@ if (quickLinksToggle && quickLinksList) {
                                 })),
                                 totalVideos: playlist.length
                             };
-                            renderFromData(pd);
+                            renderFromData(pd, 'iframe');
                             return true;
                         }
                         return false;
@@ -2594,6 +2604,15 @@ if (quickLinksToggle && quickLinksList) {
         }
     }
     // --- End Playlist Dropdown ---
+
+
+    // --- Prefetch playlist data in the background to improve first-click UX ---
+    try {
+        if (playlistDropdown && !isPlaylistLoaded) {
+            // Delay slightly to avoid competing with initial UI work
+            setTimeout(() => { try { populatePlaylist(); } catch(_) {} }, 500);
+        }
+    } catch(_) {}
 
 
     // --- INITIALIZE FEATURES ON LOAD ---
