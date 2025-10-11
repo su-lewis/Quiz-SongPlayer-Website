@@ -1172,6 +1172,7 @@ function initializePage() {
     let isPlayerReady = false; // Make accessible for random button
     let playlistLoaded = false; // Make accessible for shuffle button
     let playedVideos = []; // Track played videos for shuffle functionality
+    let shuffleHistory = []; // Track played videos for "previous" functionality in shuffle
     let shuffleMode = true; // Track if shuffle is active - DEFAULT: ON
     let shuffleButton = null; // Reference to shuffle button
     let updatePlaylistActiveState = () => {}; // Placeholder for playlist dropdown update
@@ -1621,6 +1622,12 @@ function initializePage() {
             // When a track ends, play the next one (shuffled or in order)
             if (state === YT.PlayerState.ENDED) {
                 if (seekBarProgress) seekBarProgress.style.width = '0%';
+                // Add the just-finished song to shuffle history if shuffle is on
+                if (shuffleMode && fullPlaylistData && fullPlaylistData.videos) {
+                    if (currentPlaylistIndex >= 0 && !shuffleHistory.includes(currentPlaylistIndex)) {
+                        shuffleHistory.push(currentPlaylistIndex);
+                    }
+                }
                 internalIsPlaying = false;
                 updatePlayPauseIcon();
                 savePlayerState();
@@ -1683,40 +1690,31 @@ function initializePage() {
         function playPreviousVideo() { 
             if (!isPlayerReady || !player || !playlistLoaded) return; 
             clearPendingRestoreFlags(); 
-            try { 
-                if (fullPlaylistData && fullPlaylistData.videos) {
-                    // Get current video ID
-                    const currentVideoData = player.getVideoData();
-                    const currentVideoId = currentVideoData ? currentVideoData.video_id : null;
-                    
-                    // Find current index in our full playlist
-                    const currentIndex = fullPlaylistData.videos.findIndex(v => v.videoId === currentVideoId);
-                    
-                    if (currentIndex > 0) {
-                        const prevIndex = currentIndex - 1;
-                        const prevVideo = fullPlaylistData.videos[prevIndex];
+            try {
+                if (shuffleMode && shuffleHistory.length > 0) {
+                    // In shuffle mode, go to the last song in history
+                    const prevIndex = shuffleHistory.pop(); // Get and remove the last played index
+                    const prevVideo = fullPlaylistData.videos[prevIndex];
+                    if (prevVideo) {
                         player.loadVideoById(prevVideo.videoId);
                         currentPlaylistIndex = prevIndex;
                         updateVideoTitle(prevVideo.title);
                         updateThumbnail(prevVideo.videoId);
                         updateTrackNumber(prevVideo.videoId);
                         savePlayerState();
-                    } else {
-                        // Wrap to last video
-                        const lastIndex = fullPlaylistData.videos.length - 1;
-                        const lastVideo = fullPlaylistData.videos[lastIndex];
-                        player.loadVideoById(lastVideo.videoId);
-                        currentPlaylistIndex = lastIndex;
-                        updateVideoTitle(lastVideo.title);
-                        updateThumbnail(lastVideo.videoId);
-                        updateTrackNumber(lastVideo.videoId);
-                        savePlayerState();
                     }
                 } else {
-                    player.previousVideo(); 
+                    // Normal (non-shuffle) behavior
+                    const currentIndex = player.getPlaylistIndex();
+                    const totalVideos = player.getPlaylist().length;
+                    // Calculate previous index, wrapping around to the end if at the beginning
+                    const prevIndex = (currentIndex - 1 + totalVideos) % totalVideos;
+                    player.playVideoAt(prevIndex);
                 }
-            } catch(e){ 
-                console.error("Err Prev:", e); 
+            } catch (e) {
+                console.error("Error in playPreviousVideo:", e);
+                // Fallback to simple previous in case of error
+                try { player.previousVideo(); } catch (e2) { console.error("Fallback player.previousVideo() also failed:", e2); }
             } 
         }
         function playNextVideo() { 
@@ -2120,6 +2118,11 @@ if (quickLinksToggle && quickLinksList) {
                     const currentVideoData = player.getVideoData();
                     const currentVideoId = currentVideoData ? currentVideoData.video_id : null;
                     const currentIdx = playlist.findIndex(v => v.videoId === currentVideoId);
+
+                    // Add current song to history before playing next, if it's not already the last one
+                    if (currentIdx >= 0 && shuffleHistory[shuffleHistory.length - 1] !== currentIdx) {
+                        shuffleHistory.push(currentIdx);
+                    }
                     
                     // If all videos have been played, reset the played list
                     if (playedVideos.length >= playlist.length - 1) {
@@ -2186,6 +2189,7 @@ if (quickLinksToggle && quickLinksList) {
                 // Disable shuffle mode - return to normal color
                 shuffleButton.classList.remove('shuffle-active');
                 playedVideos = []; // Reset played videos list
+                shuffleHistory = []; // Also reset shuffle history
                 console.log('[Shuffle] Shuffle mode disabled');
             }
         });
