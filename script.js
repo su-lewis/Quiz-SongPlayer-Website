@@ -2358,6 +2358,8 @@ if (quickLinksToggle && quickLinksList) {
                         if (code === 429) causeHint = 'YouTube quota exceeded.';
                         else if (code === 504) causeHint = 'Service timeout while contacting YouTube.';
                         else if (code === 500) causeHint = 'Server configuration error (missing API key?).';
+                        else if (code === 403) causeHint = 'Access forbidden (invalid key or playlist privacy).';
+                        else if (code === 404) causeHint = 'Playlist not found (check playlist ID).';
                     } catch (_) {}
                     // Fallback to old method using iframe API (limited to first ~200) if player is available
                     const pollStart = Date.now();

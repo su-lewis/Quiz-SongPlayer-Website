@@ -77,9 +77,9 @@ export const handler = async (event, context) => {
             const response = await fetchWithTimeout(url.toString());
 
             if (!response.ok) {
-                const errorData = await response.json();
+                const errorData = await response.json().catch(() => ({}));
                 console.error('YouTube API error:', errorData);
-                
+
                 // Check for quota exceeded
                 if (errorData.error?.errors?.[0]?.reason === 'quotaExceeded') {
                     return {
@@ -91,8 +91,15 @@ export const handler = async (event, context) => {
                         })
                     };
                 }
-                
-                throw new Error(`YouTube API error: ${response.status} ${response.statusText}`);
+
+                // Pass through upstream status when possible (e.g., 403/404)
+                const upstreamCode = errorData.error?.code || response.status;
+                const message = errorData.error?.message || response.statusText || 'YouTube API error';
+                return {
+                    statusCode: upstreamCode,
+                    headers,
+                    body: JSON.stringify({ error: message, upstream: true })
+                };
             }
 
             const data = await response.json();
