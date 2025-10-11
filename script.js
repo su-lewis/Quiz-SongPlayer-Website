@@ -2386,6 +2386,15 @@ if (quickLinksToggle && quickLinksList) {
                     try { populatePlaylist(); } catch(_) {}
                 }
                 playlistDropdown.style.display = 'block';
+
+                // --- START: Reposition Dropdown ---
+                // Position the dropdown to open upwards from the music player
+                const playerHeight = musicPlayerContainer.offsetHeight;
+                if (playerHeight > 0) {
+                    playlistDropdown.style.bottom = `${playerHeight}px`;
+                }
+                // --- END: Reposition Dropdown ---
+
                 updatePlaylistActiveState();
             } else {
                 playlistDropdown.style.display = 'none';
