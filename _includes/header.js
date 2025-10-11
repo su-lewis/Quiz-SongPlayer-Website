@@ -3,7 +3,7 @@ const headerContent = `
     <div class="header-top">
         <div class="nav-container">
             <div class="logo">
-                <a href="index.html" id="logo-link">
+                <a href="/" id="logo-link">
                     <img src="images/my-logo.webp" alt="Lewis' logo">
                 </a>
             </div>
@@ -43,7 +43,7 @@ const headerContent = `
                         </label>
                     </div>
                 </div>
-                <a href="/create.html" id="create-link" data-translate="create">Create</a>
+                <a href="/create" id="create-link" data-translate="create">Create</a>
                 <a href="#" id="random-link" data-translate="random">Random</a>
             </nav>
             <div class="search-bar">

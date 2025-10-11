@@ -39,7 +39,7 @@ const sidebarContent = `
 <!-- ========== START: Recent Posts Section ========== -->
 <div class="recent-posts-container content-box">
     <h4>
-        <a href="/posts.html" class="recent-posts-title-link" data-translate="recentPosts">Recent Posts</a>
+        <a href="/posts" class="recent-posts-title-link" data-translate="recentPosts">Recent Posts</a>
     </h4>
     <div id="posts-container">
         <p data-translate="loadingPosts">Loading posts...</p>

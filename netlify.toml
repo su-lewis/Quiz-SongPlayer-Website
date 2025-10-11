@@ -11,6 +11,30 @@
   node_bundler = "esbuild"
   external_node_modules = ["firebase-admin"]
 
-# Optional redirects/headers...
+[[redirects]]
+  from = "/.netlify/functions/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# Pretty URLs: remove .html for any language
+[[redirects]]
+  from = "/:page"
+  to = "/:page.html"
+  status = 200
+  force = false
+
+# Trailing slash to .html (pretty URLs)
+[[redirects]]
+  from = "/:page/"
+  to = "/:page.html"
+  status = 200
+
+# Root index already works without .html, but ensure consistency
+[[redirects]]
+  from = "/index"
+  to = "/index.html"
+  status = 200
+
+# Legacy explicit posts rule is now covered by the general trailing slash rule above
 
     

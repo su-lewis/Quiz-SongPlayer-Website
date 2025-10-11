@@ -1021,7 +1021,7 @@ function initializePage() {
 
                         const titleElement = document.createElement('h3');
                         const titleLink = document.createElement('a');
-                        titleLink.href = `/posts.html#post-${post.id}`;
+                        titleLink.href = `/posts#post-${post.id}`;
                         const safeTitle = (post.title || '').trim();
                         titleLink.textContent = safeTitle.length > 0 ? safeTitle : '.';
                         titleLink.className = 'post-title-link';
@@ -1038,7 +1038,7 @@ function initializePage() {
                         // [more] link (translated now; also marked for translation updates)
                         if (needsMore) {
                             const moreLink = document.createElement('a');
-                            moreLink.href = `/posts.html#post-${post.id}`;
+                            moreLink.href = `/posts#post-${post.id}`;
                             moreLink.textContent = t('readMore') || '[more]';
                             moreLink.setAttribute('data-translate', 'readMore');
                             moreLink.className = 'read-more-link';
@@ -1134,14 +1134,13 @@ function initializePage() {
             // Static pages in the site
             const staticPages = [
                 '/',
-                '/index.html',
-                '/create.html',
-                '/posts.html'
+                '/create',
+                '/posts'
             ];
             let candidates = [...staticPages];
             const normalizePath = (p) => {
                 if (!p || p === '/') return '/';
-                if (p === '/index.html') return '/';
+                if (p === '/index.html' || p === '/index') return '/';
                 return p;
             };
             const currentPath = normalizePath(location.pathname);
@@ -1152,20 +1151,20 @@ function initializePage() {
                     if (Array.isArray(posts) && posts.length > 0) {
                         // Optionally limit to a reasonable number to avoid huge arrays
                         posts.forEach(p => {
-                            if (p && p.id) candidates.push(`/posts.html#post-${p.id}`);
+                            if (p && p.id) candidates.push(`/posts#post-${p.id}`);
                         });
                     }
                 }
             } catch (err) {
                 // ignore and fallback to static pages only
             }
-            // Filter out current page; allow posts anchors on posts.html (but avoid same anchor)
+            // Filter out current page; allow posts anchors on posts page (but avoid same anchor)
             candidates = candidates.filter(target => {
                 const [path, hashPart] = target.split('#');
                 const normalized = normalizePath(path);
                 if (hashPart) {
                     // It's an anchor (likely a post). Always allowed, except avoid same anchor when already on posts page.
-                    if (normalized === '/posts.html' && currentPath === '/posts.html') {
+                    if (normalized === '/posts' && currentPath === '/posts') {
                         return ('#' + hashPart) !== (location.hash || '');
                     }
                     return true;
@@ -1175,7 +1174,7 @@ function initializePage() {
             });
             if (candidates.length === 0) {
                 // Fallback: go to posts page to show something
-                candidates = ['/posts.html'];
+                candidates = ['/posts'];
             }
             // Pick a random target
             const target = candidates[Math.floor(Math.random() * candidates.length)];
@@ -2381,7 +2380,7 @@ if (quickLinksToggle && quickLinksList) {
                                 clearInterval(poller);
                             } else if (Date.now() - pollStart > pollMaxMs) {
                                 clearInterval(poller);
-                                dropdownContent.innerHTML = '<div class="playlist-error">Failed to load playlist. <button class="playlist-retry-btn" type="button">Retry</button></div>';
+                                dropdownContent.innerHTML = '<div class="playlist-error">Failed to load playlist. Possible causes: server not configured (missing API key) or YouTube quota exceeded. <button class="playlist-retry-btn" type="button">Retry</button></div>';
                                 const retryBtn = dropdownContent.querySelector('.playlist-retry-btn');
                                 if (retryBtn) {
                                     retryBtn.addEventListener('click', (ev) => {
@@ -2503,7 +2502,7 @@ if (quickLinksToggle && quickLinksList) {
                     playlistDropdown.appendChild(dropdownContent);
                 }
                 // Only show error if we truly can't recover (this catch shouldn't hit the polling branch)
-                dropdownContent.innerHTML = '<div class="playlist-error">Failed to load playlist. <button class="playlist-retry-btn" type="button">Retry</button></div>';
+                dropdownContent.innerHTML = '<div class="playlist-error">Failed to load playlist. Possible causes: server not configured (missing API key) or YouTube quota exceeded. <button class="playlist-retry-btn" type="button">Retry</button></div>';
                 const retryBtn = dropdownContent.querySelector('.playlist-retry-btn');
                 if (retryBtn) {
                     retryBtn.addEventListener('click', (ev) => {
