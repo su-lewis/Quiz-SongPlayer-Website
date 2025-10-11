@@ -6,6 +6,7 @@
  */
 
 export const handler = async (event, context) => {
+    console.log('[youtube-playlist] handler invoked', { method: event.httpMethod, path: event.path });
     const headers = {
         'Content-Type': 'application/json',
         'Access-Control-Allow-Origin': '*',
@@ -41,10 +42,24 @@ export const handler = async (event, context) => {
     }
 
     try {
+        // Helper: fetch with timeout to avoid long hangs
+        const fetchWithTimeout = async (url, options = {}, ms = 6000) => {
+            const controller = new AbortController();
+            const id = setTimeout(() => controller.abort(), ms);
+            try {
+                const res = await fetch(url, { ...options, signal: controller.signal });
+                return res;
+            } finally {
+                clearTimeout(id);
+            }
+        };
         const allVideos = [];
         let pageToken = null;
         let pageCount = 0;
         const maxPages = 20; // Safety limit (50 videos per page = 1000 max)
+    const deadlineMs = 8000; // ~8s overall budget to stay within function limits
+    const startTs = Date.now();
+    let partial = false;
 
         // Fetch all pages of playlist items
         do {
@@ -59,7 +74,7 @@ export const handler = async (event, context) => {
             }
 
             console.log(`Fetching page ${pageCount + 1}...`);
-            const response = await fetch(url.toString());
+            const response = await fetchWithTimeout(url.toString());
 
             if (!response.ok) {
                 const errorData = await response.json();
@@ -106,6 +121,13 @@ export const handler = async (event, context) => {
                 break;
             }
 
+            // Overall deadline check
+            if (Date.now() - startTs > deadlineMs) {
+                console.warn('Reached overall time budget; returning partial results');
+                partial = true;
+                break;
+            }
+
         } while (pageToken);
 
         console.log(`Successfully fetched ${allVideos.length} videos from playlist`);
@@ -116,17 +138,19 @@ export const handler = async (event, context) => {
             body: JSON.stringify({
                 playlistId,
                 totalVideos: allVideos.length,
-                videos: allVideos
+                videos: allVideos,
+                partial
             })
         };
 
     } catch (error) {
+        const isAbort = (error && (error.name === 'AbortError' || /aborted|timeout/i.test(error.message || '')));
         console.error('Error fetching playlist:', error);
         return {
-            statusCode: 500,
+            statusCode: isAbort ? 504 : 500,
             headers,
             body: JSON.stringify({ 
-                error: 'Failed to fetch playlist data',
+                error: isAbort ? 'Upstream timeout fetching YouTube API' : 'Failed to fetch playlist data',
                 message: error.message 
             })
         };

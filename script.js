@@ -2350,6 +2350,15 @@ if (quickLinksToggle && quickLinksList) {
                 } catch (apiError) {
                     clearTimeout(timeoutId);
                     console.error('[Playlist] Failed to fetch from API (or timed out), falling back to iframe API:', apiError);
+                    // Derive a hint for the user based on error
+                    let causeHint = '';
+                    try {
+                        const m = String(apiError && apiError.message || '').match(/API error: (\d+)/);
+                        const code = m ? parseInt(m[1], 10) : undefined;
+                        if (code === 429) causeHint = 'YouTube quota exceeded.';
+                        else if (code === 504) causeHint = 'Service timeout while contacting YouTube.';
+                        else if (code === 500) causeHint = 'Server configuration error (missing API key?).';
+                    } catch (_) {}
                     // Fallback to old method using iframe API (limited to first ~200) if player is available
                     const pollStart = Date.now();
                     const pollMaxMs = 6000; // up to 6 seconds
@@ -2380,7 +2389,8 @@ if (quickLinksToggle && quickLinksList) {
                                 clearInterval(poller);
                             } else if (Date.now() - pollStart > pollMaxMs) {
                                 clearInterval(poller);
-                                dropdownContent.innerHTML = '<div class="playlist-error">Failed to load playlist. Possible causes: server not configured (missing API key) or YouTube quota exceeded. <button class="playlist-retry-btn" type="button">Retry</button></div>';
+                                const cause = causeHint ? ` (${causeHint})` : ' Possible causes: server not configured (missing API key) or YouTube quota exceeded.';
+                                dropdownContent.innerHTML = `<div class="playlist-error">Failed to load playlist.${cause} <button class="playlist-retry-btn" type="button">Retry</button></div>`;
                                 const retryBtn = dropdownContent.querySelector('.playlist-retry-btn');
                                 if (retryBtn) {
                                     retryBtn.addEventListener('click', (ev) => {
@@ -2501,8 +2511,16 @@ if (quickLinksToggle && quickLinksList) {
                     dropdownContent.className = 'playlist-dropdown-content';
                     playlistDropdown.appendChild(dropdownContent);
                 }
-                // Only show error if we truly can't recover (this catch shouldn't hit the polling branch)
-                dropdownContent.innerHTML = '<div class="playlist-error">Failed to load playlist. Possible causes: server not configured (missing API key) or YouTube quota exceeded. <button class="playlist-retry-btn" type="button">Retry</button></div>';
+                // Only show error if we truly can't recover. Provide a hint if we can infer status code.
+                let causeHint = '';
+                try {
+                    const m = String(e && e.message || '').match(/API error: (\d+)/);
+                    const code = m ? parseInt(m[1], 10) : undefined;
+                    if (code === 429) causeHint = ' (YouTube quota exceeded.)';
+                    else if (code === 504) causeHint = ' (Service timeout while contacting YouTube.)';
+                    else if (code === 500) causeHint = ' (Server configuration error — missing API key?)';
+                } catch (_) {}
+                dropdownContent.innerHTML = `<div class="playlist-error">Failed to load playlist.${causeHint} <button class="playlist-retry-btn" type="button">Retry</button></div>`;
                 const retryBtn = dropdownContent.querySelector('.playlist-retry-btn');
                 if (retryBtn) {
                     retryBtn.addEventListener('click', (ev) => {
