@@ -16,6 +16,12 @@
   to = "/.netlify/functions/:splat"
   status = 200
 
+# Friendly API path that maps to Netlify Functions (helps avoid blockers on '/.netlify')
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
 # Pretty URLs: remove .html for any language
 [[redirects]]
   from = "/:page"

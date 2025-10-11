@@ -27,14 +27,14 @@ function initializePage() {
         window.addEventListener('click', function(event) {
             if (!event.target?.closest('.dropdown-toggle')) {
                 document.querySelectorAll('.dropdown-menu').forEach(dd => dd.classList.remove('show'));
-                // Clear any persisted hover state when closing
-                const openMenu = document.querySelector('.dropdown-menu');
-                openMenu?.querySelectorAll('.persist-hover').forEach(el => el.classList.remove('persist-hover'));
-                // Also deactivate the language submenu active state
-                const langItem = document.querySelector('.language-menu-item');
-                langItem?.classList.remove('language-active');
-            }
-        });
+                    // Clear any persisted hover state when closing
+                    const openMenu = document.querySelector('.dropdown-menu');
+                    openMenu?.querySelectorAll('.persist-hover').forEach(el => el.classList.remove('persist-hover'));
+                    // Also deactivate the language submenu active state
+                    const langItem = document.querySelector('.language-menu-item');
+                    langItem?.classList.remove('language-active');
+                }
+            });
     }
 
     // --- Translation System ---
@@ -44,79 +44,63 @@ function initializePage() {
     const languageSubmenu = document.querySelector('.language-submenu');
     let submenuActive = false;
 
-    // Persist last hovered item within dropdown
-    function setPersistHover(el) {
-        if (!dropdownMenu || !el) return;
-        dropdownMenu.querySelectorAll('.persist-hover').forEach(n => n.classList.remove('persist-hover'));
-        el.classList.add('persist-hover');
-    }
-
-    // Helper: deactivate submenu
-    function deactivateLanguageSubmenu() {
-        submenuActive = false;
-        languageMenuItem?.classList.remove('language-active');
-    }
-
-    // Helper: activate submenu
-    function activateLanguageSubmenu() {
-        submenuActive = true;
-        languageMenuItem?.classList.add('language-active');
-    }
-
-    // Mouse enter/leave for persistent submenu
-    if (languageMenuItem && languageSubmenu) {
-    // Activate on hover over parent; track hover state on parent link
-    languageMenuItem.addEventListener('mouseenter', (e) => { activateLanguageSubmenu(); const link = languageMenuItem.querySelector('a'); if (link) setPersistHover(link); });
-
-        // On mobile (no hover), toggle submenu on click of the parent link
-        const langParentLink = languageMenuItem.querySelector('a');
-        if (langParentLink) {
-            langParentLink.addEventListener('click', (e) => {
-                if (window.matchMedia('(max-width: 768px)').matches) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    if (languageMenuItem.classList.contains('language-active')) {
-                        deactivateLanguageSubmenu();
-                    } else {
-                        activateLanguageSubmenu();
-                        setPersistHover(langParentLink);
-                    }
-                }
-            });
+    if (dropdownMenu && languageMenuItem && languageSubmenu) {
+        // Persist last hovered item within dropdown
+        function setPersistHover(el) {
+            if (!dropdownMenu || !el) return;
+            dropdownMenu.querySelectorAll('.persist-hover').forEach(n => n.classList.remove('persist-hover'));
+            el.classList.add('persist-hover');
         }
 
-        // Keep submenu active when moving between parent and submenu or whitespace
-        languageMenuItem.addEventListener('mouseleave', (e) => {
-            // Intentionally no-op; submenu remains active
-        });
-        languageSubmenu.addEventListener('mouseleave', (e) => {
-            // Intentionally no-op; submenu remains active
-        });
+        // Helper: deactivate submenu
+        function deactivateLanguageSubmenu() {
+            submenuActive = false;
+            languageMenuItem?.classList.remove('language-active');
+        }
 
-        // Deactivate on click outside
-        document.addEventListener('click', (e) => {
-            if (
-                submenuActive &&
-                !languageMenuItem.contains(e.target) &&
-                !languageSubmenu.contains(e.target)
-            ) {
-                deactivateLanguageSubmenu();
+        // Helper: activate submenu
+        function activateLanguageSubmenu() {
+            submenuActive = true;
+            languageMenuItem?.classList.add('language-active');
+        }
+
+        // Mouse enter/leave for persistent submenu
+        // Activate on hover over parent; track hover state on parent link
+        languageMenuItem.addEventListener('mouseenter', (e) => { activateLanguageSubmenu(); const link = languageMenuItem.querySelector('a'); if (link) setPersistHover(link); });
+
+            // On mobile (no hover), toggle submenu on click of the parent link
+            const langParentLink = languageMenuItem.querySelector('a');
+            if (langParentLink) {
+                langParentLink.addEventListener('click', (e) => {
+                    if (window.matchMedia('(max-width: 768px)').matches) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        if (submenuActive) {
+                            deactivateLanguageSubmenu();
+                        } else {
+                            activateLanguageSubmenu();
+                            setPersistHover(langParentLink);
+                        }
+                    }
+                });
             }
-        });
 
-        // Keep submenu open when hovering other items; close only on explicit click-away
-        // (Removed hover-to-close on other top-level items per desired behavior)
-    }
+            // Keep submenu active when moving between parent and submenu or whitespace
+            languageMenuItem.addEventListener('mouseleave', (e) => {
+                // Intentionally no-op; submenu remains active
+            });
+            languageSubmenu.addEventListener('mouseleave', (e) => {
+                // Intentionally no-op; submenu remains active
+            });
 
-    // Attach persist-hover behavior to other top-level dropdown items (including dark mode label)
-    if (dropdownMenu) {
-        const children = Array.from(dropdownMenu.children);
-        children.forEach(child => {
-            if (child.matches('a, .dropdown-item-label')) {
-                // Persist hover when mouse enters the item
+            // Add hover listeners to all direct children of dropdown-menu
+            const children = Array.from(dropdownMenu.children);
+            for (const child of children) {
+                if (child.tagName !== 'A' && child.tagName !== 'LABEL') continue;
                 child.addEventListener('mouseenter', () => {
                     setPersistHover(child);
-                    if (languageMenuItem && !languageMenuItem.contains(child)) {
+                    // If the hovered item is NOT the language menu, deactivate the submenu
+                    if (!languageMenuItem.contains(child)) {
                         deactivateLanguageSubmenu();
                     }
                 });
@@ -128,9 +112,8 @@ function initializePage() {
                     }
                 });
             }
-        });
-        // Do not clear persisted hover on mouseleave; keep the last hovered
-        // Item highlighted and submenu state intact until explicit close
+            // Do not clear persisted hover on mouseleave; keep the last hovered
+            // Item highlighted and submenu state intact until explicit close
     }
     const translations = {
         en: {
@@ -156,10 +139,10 @@ function initializePage() {
             loadingTitle: 'Loading title...',
             myX: 'My X',
             simpCity: 'SimpCity',
-            megaFolder: 'Mega Folder',
+            megaFolder: '<s>Mega Folder</s>',
             ansiArt: 'ANSI Art (Click to play)',
             copyright: '© QuizSongPlayer 2025',
-            notAffiliated: 'We are not affiliated with the city Minneapolis',
+            notAffiliated: 'We are not affiliated with the city of Minneapolis',
             option2: 'Option 2',
             option3: 'Option 3',
             random: 'Random',
@@ -169,7 +152,7 @@ function initializePage() {
             logout: 'Log Out',
             searchPlaceholder: 'Search...'
         },
-    ja: {
+        ja: {
             menu: 'メニュー ',
             language: '言語',
             darkMode: 'ダークモード',
@@ -205,7 +188,7 @@ function initializePage() {
             logout: 'ログアウト',
             searchPlaceholder: '検索...'
         },
-    fr: {
+        fr: {
             menu: 'Menu ',
             language: 'Langue',
             darkMode: 'Mode Sombre',
@@ -241,7 +224,7 @@ function initializePage() {
             logout: 'Se déconnecter',
             searchPlaceholder: 'Rechercher...'
         },
-    de: {
+        de: {
             menu: 'Menü ',
             language: 'Sprache',
             darkMode: 'Dunkler Modus',
@@ -277,7 +260,7 @@ function initializePage() {
             logout: 'Abmelden',
             searchPlaceholder: 'Suchen...'
         },
-    it: {
+        it: {
             menu: 'Menu ',
             language: 'Lingua',
             darkMode: 'Modalità scura',
@@ -313,7 +296,7 @@ function initializePage() {
             logout: 'Esci',
             searchPlaceholder: 'Cerca...'
         },
-    es: {
+        es: {
             menu: 'Menú ',
             language: 'Idioma',
             darkMode: 'Modo Oscuro',
@@ -349,7 +332,7 @@ function initializePage() {
             logout: 'Cerrar sesión',
             searchPlaceholder: 'Buscar...'
         },
-    pt: {
+        pt: {
             menu: 'Menu ',
             language: 'Idioma',
             darkMode: 'Modo Escuro',
@@ -385,7 +368,7 @@ function initializePage() {
             logout: 'Sair',
             searchPlaceholder: 'Pesquisar...'
         },
-    ru: {
+        ru: {
             menu: 'Меню ',
             language: 'Язык',
             darkMode: 'Тёмная тема',
@@ -421,7 +404,7 @@ function initializePage() {
             logout: 'Выйти',
             searchPlaceholder: 'Поиск...'
         },
-    zh: {
+        zh: {
             menu: '菜单 ',
             language: '语言',
             darkMode: '深色模式',
@@ -457,7 +440,7 @@ function initializePage() {
             logout: '退出登录',
             searchPlaceholder: '搜索...'
         },
-    ko: {
+        ko: {
             menu: '메뉴 ',
             language: '언어',
             darkMode: '다크 모드',
@@ -493,7 +476,7 @@ function initializePage() {
             logout: '로그아웃',
             searchPlaceholder: '검색...'
         },
-    el: {
+        el: {
             menu: 'Μενού ',
             language: 'Γλώσσα',
             darkMode: 'Σκούρο θέμα',
@@ -529,7 +512,7 @@ function initializePage() {
             logout: 'Αποσύνδεση',
             searchPlaceholder: 'Αναζήτηση...'
         },
-    ar: {
+        ar: {
             menu: 'القائمة ',
             language: 'اللغة',
             darkMode: 'الوضع الداكن',
@@ -565,7 +548,7 @@ function initializePage() {
             logout: 'تسجيل الخروج',
             searchPlaceholder: 'بحث...'
         },
-    af: {
+        af: {
             menu: 'Kieslys ',
             language: 'Taal',
             darkMode: 'Donker modus',
@@ -601,7 +584,7 @@ function initializePage() {
             logout: 'Teken uit',
             searchPlaceholder: 'Soek...'
         },
-    haw: {
+        haw: {
             menu: 'Papa kuhikuhi ',
             language: 'ʻŌlelo',
             darkMode: 'ʻAno pouli',
@@ -637,7 +620,7 @@ function initializePage() {
             logout: 'Lele i waho',
             searchPlaceholder: 'Huli...'
         },
-    hi: {
+        hi: {
             menu: 'मेन्यू ',
             language: 'भाषा',
             darkMode: 'डार्क मोड',
@@ -673,7 +656,7 @@ function initializePage() {
             logout: 'लॉग आउट',
             searchPlaceholder: 'खोजें...'
         },
-    la: {
+        la: {
             menu: 'Index ',
             language: 'Lingua',
             darkMode: 'Modus Obscurus',
@@ -2216,107 +2199,20 @@ if (quickLinksToggle && quickLinksList) {
     let isPlaylistLoaded = false;
     let lastPlaylistSource = null; // 'api' | 'iframe'
 
-    async function populatePlaylist() {
-        // Allow populate to run even if player is not yet ready; API fetch doesn't depend on the iframe
+    async function populatePlaylist() { // Allow populate to run even if player is not yet ready; API fetch doesn't depend on the iframe
         if (isPlaylistLoaded) return;
-        
         try {
             if (!playlistDropdown) {
                 console.warn('[Playlist] Dropdown element not found. Skipping populate.');
                 return;
             }
             let dropdownContent = playlistDropdown.querySelector('.playlist-dropdown-content');
-            if (!dropdownContent) {
-                // Create the content container if it doesn't exist
+            if (!dropdownContent) { // Create the content container if it doesn't exist
                 dropdownContent = document.createElement('div');
                 dropdownContent.className = 'playlist-dropdown-content';
                 playlistDropdown.appendChild(dropdownContent);
             }
             dropdownContent.innerHTML = '<p class="playlist-loading">Loading playlist...</p>';
-
-            // Helper to render the playlist UI from data
-            const renderFromData = (playlistData, source = 'api') => {
-                // Clear loading message
-                dropdownContent.innerHTML = '';
-
-                // Create playlist items from fetched data
-                playlistData.videos.forEach((video, index) => {
-                    const item = document.createElement('div');
-                    item.className = 'playlist-item';
-                    item.dataset.index = index;
-                    item.dataset.videoId = video.videoId;
-                    
-                    // Create title element
-                    const titleSpan = document.createElement('span');
-                    titleSpan.className = 'playlist-item-title';
-                    titleSpan.textContent = video.title 
-                        ? `${index + 1}. ${video.title}`
-                        : `${index + 1}. Loading...`;
-                    
-                    item.appendChild(titleSpan);
-
-                    // Add click handler
-                    item.addEventListener('click', () => {
-                        if (player && isPlayerReady) {
-                            clearPendingRestoreFlags();
-                            try {
-                                // Use loadVideoById instead of playVideoAt for better compatibility with large playlists
-                                player.loadVideoById(video.videoId);
-                                playlistDropdown.style.display = 'none';
-
-                                // Always update thumbnail and track number immediately
-                                updateThumbnail(video.videoId);
-                                updateTrackNumber(video.videoId);
-
-                                // Update title: use cached if available, else show placeholder
-                                if (video.title) {
-                                    updateVideoTitle(video.title);
-                                } else {
-                                    updateVideoTitle('Loading...');
-                                }
-
-                                // Then update playlist active state and fetch fresh details
-                                setTimeout(() => {
-                                    updatePlaylistActiveState();
-                                    updateVideoDetails();
-                                }, 100);
-                            } catch(e) {
-                                console.error('[Playlist] Error playing video:', e);
-                            }
-                        }
-                    });
-
-                    dropdownContent.appendChild(item);
-
-                    // If title is missing (fallback mode), fetch it via oEmbed
-                    if (!video.title && video.videoId) {
-                        setTimeout(() => {
-                            fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${video.videoId}&format=json`)
-                                .then(response => response.ok ? response.json() : null)
-                                .then(data => {
-                                    if (data?.title) {
-                                        titleSpan.textContent = `${index + 1}. ${data.title}`;
-                                    }
-                                })
-                                .catch(() => {
-                                    titleSpan.textContent = `${index + 1}. Track ${index + 1}`;
-                                });
-                        }, index * 10); // Stagger requests to avoid rate limiting
-                    }
-                });
-
-                isPlaylistLoaded = true;
-                lastPlaylistSource = source;
-                updatePlaylistActiveState();
-
-                // Tiny status line for visibility
-                const status = document.createElement('div');
-                status.className = 'playlist-loading';
-                status.style.paddingTop = '8px';
-                status.style.fontSize = '0.8em';
-                status.textContent = source === 'api' ? 'Loaded via API' : 'Loaded via iframe';
-                dropdownContent.appendChild(status);
-            };
 
             // Check for cached playlist data (24 hour cache)
             const cacheKey = 'youtube_playlist_cache';
@@ -2324,7 +2220,6 @@ if (quickLinksToggle && quickLinksList) {
             const cachedData = localStorage.getItem(cacheKey);
             const cacheTimestamp = localStorage.getItem(cacheTimestampKey);
             const cacheMaxAge = 24 * 60 * 60 * 1000; // 24 hours
-
             let playlistData = null;
 
             // Use cached data if available and not expired
@@ -2338,11 +2233,8 @@ if (quickLinksToggle && quickLinksList) {
 
             // Fetch fresh data if no cache or expired
             if (!playlistData) {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 5000); // 5s timeout
                 try {
-                    const response = await fetch('/.netlify/functions/youtube-playlist', { signal: controller.signal });
-                    clearTimeout(timeoutId);
+                    const response = await fetch('/.netlify/functions/youtube-playlist');
                     if (!response.ok) {
                         throw new Error(`API error: ${response.status}`);
                     }
@@ -2358,149 +2250,91 @@ if (quickLinksToggle && quickLinksList) {
                     localStorage.setItem(cacheKey, JSON.stringify(data));
                     localStorage.setItem(cacheTimestampKey, Date.now().toString());
                 } catch (apiError) {
-                    clearTimeout(timeoutId);
                     console.error('[Playlist] Failed to fetch from API (or timed out), falling back to iframe API:', apiError);
-                    // Derive a hint for the user based on error
-                    let causeHint = '';
-                    try {
-                        const m = String(apiError && apiError.message || '').match(/API error: (\d+)/);
-                        const code = m ? parseInt(m[1], 10) : undefined;
-                        if (code === 429) causeHint = 'YouTube quota exceeded.';
-                        else if (code === 504) causeHint = 'Service timeout while contacting YouTube.';
-                        else if (code === 500) causeHint = 'Server configuration error (missing API key?).';
-                        else if (code === 403) causeHint = 'Access forbidden (invalid key or playlist privacy).';
-                        else if (code === 404) causeHint = 'Playlist not found (check playlist ID).';
-                    } catch (_) {}
-                    // Fallback to old method using iframe API (limited to first ~200) if player is available
-                    const pollStart = Date.now();
-                    const pollMaxMs = 6000; // up to 6 seconds
-                    const pollIntervalMs = 300;
-                    const tryRenderFromIframe = () => {
-                        if (!player || !isPlayerReady) return false;
-                        let playlist = [];
-                        try { playlist = player.getPlaylist() || []; } catch(_) { playlist = []; }
-                        if (playlist && playlist.length > 0) {
-                            const pd = {
-                                videos: playlist.map((videoId, index) => ({
-                                    videoId,
-                                    title: null,
-                                    position: index
-                                })),
-                                totalVideos: playlist.length
-                            };
-                            renderFromData(pd, 'iframe');
-                            return true;
-                        }
-                        return false;
+                    // Fallback to old method using iframe API (limited to first 200)
+                    const playlist = player.getPlaylist();
+                    if (!playlist || playlist.length === 0) {
+                        dropdownContent.innerHTML = '<p class="playlist-error">Failed to load playlist</p>';
+                        return;
+                    }
+                    playlistData = {
+                        videos: playlist.map((videoId, index) => ({
+                            videoId,
+                            title: null, // Will fetch titles individually
+                            position: index
+                        })),
+                        totalVideos: playlist.length
                     };
-                    // Try immediately; if empty, poll until available or timeout
-                    if (!tryRenderFromIframe()) {
-                        dropdownContent.innerHTML = '<p class="playlist-loading">Loading playlist...</p>';
-                        const poller = setInterval(() => {
-                            if (tryRenderFromIframe()) {
-                                clearInterval(poller);
-                            } else if (Date.now() - pollStart > pollMaxMs) {
-                                clearInterval(poller);
-                                const cause = causeHint ? ` (${causeHint})` : ' Possible causes: server not configured (missing API key) or YouTube quota exceeded.';
-                                dropdownContent.innerHTML = `<div class="playlist-error">Failed to load playlist.${cause} <button class="playlist-retry-btn" type="button">Retry</button></div>`;
-                                const retryBtn = dropdownContent.querySelector('.playlist-retry-btn');
-                                if (retryBtn) {
-                                    retryBtn.addEventListener('click', (ev) => {
-                                        ev.stopPropagation();
-                                        // Reset state to allow repopulation
-                                        isPlaylistLoaded = false;
-                                        dropdownContent.innerHTML = '<p class="playlist-loading">Loading playlist...</p>';
-                                        // Try again (API first, then iframe if available)
-                                        try { populatePlaylist(); } catch(_) {}
-                                    });
-                                }
-                                isPlaylistLoaded = false;
-                            }
-                        }, pollIntervalMs);
-                    }
-                    // After starting poll (or rendering), stop normal flow here
-                    return;
                 }
             }
-            // Normal success path: render from API data
-            if (playlistData) {
-                renderFromData(playlistData);
-            }
-            
-            // If this is the user's true first visit and we haven't applied the default yet,
-            // switch to the desired default track by ID or title match.
-            if (applyDefaultOnFirstVisit && !defaultApplied && fullPlaylistData && fullPlaylistData.videos && fullPlaylistData.videos.length > 0) {
-                let targetVideoId = null;
-                if (DEFAULT_FIRST_VIDEO_ID) {
-                    targetVideoId = DEFAULT_FIRST_VIDEO_ID;
-                } else {
-                    // Try to find by title match (case-insensitive regex)
-                    const matchIdx = fullPlaylistData.videos.findIndex(v => v.title && DEFAULT_FIRST_VIDEO_TITLE_MATCH.test(v.title));
-                    if (matchIdx >= 0) {
-                        targetVideoId = fullPlaylistData.videos[matchIdx].videoId;
-                        currentPlaylistIndex = matchIdx;
-                    }
-                }
 
-                if (targetVideoId) {
-                    try {
-                        // On true first visit, play the default video immediately (muted if autoplay)
-                        if (wantAutoplayAfterDefault) {
-                            player.loadVideoById(targetVideoId);
-                            try { player.mute(); } catch (_) {}
-                            internalIsMuted = true;
-                            internalIsPlaying = true;
-                        } else {
-                            player.cueVideoById(targetVideoId);
+            // Clear loading message
+            dropdownContent.innerHTML = '';
+
+            // Create playlist items from fetched data
+            playlistData.videos.forEach((video, index) => {
+                const item = document.createElement('div');
+                item.className = 'playlist-item';
+                item.dataset.index = index;
+                item.dataset.videoId = video.videoId;
+                
+                // Create title element
+                const titleSpan = document.createElement('span');
+                titleSpan.className = 'playlist-item-title';
+                titleSpan.textContent = video.title 
+                    ? `${index + 1}. ${video.title}`
+                    : `${index + 1}. Loading...`;
+                
+                item.appendChild(titleSpan);
+
+                // Add click handler
+                item.addEventListener('click', () => {
+                    if (player && isPlayerReady) {
+                        clearPendingRestoreFlags();
+                        try {
+                            // Use loadVideoById instead of playVideoAt for better compatibility with large playlists
+                            player.loadVideoById(video.videoId);
+                            playlistDropdown.style.display = 'none';
+                            
+                            // Update UI immediately with cached data
+                            if (video.title) {
+                                updateVideoTitle(video.title);
+                                updateThumbnail(video.videoId);
+                                updateTrackNumber(video.videoId);
+                            }
+                            
+                            // Then update playlist active state and fetch fresh details
+                            setTimeout(() => {
+                                updatePlaylistActiveState();
+                                updateVideoDetails();
+                            }, 100);
+                        } catch(e) {
+                            console.error('[Playlist] Error playing video:', e);
                         }
-                        // Update UI hints immediately
-                        updateThumbnail(targetVideoId);
-                        updateTrackNumber(targetVideoId);
-                        // Title will update via updateVideoDetails once YT data is ready
-                        defaultApplied = true;
-                        savePlayerState();
-                    } catch (e) {
-                        console.warn('[Playlist] Failed to switch to default video by id/title:', e);
                     }
+                });
+
+                dropdownContent.appendChild(item);
+
+                // If title is missing (fallback mode), fetch it via oEmbed
+                if (!video.title && video.videoId) {
+                    setTimeout(() => {
+                        fetch(`https://www.youtube.com/oembed?url=https://www.youtube.com/watch?v=${video.videoId}&format=json`)
+                            .then(response => response.ok ? response.json() : null)
+                            .then(data => {
+                                if (data?.title) {
+                                    titleSpan.textContent = `${index + 1}. ${data.title}`;
+                                }
+                            })
+                            .catch(() => {
+                                titleSpan.textContent = `${index + 1}. Track ${index + 1}`;
+                            });
+                    }, index * 10); // Stagger requests to avoid rate limiting
                 }
-            }
-            
-            // After first visit: choose random on each load if configured
-            if (chooseRandomOnLoad && !randomApplied && fullPlaylistData && fullPlaylistData.videos && fullPlaylistData.videos.length > 0) {
-                try {
-                    const videos = fullPlaylistData.videos;
-                    const randomIndex = Math.floor(Math.random() * videos.length);
-                    const randomVideo = videos[randomIndex];
-                    if (randomVideo && randomVideo.videoId) {
-                        // Always start playing (muted) on load when randomizing
-                        player.loadVideoById(randomVideo.videoId);
-                        if (AUTOPLAY_ON_LOAD) {
-                            try { player.mute(); } catch (_) {}
-                            internalIsMuted = true;
-                        } else {
-                            try { player.unMute(); } catch (_) {}
-                            internalIsMuted = false;
-                        }
-                        internalIsPlaying = true;
-                        currentPlaylistIndex = randomIndex;
-                        updateThumbnail(randomVideo.videoId);
-                        updateTrackNumber(randomVideo.videoId);
-                        if (randomVideo.title) {
-                            updateVideoTitle(randomVideo.title);
-                        } else {
-                            // Prompt early details refresh to fetch title from YT API
-                            setTimeout(() => { try { updateVideoDetails(); } catch(_){} }, 200);
-                        }
-                        // Clear any pending restore flags to avoid jumping back to index 1
-                        pendingSeekTime = null;
-                        pendingPlay = false;
-                        randomApplied = true;
-                        savePlayerState();
-                    }
-                } catch (e) {
-                    console.warn('[Playlist] Failed to apply random-on-load:', e);
-                }
-            }
+            });
+
+            isPlaylistLoaded = true;
+            updatePlaylistActiveState();
 
             // Update track number for currently playing video now that fullPlaylistData is available
             if (player && isPlayerReady) {
@@ -2516,41 +2350,14 @@ if (quickLinksToggle && quickLinksList) {
             
         } catch (e) {
             console.error('[Playlist] Error populating:', e);
-            if (playlistDropdown) {
-                let dropdownContent = playlistDropdown.querySelector('.playlist-dropdown-content');
-                if (!dropdownContent) {
-                    dropdownContent = document.createElement('div');
-                    dropdownContent.className = 'playlist-dropdown-content';
-                    playlistDropdown.appendChild(dropdownContent);
-                }
-                // Only show error if we truly can't recover. Provide a hint if we can infer status code.
-                let causeHint = '';
-                try {
-                    const m = String(e && e.message || '').match(/API error: (\d+)/);
-                    const code = m ? parseInt(m[1], 10) : undefined;
-                    if (code === 429) causeHint = ' (YouTube quota exceeded.)';
-                    else if (code === 504) causeHint = ' (Service timeout while contacting YouTube.)';
-                    else if (code === 500) causeHint = ' (Server configuration error — missing API key?)';
-                } catch (_) {}
-                dropdownContent.innerHTML = `<div class="playlist-error">Failed to load playlist.${causeHint} <button class="playlist-retry-btn" type="button">Retry</button></div>`;
-                const retryBtn = dropdownContent.querySelector('.playlist-retry-btn');
-                if (retryBtn) {
-                    retryBtn.addEventListener('click', (ev) => {
-                        ev.stopPropagation();
-                        isPlaylistLoaded = false;
-                        dropdownContent.innerHTML = '<p class="playlist-loading">Loading playlist...</p>';
-                        try { populatePlaylist(); } catch(_) {}
-                    });
-                }
-            } else {
-                console.error('[Playlist] Dropdown element missing; cannot display error message.');
-            }
+            const dropdownContent = playlistDropdown.querySelector('.playlist-dropdown-content');
+            dropdownContent.innerHTML = '<p class="playlist-error">Failed to load playlist. Please refresh.</p>';
         }
     }
 
     // Assign to global variable so it can be called from updateVideoDetails
     updatePlaylistActiveState = function() {
-        if (!player || !isPlayerReady || !playlistDropdown) return;
+        if (!player || !isPlayerReady || !playlistDropdown || !isPlaylistLoaded) return;
         
         const items = playlistDropdown.querySelectorAll('.playlist-item');
         const currentIndex = player.getPlaylistIndex();
@@ -2570,7 +2377,7 @@ if (quickLinksToggle && quickLinksList) {
             
             // Toggle dropdown visibility
             if (playlistDropdown.style.display === 'none' || !playlistDropdown.style.display) {
-                // Try to populate if not already done (API fetch can run before iframe is ready)
+                // Try to populate if not already done
                 if (!isPlaylistLoaded) {
                     try { populatePlaylist(); } catch(_) {}
                 }
