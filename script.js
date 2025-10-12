@@ -911,20 +911,21 @@ function initializePage() {
     const handleCreateSubmit = async (event) => {
         event.preventDefault();
         const user = window.netlifyIdentity?.currentUser();
-        if (!user || !user.token?.access_token) { updateUserStatusUI(); if (formMessage) { formMessage.textContent = 'Auth required.'; formMessage.className = 'message error'; } console.error("Create submit failed: User not authenticated."); return; }
-        const token = user.token.access_token;
+        if (!user) { updateUserStatusUI(); if (formMessage) { formMessage.textContent = 'Authentication required.'; formMessage.className = 'message error'; } console.error("Create submit failed: User not authenticated."); return; }
+        
     const title = titleInput?.value.trim();
         const content = contentInput?.value.trim();
         const titleMaxLength = parseInt(titleInput?.getAttribute('maxlength') || '300', 10);
         const contentMaxLength = parseInt(contentInput?.getAttribute('maxlength') || '40000', 10);
 
-    if (!content) { if (formMessage) { formMessage.textContent = "Content is required."; formMessage.className = 'message error'; } return; }
-    if (title && title.length > titleMaxLength) { if (formMessage) { formMessage.textContent = `Title exceeds maximum length of ${titleMaxLength}.`; formMessage.className = 'message error'; } return; }
+        if (!content) { if (formMessage) { formMessage.textContent = "Content is required."; formMessage.className = 'message error'; } return; }
+        if (title && title.length > titleMaxLength) { if (formMessage) { formMessage.textContent = `Title exceeds maximum length of ${titleMaxLength}.`; formMessage.className = 'message error'; } return; }
         if (content.length > contentMaxLength) { if (formMessage) { formMessage.textContent = `Content exceeds maximum length of ${contentMaxLength}.`; formMessage.className = 'message error'; } return; }
 
         if (submitButton) submitButton.disabled = true;
         if (formMessage) { formMessage.textContent = "Submitting..."; formMessage.className = 'message info'; }
         try {
+            const token = await user.jwt(true); // Force refresh token if needed
             const response = await fetch('/.netlify/functions/posts', { method: 'POST', headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, body: JSON.stringify({ title, content }) });
             if (!response.ok) { let errorMsg = `HTTP error! status: ${response.status}`; try { const errorData = await response.json(); errorMsg = errorData.error || errorMsg; } catch (e) { /* Ignore parsing error */ } throw new Error(errorMsg); }
             const createdPost = await response.json(); console.log('Post created:', createdPost.id);
