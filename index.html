@@ -1,34 +1,10 @@
-
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
-    <!-- 1. Core Metadata (Character set, viewport, and title should come first) -->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>QuizSongPlayer</title>
-
-    <!-- 2. Resource Hints (Helps the browser prepare for fetching assets) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="preconnect" href="https://www.youtube.com">
-    <link rel="preconnect" href="https://i.ytimg.com">
-    <link rel="preload" href="images/my-logo.webp" as="image" fetchpriority="high">
-
-    <!-- 3. Favicons & Manifest (Icons for various devices and PWA manifest) -->
-    <link rel="icon" href="/images/favicon.svg" type="image/svg+xml">
-    <link rel="icon" href="/images/favicon.ico" sizes="any"> <!-- Fallback for older browsers -->
-    <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
-    <link rel="manifest" href="/images/site.webmanifest">
-    <meta name="apple-mobile-web-app-title" content="QuizSongPlayer">
-
-    <!-- 4. Stylesheets (Load library/vendor CSS before your custom styles) -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="css/styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet">
-
-    <!-- 5. Scripts (Defer scripts to prevent render-blocking) -->
-    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js" defer></script>
+    <!-- The head content will be injected here by head.js -->
+    <script src="_includes/head.js"></script>
+    <script>generateHead('');</script> <!-- Pass an empty string for the home page title -->
 </head>
 
 <body>
