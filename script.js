@@ -369,15 +369,23 @@ function initializePage() {
 
     if (window.netlifyIdentity) {
         // console.log("Netlify Identity found. Setting up listeners...");
-        updateUserStatusUI(); // Initial check
-        netlifyIdentity.on("init", user => { updateUserStatusUI(); if (postsContainer) fetchAndDisplayPosts(); });
+
+        // The "init" event fires when the widget is ready.
+        // We'll set up all our listeners inside this callback.
+        netlifyIdentity.on("init", user => {
+            updateUserStatusUI();
+            if (postsContainer) fetchAndDisplayPosts();
+
+            // Attach button listeners only when identity is ready
+            signupButton?.addEventListener('click', () => netlifyIdentity.open('signup'));
+            loginButton?.addEventListener('click', () => netlifyIdentity.open('login'));
+            logoutButton?.addEventListener('click', () => netlifyIdentity.logout());
+        });
+
         netlifyIdentity.on("login", user => { updateUserStatusUI(); netlifyIdentity.close(); if (postsContainer) fetchAndDisplayPosts(); });
         netlifyIdentity.on("logout", () => { updateUserStatusUI(); if (postsContainer) fetchAndDisplayPosts(); });
         netlifyIdentity.on("error", err => { console.error("NI Event: error:", err); updateUserStatusUI(); if(loginPrompt && loginPrompt.style.display !== 'none') { loginPrompt.textContent = "Auth error."; } else if (formMessage && createPostForm?.style.display !== 'none') { formMessage.textContent = `Auth Error: ${err.message || 'Unknown'}`; formMessage.className = 'message error'; } });
-        // Custom button listeners
-        signupButton?.addEventListener('click', () => netlifyIdentity.open('signup'));
-        loginButton?.addEventListener('click', () => netlifyIdentity.open('login'));
-        logoutButton?.addEventListener('click', () => netlifyIdentity.logout());
+
     } else {
         console.error("Netlify Identity widget script not loaded.");
         updateUserStatusUI(); // Show logged out state
