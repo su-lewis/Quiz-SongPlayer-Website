@@ -59,6 +59,7 @@ const sidebarContent = `
                 <span id="video-trigger-info" role="button" tabindex="0" style="cursor: pointer;" data-translate="ansiArt">ANSI Art (Click to play)</span>
                 <div id="video-embed-container" style="display: none;"></div>
             </li>
+            <li><a href="https://ko-fi.com/lollipop1110111" target="_blank" data-translate="support">Support</a></li>
         </ul>
     </div>
 </div>

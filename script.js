@@ -121,721 +121,106 @@ function initializePage() {
             // Do not clear persisted hover on mouseleave; keep the last hovered
             // Item highlighted and submenu state intact until explicit close
     }
-    const translations = {
-        en: {
-            menu: 'Menu ',
-            language: 'Language',
-            darkMode: 'Dark Mode',
-            create: 'Create',
-            login: 'Login',
-            createAccount: 'Create Account',
-            recentPosts: 'Recent Posts',
-            quickLinks: 'Quick Links',
-            welcome: 'Welcome to QuizSongPlayer',
-            keepTrack: 'Keep track of my blog posts in the sidebar!',
-            newPersonalWebsite: 'This is my new personal website.',
-            createNewPost: 'Create a New Post',
-            titleOptional: 'Title (optional):',
-            contentRequired: 'Content:',
-            submitPost: 'Submit Post',
-            allPosts: 'All Posts',
-            loadingPosts: 'Loading posts...',
-            musicPlayer: 'Music Player',
-            loadingPlaylist: 'Loading playlist...',
-            previous: 'Previous',
-            play: 'Play',
-            next: 'Next',
-            shuffle: 'Shuffle',
-            mute: 'Mute',
-            track: '1.',
-            loadingTitle: 'Loading title...',
-            myX: 'My X',
-            simpCity: 'SimpCity',
-            megaFolder: '<s>Mega Folder</s>',
-            ansiArt: 'ANSI Art (Click to play)',
-            copyright: '© QuizSongPlayer 2025',
-            notAffiliated: 'We are not affiliated with the city of Minneapolis',
-            option2: 'Option 2',
-            option3: 'Option 3',
-            random: 'Random',
-            readMore: '[more]',
-            noPostsFound: 'No posts found.',
-            errorLoadingPosts: 'Error loading posts:',
-            logout: 'Log Out',
-            searchPlaceholder: 'Search...'
-        },
-        ja: {
-            menu: 'メニュー ',
-            language: '言語',
-            darkMode: 'ダークモード',
-            create: '作成',
-            login: 'ログイン',
-            createAccount: 'アカウント作成',
-            recentPosts: '最新の投稿',
-            quickLinks: 'クイックリンク',
-            welcome: 'QuizSongPlayer へようこそ',
-            keepTrack: 'サイドバーでブログ投稿をチェック！',
-            loadingPosts: '投稿を読み込み中...',
-            musicPlayer: 'ミュージックプレーヤー',
-            loadingPlaylist: 'プレイリストを読み込み中...',
-            previous: '前へ',
-            play: '再生',
-            next: '次へ',
-            shuffle: 'シャッフル',
-            mute: 'ミュート',
-            track: '1.',
-            loadingTitle: 'タイトルを読み込み中...',
-            myX: '私のX',
-            simpCity: 'SimpCity',
-            megaFolder: 'Mega フォルダ',
-            ansiArt: 'ANSIアート（クリックで再生）',
-            copyright: '© QuizSongPlayer 2025',
-            notAffiliated: 'ミネアポリス市とは提携していません',
-            option2: 'オプション 2',
-            option3: 'オプション 3',
-            random: 'ランダム',
-            readMore: '［もっと読む］',
-            noPostsFound: '投稿が見つかりません。',
-            errorLoadingPosts: '投稿の読み込みエラー:',
-            logout: 'ログアウト',
-            searchPlaceholder: '検索...'
-        },
-        fr: {
-            menu: 'Menu ',
-            language: 'Langue',
-            darkMode: 'Mode Sombre',
-            create: 'Créer',
-            login: 'Connexion',
-            createAccount: 'Créer un Compte',
-            recentPosts: 'Publications Récentes',
-            quickLinks: 'Liens Rapides',
-            welcome: 'Bienvenue à QuizSongPlayer',
-            keepTrack: 'Suivez mes articles de blog dans la barre latérale !',
-            newPersonalWebsite: 'Ceci est mon nouveau site web personnel.',
-            createNewPost: 'Créer un nouvel article',
-            titleOptional: 'Titre (optionnel) :',
-            contentRequired: 'Contenu :',
-            submitPost: 'Soumettre l\'article',
-            allPosts: 'Tous les articles',
-            loadingPosts: 'Chargement des articles...',
-            musicPlayer: 'Lecteur de musique',
-            loadingPlaylist: 'Chargement de la playlist...',
-            previous: 'Précédent',
-            play: 'Lire',
-            next: 'Suivant',
-            shuffle: 'Aléatoire',
-            mute: 'Muet',
-            track: '1.',
-            loadingTitle: 'Chargement du titre...',
-            myX: 'Mon X',
-            simpCity: 'SimpCity',
-            megaFolder: 'Dossier Mega',
-            ansiArt: 'Art ANSI (Cliquez pour jouer)',
-            copyright: '© QuizSongPlayer 2025',
-            notAffiliated: 'Nous ne sommes pas affiliés à la ville de Minneapolis',
-            option2: 'Option 2',
-            option3: 'Option 3',
-            random: 'Aléatoire',
-            readMore: '[plus]',
-            noPostsFound: 'Aucun article trouvé.',
-            errorLoadingPosts: 'Erreur lors du chargement des articles :',
-            logout: 'Se déconnecter',
-            searchPlaceholder: 'Rechercher...'
-        },
-        de: {
-            menu: 'Menü ',
-            language: 'Sprache',
-            darkMode: 'Dunkler Modus',
-            create: 'Erstellen',
-            login: 'Anmelden',
-            createAccount: 'Konto Erstellen',
-            recentPosts: 'Neueste Beiträge',
-            quickLinks: 'Schnelllinks',
-            welcome: 'Willkommen bei QuizSongPlayer',
-            keepTrack: 'Behalte meine Blogbeiträge in der Seitenleiste im Blick!',
-            newPersonalWebsite: 'Dies ist meine neue persönliche Webseite.',
-            createNewPost: 'Einen neuen Beitrag erstellen',
-            titleOptional: 'Titel (optional):',
-            contentRequired: 'Inhalt:',
-            submitPost: 'Beitrag absenden',
-            allPosts: 'Alle Beiträge',
-            loadingPosts: 'Beiträge werden geladen...',
-            musicPlayer: 'Musikspieler',
-            loadingPlaylist: 'Playlist wird geladen...',
-            previous: 'Zurück',
-            play: 'Abspielen',
-            next: 'Weiter',
-            shuffle: 'Zufällig',
-            mute: 'Stumm',
-            track: '1.',
-            loadingTitle: 'Titel wird geladen...',
-            myX: 'Mein X',
-            simpCity: 'SimpCity',
-            megaFolder: 'Mega-Ordner',
-            ansiArt: 'ANSI Art (Klicken zum Abspielen)',
-            copyright: '© QuizSongPlayer 2025',
-            notAffiliated: 'Wir sind nicht mit der Stadt Minneapolis verbunden',
-            option2: 'Option 2',
-            option3: 'Option 3',
-            random: 'Zufall',
-            readMore: '[mehr]',
-            noPostsFound: 'Keine Beiträge gefunden.',
-            errorLoadingPosts: 'Fehler beim Laden der Beiträge:',
-            logout: 'Abmelden',
-            searchPlaceholder: 'Suchen...'
-        },
-        it: {
-            menu: 'Menu ',
-            language: 'Lingua',
-            darkMode: 'Modalità scura',
-            create: 'Crea',
-            login: 'Accedi',
-            createAccount: 'Crea account',
-            recentPosts: 'Post recenti',
-            quickLinks: 'Link rapidi',
-            welcome: 'Benvenuto su QuizSongPlayer',
-            keepTrack: 'Tieni traccia dei miei post nel sidebar!',
-            newPersonalWebsite: 'Questo è il mio nuovo sito web personale.',
-            createNewPost: 'Crea un nuovo post',
-            titleOptional: 'Titolo (opzionale):',
-            contentRequired: 'Contenuto:',
-            submitPost: 'Invia post',
-            allPosts: 'Tutti i post',
-            loadingPosts: 'Caricamento dei post...',
-            musicPlayer: 'Lettore musicale',
-            loadingPlaylist: 'Caricamento playlist...',
-            previous: 'Precedente',
-            play: 'Riproduci',
-            next: 'Successivo',
-            shuffle: 'Casuale',
-            mute: 'Muto',
-            track: '1.',
-            loadingTitle: 'Caricamento titolo...',
-            myX: 'Il mio X',
-            simpCity: 'SimpCity',
-            megaFolder: 'Cartella Mega',
-            ansiArt: 'Arte ANSI (Clicca per riprodurre)',
-            copyright: '© QuizSongPlayer 2025',
-            notAffiliated: 'Non siamo affiliati con la città di Minneapolis',
-            option2: 'Opzione 2',
-            option3: 'Opzione 3',
-            random: 'Casuale',
-            readMore: '[altro]',
-            noPostsFound: 'Nessun post trovato.',
-            errorLoadingPosts: 'Errore nel caricamento dei post:',
-            logout: 'Esci',
-            searchPlaceholder: 'Cerca...'
-        },
-        es: {
-            menu: 'Menú ',
-            language: 'Idioma',
-            darkMode: 'Modo Oscuro',
-            create: 'Crear',
-            login: 'Iniciar Sesión',
-            createAccount: 'Crear Cuenta',
-            recentPosts: 'Publicaciones Recientes',
-            quickLinks: 'Enlaces Rápidos',
-            welcome: 'Bienvenido a QuizSongPlayer',
-            keepTrack: '¡Sigue mis publicaciones de blog en la barra lateral!',
-            newPersonalWebsite: 'Este es mi nuevo sitio web personal.',
-            createNewPost: 'Crear una nueva publicación',
-            titleOptional: 'Título (opcional):',
-            contentRequired: 'Contenido:',
-            submitPost: 'Enviar publicación',
-            allPosts: 'Todas las publicaciones',
-            loadingPosts: 'Cargando publicaciones...',
-            musicPlayer: 'Reproductor de música',
-            loadingPlaylist: 'Cargando lista de reproducción...',
-            previous: 'Anterior',
-            play: 'Reproducir',
-            next: 'Siguiente',
-            shuffle: 'Aleatorio',
-            mute: 'Silencio',
-            track: '1.',
-            loadingTitle: 'Cargando título...',
-            myX: 'Mi X',
-            simpCity: 'SimpCity',
-            megaFolder: 'Carpeta Mega',
-            ansiArt: 'Arte ANSI (Haz clic para reproducir)',
-            copyright: '© QuizSongPlayer 2025',
-            notAffiliated: 'No estamos afiliados con la ciudad de Minneapolis',
-            option2: 'Opción 2',
-            option3: 'Opción 3',
-            random: 'Aleatorio',
-            readMore: '[más]',
-            noPostsFound: 'No se encontraron publicaciones.',
-            errorLoadingPosts: 'Error al cargar las publicaciones:',
-            logout: 'Cerrar sesión',
-            searchPlaceholder: 'Buscar...'
-        },
-        pt: {
-            menu: 'Menu ',
-            language: 'Idioma',
-            darkMode: 'Modo Escuro',
-            create: 'Criar',
-            login: 'Entrar',
-            createAccount: 'Criar Conta',
-            recentPosts: 'Postagens Recentes',
-            quickLinks: 'Links Rápidos',
-            welcome: 'Bem-vindo ao QuizSongPlayer',
-            keepTrack: 'Acompanhe minhas postagens no sidebar!',
-            newPersonalWebsite: 'Este é o meu novo site pessoal.',
-            createNewPost: 'Criar uma nova postagem',
-            titleOptional: 'Título (opcional):',
-            contentRequired: 'Conteúdo:',
-            submitPost: 'Enviar postagem',
-            allPosts: 'Todas as postagens',
-            loadingPosts: 'Carregando postagens...',
-            musicPlayer: 'Reprodutor de música',
-            loadingPlaylist: 'Carregando playlist...',
-            previous: 'Anterior',
-            play: 'Reproduzir',
-            next: 'Próximo',
-            shuffle: 'Aleatório',
-            mute: 'Mudo',
-            track: '1.',
-            loadingTitle: 'Carregando título...',
-            myX: 'Meu X',
-            simpCity: 'SimpCity',
-            megaFolder: 'Pasta Mega',
-            ansiArt: 'Arte ANSI (Clique para reproduzir)',
-            copyright: '© QuizSongPlayer 2025',
-            notAffiliated: 'Não somos afiliados à cidade de Minneapolis',
-            option2: 'Opção 2',
-            option3: 'Opção 3',
-            random: 'Aleatório',
-            readMore: '[mais]',
-            noPostsFound: 'Nenhuma postagem encontrada.',
-            errorLoadingPosts: 'Erro ao carregar postagens:',
-            logout: 'Sair',
-            searchPlaceholder: 'Pesquisar...'
-        },
-        ru: {
-            menu: 'Меню ',
-            language: 'Язык',
-            darkMode: 'Тёмная тема',
-            create: 'Создать',
-            login: 'Войти',
-            createAccount: 'Создать аккаунт',
-            recentPosts: 'Недавние записи',
-            quickLinks: 'Быстрые ссылки',
-            welcome: 'Добро пожаловать в QuizSongPlayer',
-            keepTrack: 'Следите за моими записями в боковой панели!',
-            newPersonalWebsite: 'Это мой новый личный сайт.',
-            createNewPost: 'Создать новую запись',
-            titleOptional: 'Заголовок (необязательно):',
-            contentRequired: 'Содержание:',
-            submitPost: 'Отправить запись',
-            allPosts: 'Все записи',
-            loadingPosts: 'Загрузка записей...',
-            musicPlayer: 'Музыкальный плеер',
-            loadingPlaylist: 'Загрузка плейлиста...',
-            previous: 'Назад',
-            play: 'Воспроизвести',
-            next: 'Вперёд',
-            shuffle: 'Перемешать',
-            mute: 'Без звука',
-            track: '1.',
-            loadingTitle: 'Загрузка названия...',
-            myX: 'Мой X',
-            simpCity: 'SimpCity',
-            megaFolder: 'Mega папка',
-            ansiArt: 'ANSI-арт (нажмите для воспроизведения)',
-            copyright: '© QuizSongPlayer 2025',
-            notAffiliated: 'Мы не связаны с городом Миннеаполис',
-            option2: 'Опция 2',
-            option3: 'Опция 3',
-            random: 'Случайно',
-            readMore: '[ещё]',
-            noPostsFound: 'Записей не найдено.',
-            errorLoadingPosts: 'Ошибка загрузки записей:',
-            logout: 'Выйти',
-            searchPlaceholder: 'Поиск...'
-        },
-        zh: {
-            menu: '菜单 ',
-            language: '语言',
-            darkMode: '深色模式',
-            create: '创建',
-            login: '登录',
-            createAccount: '创建账户',
-            recentPosts: '最新文章',
-            quickLinks: '快速链接',
-            welcome: '欢迎来到 QuizSongPlayer',
-            keepTrack: '在侧边栏查看我的博客文章！',
-            newPersonalWebsite: '这是我的新个人网站。',
-            createNewPost: '创建新文章',
-            titleOptional: '标题（可选）：',
-            contentRequired: '内容：',
-            submitPost: '提交文章',
-            allPosts: '所有文章',
-            loadingPosts: '正在加载文章...',
-            musicPlayer: '音乐播放器',
-            loadingPlaylist: '正在加载播放列表...',
-            previous: '上一首',
-            play: '播放',
-            next: '下一首',
-            shuffle: '随机',
-            mute: '静音',
-            track: '1.',
-            loadingTitle: '正在加载标题...',
-            myX: '我的 X',
-            simpCity: 'SimpCity',
-            megaFolder: 'Mega 文件夹',
-            ansiArt: 'ANSI 艺术（点击播放）',
-            copyright: '© QuizSongPlayer 2025',
-            notAffiliated: '我们与明尼阿波利斯市无关联',
-            option2: '选项 2',
-            option3: '选项 3',
-            random: '随机',
-            readMore: '[更多]',
-            noPostsFound: '未找到文章。',
-            errorLoadingPosts: '加载文章时出错：',
-            logout: '退出登录',
-            searchPlaceholder: '搜索...'
-        },
-        ko: {
-            menu: '메뉴 ',
-            language: '언어',
-            darkMode: '다크 모드',
-            create: '만들기',
-            login: '로그인',
-            createAccount: '계정 만들기',
-            recentPosts: '최근 게시물',
-            quickLinks: '빠른 링크',
-            welcome: 'QuizSongPlayer에 오신 것을 환영합니다',
-            keepTrack: '사이드바에서 블로그 글을 확인하세요!',
-            newPersonalWebsite: '이것은 저의 새로운 개인 웹사이트입니다.',
-            createNewPost: '새 게시물 작성',
-            titleOptional: '제목 (선택 사항):',
-            contentRequired: '내용:',
-            submitPost: '게시물 제출',
-            allPosts: '모든 게시물',
-            loadingPosts: '게시물 불러오는 중...',
-            musicPlayer: '음악 플레이어',
-            loadingPlaylist: '재생목록 불러오는 중...',
-            previous: '이전',
-            play: '재생',
-            next: '다음',
-            shuffle: '셔플',
-            mute: '음소거',
-            track: '1.',
-            loadingTitle: '제목 불러오는 중...',
-            myX: '나의 X',
-            simpCity: 'SimpCity',
-            megaFolder: 'Mega 폴더',
-            ansiArt: 'ANSI 아트 (클릭하여 재생)',
-            copyright: '© QuizSongPlayer 2025',
-            notAffiliated: '우리는 미니애폴리스 시와 관련이 없습니다',
-            option2: '옵션 2',
-            option3: '옵션 3',
-            random: '무작위',
-            readMore: '[더보기]',
-            noPostsFound: '게시물이 없습니다.',
-            errorLoadingPosts: '게시물 로딩 오류:',
-            logout: '로그아웃',
-            searchPlaceholder: '검색...'
-        },
-        el: {
-            menu: 'Μενού ',
-            language: 'Γλώσσα',
-            darkMode: 'Σκούρο θέμα',
-            create: 'Δημιουργία',
-            login: 'Σύνδεση',
-            createAccount: 'Δημιουργία λογαριασμού',
-            recentPosts: 'Πρόσφατες αναρτήσεις',
-            quickLinks: 'Γρήγοροι σύνδεσμοι',
-            welcome: 'Καλώς ήρθατε στο QuizSongPlayer',
-            keepTrack: 'Παρακολουθήστε τα άρθρα μου στην πλαϊνή μπάρα!',
-            newPersonalWebsite: 'Αυτή είναι η νέα μου προσωπική ιστοσελίδα.',
-            createNewPost: 'Δημιουργία νέας ανάρτησης',
-            titleOptional: 'Τίτλος (προαιρετικός):',
-            contentRequired: 'Περιεχόμενο:',
-            submitPost: 'Υποβολή ανάρτησης',
-            allPosts: 'Όλες οι αναρτήσεις',
-            loadingPosts: 'Φόρτωση αναρτήσεων...',
-            musicPlayer: 'Μουσικός αναπαραγωγέας',
-            loadingPlaylist: 'Φόρτωση λίστας...',
-            previous: 'Προηγούμενο',
-            play: 'Αναπαραγωγή',
-            next: 'Επόμενο',
-            shuffle: 'Τυχαία',
-            mute: 'Σίγαση',
-            track: '1.',
-            loadingTitle: 'Φόρτωση τίτλου...',
-            myX: 'Το X μου',
-            simpCity: 'SimpCity',
-            megaFolder: 'Mega Φάκελος',
-            ansiArt: 'ANSI Τέχνη (Κλικ για αναπαραγωγή)',
-            copyright: '© QuizSongPlayer 2025',
-            notAffiliated: 'Δεν συνδεόμαστε με τον δήμο της Μινεάπολης',
-            option2: 'Επιλογή 2',
-            option3: 'Επιλογή 3',
-            random: 'Τυχαίο',
-            readMore: '[περισσότερα]',
-            noPostsFound: 'Δεν βρέθηκαν αναρτήσεις.',
-            errorLoadingPosts: 'Σφάλμα κατά τη φόρτωση αναρτήσεων:',
-            logout: 'Αποσύνδεση',
-            searchPlaceholder: 'Αναζήτηση...'
-        },
-        ar: {
-            menu: 'القائمة ',
-            language: 'اللغة',
-            darkMode: 'الوضع الداكن',
-            create: 'إنشاء',
-            login: 'تسجيل الدخول',
-            createAccount: 'إنشاء حساب',
-            recentPosts: 'أحدث المنشورات',
-            quickLinks: 'روابط سريعة',
-            welcome: 'مرحبًا بكم في QuizSongPlayer',
-            keepTrack: 'تابع منشوراتي على الشريط الجانبي!',
-            newPersonalWebsite: 'هذا هو موقعي الشخصي الجديد.',
-            createNewPost: 'إنشاء منشور جديد',
-            titleOptional: 'العنوان (اختياري):',
-            contentRequired: 'المحتوى:',
-            submitPost: 'إرسال المنشور',
-            allPosts: 'كل المنشورات',
-            loadingPosts: 'جاري تحميل المنشورات...',
-            musicPlayer: 'مشغل الموسيقى',
-            loadingPlaylist: 'جاري تحميل قائمة التشغيل...',
-            previous: 'السابق',
-            play: 'تشغيل',
-            next: 'التالي',
-            shuffle: 'عشوائي',
-            mute: 'كتم الصوت',
-            track: '1.',
-            loadingTitle: 'جاري تحميل العنوان...',
-            myX: 'X الخاص بي',
-            simpCity: 'SimpCity',
-            megaFolder: 'مجلد Mega',
-            ansiArt: 'فن ANSI (انقر للتشغيل)',
-            copyright: '© QuizSongPlayer 2025',
-            notAffiliated: 'لسنا مرتبطين بمدينة مينيابوليس',
-            option2: 'الخيار 2',
-            option3: 'الخيار 3',
-            random: 'عشوائي',
-            readMore: '[المزيد]',
-            noPostsFound: 'لم يتم العثور على منشورات.',
-            errorLoadingPosts: 'خطأ في تحميل المنشورات:',
-            logout: 'تسجيل الخروج',
-            searchPlaceholder: 'بحث...'
-        },
-        af: {
-            menu: 'Kieslys ',
-            language: 'Taal',
-            darkMode: 'Donker modus',
-            create: 'Skep',
-            login: 'Meld aan',
-            createAccount: 'Skep Rekening',
-            recentPosts: 'Onlangse Plasings',
-            quickLinks: 'Vinnige Skakels',
-            welcome: 'Welkom by QuizSongPlayer',
-            keepTrack: 'Hou tred met my blogplasings in die sybalk!',
-            newPersonalWebsite: 'Hierdie is my nuwe persoonlike webwerf.',
-            createNewPost: 'Skep \'n nuwe plasing',
-            titleOptional: 'Titel (opsioneel):',
-            contentRequired: 'Inhoud:',
-            submitPost: 'Dien plasing in',
-            allPosts: 'Alle plasings',
-            loadingPosts: 'Laai plasings...',
-            musicPlayer: 'Musiekspeler',
-            loadingPlaylist: 'Laai speellys...',
-            previous: 'Vorige',
-            play: 'Speel',
-            next: 'Volgende',
-            shuffle: 'Shuffle',
-            mute: 'Stil',
-            track: '1.',
-            loadingTitle: 'Laai titel...',
-            myX: 'My X',
-            simpCity: 'SimpCity',
-            megaFolder: 'Mega-lêergids',
-            ansiArt: 'ANSI-kuns (Klik om te speel)',
-            copyright: '© QuizSongPlayer 2025',
-            notAffiliated: 'Ons is nie geaffilieer met die stad Minneapolis nie',
-            option2: 'Opsie 2',
-            option3: 'Opsie 3',
-            random: 'Lukraak',
-            readMore: '[meer]',
-            noPostsFound: 'Geen plasings gevind nie.',
-            errorLoadingPosts: 'Fout met laai van plasings:',
-            logout: 'Teken uit',
-            searchPlaceholder: 'Soek...'
-        },
-        haw: {
-            menu: 'Papa kuhikuhi ',
-            language: 'ʻŌlelo',
-            darkMode: 'ʻAno pouli',
-            create: 'Hana',
-            login: 'Kāinoa',
-            createAccount: 'Hana moʻokāki',
-            recentPosts: 'Nā pou hou',
-            quickLinks: 'Nā loulou wikiwiki',
-            welcome: 'Welina i QuizSongPlayer',
-            keepTrack: 'E nānā i kaʻu mau pou ma ka pā ʻaoʻao!',
-            newPersonalWebsite: 'ʻO kēia kaʻu pūnaewele pilikino hou.',
-            createNewPost: 'Hana i kahi pou hou',
-            titleOptional: 'Poʻo inoa (koho):',
-            contentRequired: 'Maʻiʻo:',
-            submitPost: 'Waiho i ka pou',
-            allPosts: 'Nā pou a pau',
-            loadingPosts: 'Ke hoʻouka nei i nā pou...',
-            musicPlayer: 'Mea hoʻokani mele',
-            loadingPlaylist: 'Ke hoʻouka nei i ka papa mele...',
-            previous: 'Mua aku',
-            play: 'Hoʻokani',
-            next: 'Aʻe',
-            shuffle: 'Haohao',
-            mute: 'Hāmau',
-            track: '1.',
-            loadingTitle: 'Ke hoʻouka nei i ka poʻo inoa...',
-            myX: 'Kaʻu X',
-            simpCity: 'SimpCity',
-            megaFolder: 'Pāpale Mega',
-            ansiArt: 'Hana Noʻeau ANSI (Kaomi e pāʻani)',
-            copyright: '© QuizSongPlayer 2025',
-            notAffiliated: 'ʻAʻole mākou i pili me ke kūlanakauhale ʻo Minneapolis',
-            option2: 'Koho 2',
-            option3: 'Koho 3',
-            random: 'Kau wale',
-            readMore: '[hou aʻe]',
-            noPostsFound: 'ʻAʻohe pou i loaʻa.',
-            errorLoadingPosts: 'Kuhi hewa i ka hoʻouka ʻana i nā pou:',
-            logout: 'Lele i waho',
-            searchPlaceholder: 'Huli...'
-        },
-        hi: {
-            menu: 'मेन्यू ',
-            language: 'भाषा',
-            darkMode: 'डार्क मोड',
-            create: 'बनाएँ',
-            login: 'लॉगिन',
-            createAccount: 'खाता बनाएँ',
-            recentPosts: 'हाल की पोस्टें',
-            quickLinks: 'त्वरित लिंक',
-            welcome: 'QuizSongPlayer में आपका स्वागत है',
-            keepTrack: 'साइडबार में मेरी ब्लॉग पोस्ट देखें!',
-            newPersonalWebsite: 'यह मेरी नई व्यक्तिगत वेबसाइट है।',
-            createNewPost: 'एक नई पोस्ट बनाएँ',
-            titleOptional: 'शीर्षक (वैकल्पिक):',
-            contentRequired: 'सामग्री:',
-            submitPost: 'पोस्ट सबमिट करें',
-            allPosts: 'सभी पोस्ट',
-            loadingPosts: 'पोस्ट लोड हो रही हैं...',
-            musicPlayer: 'म्यूज़िक प्लेयर',
-            loadingPlaylist: 'प्लेलिस्ट लोड हो रही है...',
-            previous: 'पिछला',
-            play: 'चलाएँ',
-            next: 'अगला',
-            shuffle: 'शफल',
-            mute: 'म्यूट',
-            track: '1.',
-            loadingTitle: 'शीर्षक लोड हो रहा है...',
-            myX: 'मेरा X',
-            simpCity: 'SimpCity',
-            megaFolder: 'Mega फोल्डर',
-            ansiArt: 'ANSI कला (चलाने के लिए क्लिक करें)',
-            copyright: '© QuizSongPlayer 2025',
-            notAffiliated: 'हम Minneapolis शहर से संबद्ध नहीं हैं',
-            option2: 'विकल्प 2',
-            option3: 'विकल्प 3',
-            random: 'यादृच्छिक',
-            readMore: '[और]',
-            noPostsFound: 'कोई पोस्ट नहीं मिली।',
-            errorLoadingPosts: 'पोस्ट लोड करने में त्रुटि:',
-            logout: 'लॉग आउट',
-            searchPlaceholder: 'खोजें...'
-        },
-        la: {
-            menu: 'Index ',
-            language: 'Lingua',
-            darkMode: 'Modus Obscurus',
-            create: 'Creare',
-            login: 'Ingredi',
-            createAccount: 'Create Rationem',
-            recentPosts: 'Recentia Scripta',
-            quickLinks: 'Nexus Celeres',
-            welcome: 'Gratum ad QuizSongPlayer',
-            keepTrack: 'In latere schedam scripta mea inspice!',
-            newPersonalWebsite: 'Hoc est novum meum situm personalem.',
-            createNewPost: 'Novam inscriptionem creare',
-            titleOptional: 'Titulus (optionalis):',
-            contentRequired: 'Contentum:',
-            submitPost: 'Inscriptionem mittere',
-            allPosts: 'Omnia Scripta',
-            loadingPosts: 'Scripta onerantur...',
-            musicPlayer: 'Musicorum Ludius',
-            loadingPlaylist: 'Index cantuum oneratur...',
-            previous: 'Praecedens',
-            play: 'Ludere',
-            next: 'Proximus',
-            shuffle: 'Permiscere',
-            mute: 'Obmutescere',
-            track: '1.',
-            loadingTitle: 'Titulus oneratur...',
-            myX: 'Meus X',
-            simpCity: 'SimpCity',
-            megaFolder: 'Mega Folders',
-            ansiArt: 'Ars ANSI (Click ut ludas)',
-            copyright: '© QuizSongPlayer 2025',
-            notAffiliated: 'Cum urbe Minneapolis non cohaeremus',
-            option2: 'Optio 2',
-            option3: 'Optio 3',
-            random: 'Fortuitus',
-            readMore: '[plura]',
-            noPostsFound: 'Nulla scripta inventa.',
-            errorLoadingPosts: 'Error in onerandis scriptis:',
-            logout: 'Exi',
-            searchPlaceholder: 'Quaere...'
-        }
-    };
+    // --- Automatic Translation System ---
+    const translationCache = {}; // In-memory cache for the current page session
+    const originalTextMap = new WeakMap(); // Stores original English text for elements
 
     // Attribute-driven translation for stability
-    function autoTranslate(lang) {
-        const translation = translations[lang] || translations.en;
-        // Special case: Menu chevron keeps icon intact
-        const menuLink = document.getElementById('menu-link');
-        if (menuLink) {
-            const chevron = menuLink.querySelector('i');
-            if (!menuLink.hasAttribute('data-original')) {
-                menuLink.setAttribute('data-original', menuLink.textContent.replace(/\s*$/, ''));
-            }
-            const originalMenu = menuLink.getAttribute('data-original');
-            // Keep a normal space between text and the icon; fallback to fresh icon if missing
-            const chevronHTML = chevron ? chevron.outerHTML : '<i class="bi bi-chevron-down"></i>';
-            const text = (lang === 'en' ? originalMenu : (translation.menu || 'Menu')).replace(/\s+$/,'');
-            // Use a non-breaking space to ensure a visible gap regardless of collapsing
-            menuLink.innerHTML = text + '&nbsp;' + chevronHTML;
+    async function autoTranslate(lang) {
+        // Store original text on first run
+        if (!originalTextMap.has(document.body)) {
+            document.querySelectorAll('[data-translate], [data-translate-placeholder]').forEach(el => {
+                if (el.hasAttribute('data-translate-placeholder')) {
+                    originalTextMap.set(el, el.placeholder);
+                } else {
+                    originalTextMap.set(el, el.innerHTML); // Store innerHTML to preserve icons etc.
+                }
+            });
+            originalTextMap.set(document.body, true); // Mark as initialized
         }
-        // Translate all elements with data-translate
-        document.querySelectorAll('[data-translate]').forEach(el => {
-            // Skip the menu link since it's handled specially (keeps chevron icon)
-            if (menuLink && el === menuLink) return;
-            const key = el.getAttribute('data-translate');
-            const value = translation[key];
-            if (typeof value === 'string') {
-                el.textContent = value;
-            }
-        });
 
-        // Translate placeholders
-        document.querySelectorAll('[data-translate-placeholder]').forEach(el => {
-            const key = el.getAttribute('data-translate-placeholder');
-            const value = translation[key];
-            if (typeof value === 'string') {
-                if ('placeholder' in el) {
-                    el.setAttribute('placeholder', value);
+        // Restore all elements to their original English text first
+        document.querySelectorAll('[data-translate], [data-translate-placeholder]').forEach(el => {
+            if (originalTextMap.has(el)) {
+                if (el.hasAttribute('data-translate-placeholder')) {
+                    el.placeholder = originalTextMap.get(el);
+                } else {
+                    el.innerHTML = originalTextMap.get(el);
                 }
             }
         });
+
+        // If target is English, we're done.
+        if (lang === 'en') {
+            return;
+        }
+
+        // Load cache for the target language from localStorage
+        const cacheKey = `translation_cache_${lang}`;
+        try {
+            const cached = localStorage.getItem(cacheKey);
+            if (cached) {
+                Object.assign(translationCache, JSON.parse(cached));
+            }
+        } catch (e) {
+            console.warn('Could not load translation cache from localStorage.', e);
+        }
+
+        const elementsToTranslate = document.querySelectorAll('[data-translate], [data-translate-placeholder]');
+
+        for (const el of elementsToTranslate) {
+            const isPlaceholder = el.hasAttribute('data-translate-placeholder');
+            // For elements with children (like icons), we only want the text content.
+            const originalText = (isPlaceholder ? el.placeholder : el.textContent).trim();
+
+            if (!originalText) continue;
+
+            let translatedText = translationCache[originalText];
+
+            if (!translatedText) {
+                try {
+                    const response = await fetch('/.netlify/functions/translate', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ text: originalText, target_lang: lang }),
+                    });
+                    if (!response.ok) throw new Error(`API error: ${response.status}`);
+                    const data = await response.json();
+                    translatedText = data.translatedText;
+                    translationCache[originalText] = translatedText; // Save to in-memory cache
+                } catch (error) {
+                    console.error(`Failed to translate "${originalText}":`, error);
+                    continue; // Skip this element on error
+                }
+            }
+
+            if (isPlaceholder) {
+                el.placeholder = translatedText;
+            } else {
+                // To preserve icons, find the first text node and replace its content.
+                const textNode = Array.from(el.childNodes).find(node => node.nodeType === Node.TEXT_NODE && node.textContent.trim());
+                if (textNode) {
+                    textNode.textContent = translatedText;
+                } else {
+                    el.textContent = translatedText; // Fallback for simple elements
+                }
+            }
+        }
+
+        // Save the updated cache to localStorage
+        try {
+            localStorage.setItem(cacheKey, JSON.stringify(translationCache));
+        } catch (e) {
+            console.warn('Could not save translation cache to localStorage.', e);
+        }
     }
 
 
     // Track the current language (persist across pages)
     let currentLang = 'en';
-    function applyTranslations(lang) {
+    async function applyTranslations(lang) {
         currentLang = lang;
-        autoTranslate(lang);
+        await autoTranslate(lang);
         // Keep site layout LTR for all languages (do not flip layout for Arabic)
         document.documentElement.setAttribute('dir', 'ltr');
     }
@@ -843,7 +228,7 @@ function initializePage() {
     // Load preferred language from localStorage if available
     try {
         const savedLang = localStorage.getItem('preferredLang');
-        if (savedLang && translations[savedLang]) {
+        if (savedLang) {
             applyTranslations(savedLang);
         } else {
             applyTranslations('en');
@@ -857,13 +242,6 @@ function initializePage() {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const selectedLang = link.getAttribute('data-lang');
-            // Always reset to English first to ensure correct mapping
-            applyTranslations('en');
-            // Then apply the selected language
-            if (selectedLang !== 'en') {
-                setTimeout(() => applyTranslations(selectedLang), 0);
-            }
-            // Optionally, update <html lang="...">
             // Apply the selected language. The function handles reverting to original text.
             applyTranslations(selectedLang);
             document.documentElement.lang = selectedLang;
@@ -873,14 +251,18 @@ function initializePage() {
 
     // Helper: re-apply translations after posts or nav items are loaded/changed
     function retranslateDynamicContent() {
-        applyTranslations(currentLang);
+        if (currentLang !== 'en') {
+            applyTranslations(currentLang);
+        }
     }
 
     // Small helper to fetch translated strings safely
-    function t(key) {
+    async function t(key) {
         try {
-            const pack = (translations[currentLang] || translations.en) || {};
-            return pack[key] || (translations.en && translations.en[key]) || key;
+            // This function is now more complex, as it would need to be async.
+            // For simplicity, we will translate elements directly via data-translate attributes.
+            // If you need to get a translated string in JS, you'd call the translation function.
+            return key; // Placeholder, direct translation is now preferred.
         } catch (_) {
             return key;
         }
@@ -1118,8 +500,8 @@ function initializePage() {
                         // [more] link (translated now; also marked for translation updates)
                         if (needsMore) {
                             const moreLink = document.createElement('a');
-                            moreLink.href = `/posts#post-${post.id}`;
-                            moreLink.textContent = t('readMore') || '[more]';
+                            moreLink.href = `/posts#post-${post.id}`;;
+                            moreLink.textContent = '[more]';
                             moreLink.setAttribute('data-translate', 'readMore');
                             moreLink.className = 'read-more-link';
                             contentElement.appendChild(moreLink);
@@ -1193,14 +575,14 @@ function initializePage() {
                     }
                 }
             } else {
-                if (postsContainer) postsContainer.innerHTML = `<p data-translate="noPostsFound">${t('noPostsFound') || 'No posts found.'}</p>`;
-                if (fullPostsContainer) fullPostsContainer.innerHTML = `<p data-translate="noPostsFound">${t('noPostsFound') || 'No posts found.'}</p>`;
+                if (postsContainer) postsContainer.innerHTML = `<p data-translate="noPostsFound">No posts found.</p>`;
+                if (fullPostsContainer) fullPostsContainer.innerHTML = `<p data-translate="noPostsFound">No posts found.</p>`;
                 retranslateDynamicContent();
             }
         } catch (error) {
             console.error("Error fetching/displaying posts:", error);
-            if (postsContainer) postsContainer.innerHTML = `<p style="color: red;"><span data-translate="errorLoadingPosts">${t('errorLoadingPosts') || 'Error loading posts:'}</span> ${error.message}</p>`;
-            if (fullPostsContainer) fullPostsContainer.innerHTML = `<p style=\"color: red;\"><span data-translate=\"errorLoadingPosts\">${t('errorLoadingPosts') || 'Error loading posts:'}</span> ${error.message}</p>`;
+            if (postsContainer) postsContainer.innerHTML = `<p style="color: red;"><span data-translate="errorLoadingPosts">Error loading posts:</span> ${error.message}</p>`;
+            if (fullPostsContainer) fullPostsContainer.innerHTML = `<p style=\"color: red;\"><span data-translate=\"errorLoadingPosts\">Error loading posts:</span> ${error.message}</p>`;
             retranslateDynamicContent();
         }
     }
@@ -2043,7 +1425,7 @@ function initializePage() {
         }
         if (videoTriggerInfo) {
             // Localize ANSI Art label
-            videoTriggerInfo.textContent = t('ansiArt') || "ANSI Art (Click to play)";
+            videoTriggerInfo.textContent = "ANSI Art (Click to play)";
             videoTriggerInfo.style.cursor = 'pointer';
             videoTriggerInfo.setAttribute('aria-disabled', 'false');
             videoTriggerInfo.classList.remove('video-active'); // Remove styling class
@@ -2103,7 +1485,7 @@ function initializePage() {
 
     // console.log('Attempting to play ANSI video.');
         isVideoActive = true;
-    videoTriggerInfo.textContent = t('ansiArt')?.replace('(Click to play)', '(Loading...)') || "ANSI Art (Loading...)";
+    videoTriggerInfo.textContent = "ANSI Art (Loading...)";
         videoTriggerInfo.style.cursor = 'default';
         videoTriggerInfo.setAttribute('aria-disabled', 'true');
         videoTriggerInfo.classList.add('video-active');
@@ -2141,7 +1523,7 @@ function initializePage() {
                 // Playback started
                 // console.log("Video playback started.");
              if (videoTriggerInfo && isVideoActive) { // Check isVideoActive in case of rapid events
-                 videoTriggerInfo.textContent = (t('ansiArt') || 'ANSI Art (Click to play)').replace('(Click to play)', '(Playing...)');
+                 videoTriggerInfo.textContent = "ANSI Art (Playing...)";
                 }
             }).catch(error => {
                 // Playback failed
@@ -2165,7 +1547,7 @@ function initializePage() {
         });
         // Set initial text on load if not already active
         if (!isVideoActive) {
-            videoTriggerInfo.textContent = t('ansiArt') || "ANSI Art (Click to play)";
+            videoTriggerInfo.textContent = "ANSI Art (Click to play)";
             try { if (localStorage.getItem('ansiArtVisited') === '1') videoTriggerInfo.classList.add('visited'); } catch(e) {}
         }
     } else {

@@ -618,7 +618,6 @@ body.dark-mode .playlist-retry-btn {
     padding: 5px 6px;
     cursor: pointer;
     margin: 0;
-    font-weight: normal;
     font-size: 16px;   /* match menu items */
     min-height: 36px;  /* match menu items */
     transition: background-color 0.15s ease-in-out;
@@ -1400,6 +1399,12 @@ body.dark-mode .quick-links-list li a:visited {
     background-color: transparent;
 }
 
+/* Ensure strikethrough works on links and keeps them bold */
+.quick-links-list li s a {
+    text-decoration: line-through;
+    font-weight: 600; /* Re-apply bold weight */
+}
+
 /* ==========================================
    10. Character Counter Styles
    ========================================== */
@@ -1612,7 +1617,6 @@ body.dark-mode .language-submenu a {
 
 body.dark-mode .language-submenu a:hover {
     background-color: var(--dark-mode-navhover);
-    font-weight: normal;
 }
 
 /* Make the parent Language item bold on hover (dark mode) */
