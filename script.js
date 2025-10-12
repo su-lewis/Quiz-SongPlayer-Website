@@ -1691,26 +1691,36 @@ function initializePage() {
         function playPreviousVideo() { 
             if (!isPlayerReady || !player || !playlistLoaded) return; 
             clearPendingRestoreFlags(); 
-            try {
-                if (shuffleMode && shuffleHistory.length > 0) {
-                    // In shuffle mode, go to the last song in history
-                    const prevIndex = shuffleHistory.pop(); // Get and remove the last played index
-                    const prevVideo = fullPlaylistData.videos[prevIndex];
-                    if (prevVideo) {
-                        player.loadVideoById(prevVideo.videoId);
-                        currentPlaylistIndex = prevIndex;
-                        updateVideoTitle(prevVideo.title);
-                        updateThumbnail(prevVideo.videoId);
-                        updateTrackNumber(prevVideo.videoId);
-                        savePlayerState();
-                    }
-                } else {
-                    // Normal (non-shuffle) behavior
-                    const currentIndex = player.getPlaylistIndex();
-                    const totalVideos = player.getPlaylist().length;
-                    // Calculate previous index, wrapping around to the end if at the beginning
-                    const prevIndex = (currentIndex - 1 + totalVideos) % totalVideos;
-                    player.playVideoAt(prevIndex);
+            try { 
+                if (shuffleMode && shuffleHistory.length > 0) { 
+                    // In shuffle mode, go to the last song in history 
+                    const prevIndex = shuffleHistory.pop(); // Get and remove the last played index 
+                    const prevVideo = fullPlaylistData.videos[prevIndex]; 
+                    if (prevVideo) { 
+                        player.loadVideoById(prevVideo.videoId); 
+                        currentPlaylistIndex = prevIndex; 
+                        updateVideoTitle(prevVideo.title); 
+                        updateThumbnail(prevVideo.videoId); 
+                        updateTrackNumber(prevVideo.videoId); 
+                        savePlayerState(); 
+                    } 
+                } else if (fullPlaylistData && fullPlaylistData.videos) { 
+                    // Normal (non-shuffle) behavior using the full playlist data 
+                    const currentVideoData = player.getVideoData(); 
+                    const currentVideoId = currentVideoData ? currentVideoData.video_id : null; 
+                    const totalVideos = fullPlaylistData.videos.length; 
+ 
+                    // Find current index in our full playlist 
+                    let currentIndex = fullPlaylistData.videos.findIndex(v => v.videoId === currentVideoId); 
+                    if (currentIndex === -1) currentIndex = 0; // Fallback to start 
+ 
+                    const prevIndex = (currentIndex - 1 + totalVideos) % totalVideos; 
+                    const prevVideo = fullPlaylistData.videos[prevIndex]; 
+                    player.loadVideoById(prevVideo.videoId); 
+                    currentPlaylistIndex = prevIndex; 
+                    updateVideoDetails(); // This updates title, thumbnail, track number, and saves state 
+                } else { 
+                    player.previousVideo(); // Fallback to the default player method 
                 }
             } catch (e) {
                 console.error("Error in playPreviousVideo:", e);
