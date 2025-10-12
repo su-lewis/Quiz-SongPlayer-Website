@@ -1716,9 +1716,14 @@ function initializePage() {
  
                     const prevIndex = (currentIndex - 1 + totalVideos) % totalVideos; 
                     const prevVideo = fullPlaylistData.videos[prevIndex]; 
-                    player.loadVideoById(prevVideo.videoId); 
-                    currentPlaylistIndex = prevIndex; 
-                    updateVideoDetails(); // This updates title, thumbnail, track number, and saves state 
+                    if (prevVideo) {
+                        player.loadVideoById(prevVideo.videoId); 
+                        currentPlaylistIndex = prevIndex; 
+                        updateVideoTitle(prevVideo.title);
+                        updateThumbnail(prevVideo.videoId);
+                        updateTrackNumber(prevVideo.videoId);
+                        savePlayerState();
+                    }
                 } else { 
                     player.previousVideo(); // Fallback to the default player method 
                 }
