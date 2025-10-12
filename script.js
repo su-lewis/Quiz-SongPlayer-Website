@@ -292,12 +292,6 @@ function initializePage() {
     // dropdownMenu.innerHTML = ...; retranslateDynamicContent();
 
     // --- Global DOM Element References ---
-    const signupButton = document.getElementById('signup-button');
-    const loginButton = document.getElementById('login-button');
-    const logoutButton = document.getElementById('logout-button');
-    const authButtonsDiv = document.getElementById('auth-buttons');
-    const userStatusDiv = document.getElementById('user-status');
-    const userEmailSpan = document.getElementById('user-email');
     const createLink = document.getElementById('create-link');
     const createPostContainer = document.getElementById('create-post-container');
     const createPostArea = document.getElementById('create-post-area');
@@ -325,6 +319,14 @@ function initializePage() {
     const quickLinksToggle = document.querySelector('.quick-links-toggle');
     const quickLinksList = document.getElementById('quick-links-list');
     const musicPlayerContainer = document.querySelector('.mini-music-player');
+
+    // --- Auth Button References (must be after header injection) ---
+    const signupButton = document.getElementById('signup-button');
+    const loginButton = document.getElementById('login-button');
+    const logoutButton = document.getElementById('logout-button');
+    const authButtonsDiv = document.getElementById('auth-buttons');
+    const userStatusDiv = document.getElementById('user-status');
+    const userEmailSpan = document.getElementById('user-email');
 
 
 

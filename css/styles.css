@@ -1577,6 +1577,16 @@ body.dark-mode .auth-button {
 body.dark-mode .auth-button:hover {
     background-color: var(--dark-mode-navhover);
 }
+
+/* Ensure create account/login buttons have correct dark mode style */
+body.dark-mode #auth-buttons .auth-button {
+    background-color: var(--dark-mode-headerbg);
+    color: var(--dark-mode-text);
+    border-color: var(--dark-mode-mainbg);
+}
+body.dark-mode #auth-buttons .auth-button:hover {
+    background-color: var(--dark-mode-navhover);
+}
 /* Ensure logout button has a clear background in dark mode */
 body.dark-mode #user-status #logout-button {
     background-color: var(--dark-mode-navhover);
