@@ -11,11 +11,6 @@
   node_bundler = "esbuild"
   external_node_modules = ["firebase-admin"]
 
-[[redirects]]
-  from = "/.netlify/functions/*"
-  to = "/.netlify/functions/:splat"
-  status = 200
-
 # Friendly API path that maps to Netlify Functions (helps avoid blockers on '/.netlify')
 [[redirects]]
   from = "/api/*"
