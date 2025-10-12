@@ -1,6 +1,7 @@
 // FILE: netlify/functions/posts.js
 
 import admin from 'firebase-admin';
+import fetch from 'node-fetch'; // Import node-fetch for API calls
 
 // --- Rate Limiting Configuration ---
 const POST_LIMIT = 5; // Max posts allowed
@@ -25,6 +26,42 @@ if (!admin.apps.length) {
 
 const db = admin.firestore();
 
+// --- Server-Side Translation Helper ---
+async function translateText(text, targetLang, cacheCollection) {
+    if (!text || targetLang === 'en') {
+        return text;
+    }
+
+    // Use a simple hash of the text as the document ID for caching
+    const crypto = await import('crypto');
+    const hash = crypto.createHash('md5').update(text).digest('hex');
+    const cacheRef = cacheCollection.doc(hash);
+
+    const doc = await cacheRef.get();
+    if (doc.exists && doc.data()[targetLang]) {
+        return doc.data()[targetLang]; // Return cached translation
+    }
+
+    // If not in cache, call the DeepL API
+    const DEEPL_API_KEY = process.env.DEEPL_API_KEY;
+    const api_url = DEEPL_API_KEY.endsWith(':fx') ? 'https://api-free.deepl.com/v2/translate' : 'https://api.deepl.com/v2/translate';
+
+    const response = await fetch(api_url, {
+        method: 'POST',
+        headers: { 'Authorization': `DeepL-Auth-Key ${DEEPL_API_KEY}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text: [text], target_lang: targetLang.toUpperCase(), source_lang: 'EN' }),
+    });
+
+    if (!response.ok) throw new Error('DeepL API request failed');
+
+    const data = await response.json();
+    const translatedText = data.translations[0].text;
+
+    // Save the new translation to the cache
+    await cacheRef.set({ [targetLang]: translatedText }, { merge: true });
+    return translatedText;
+}
+
 export const handler = async (event, context) => {
     // Ensure Firebase is initialized
     if (!admin.apps.length) {
@@ -41,17 +78,27 @@ export const handler = async (event, context) => {
     // --- Handle GET request (Fetch Posts) ---
     if (method === 'GET') {
         try {
+            const lang = event.queryStringParameters?.lang || 'en';
+            const translationCache = db.collection('translations'); // Firestore collection for caching
+
             const postsRef = db.collection('posts');
             const snapshot = await postsRef.orderBy('created_at', 'desc').get();
             
-            const posts = [];
-            snapshot.forEach(doc => {
-                posts.push({
+            const posts = await Promise.all(snapshot.docs.map(async (doc) => {
+                const postData = doc.data();
+                
+                // Translate title and content if a language is specified
+                const translatedTitle = lang !== 'en' ? await translateText(postData.title, lang, translationCache) : postData.title;
+                const translatedContent = lang !== 'en' ? await translateText(postData.content, lang, translationCache) : postData.content;
+
+                return {
                     id: doc.id,
-                    ...doc.data(),
-                    created_at: doc.data().created_at?.toDate().toISOString() || new Date().toISOString()
-                });
-            });
+                    ...postData,
+                    title: translatedTitle,
+                    content: translatedContent,
+                    created_at: postData.created_at?.toDate().toISOString() || new Date().toISOString()
+                };
+            }));
 
             return {
                 statusCode: 200,

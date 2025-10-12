@@ -973,6 +973,13 @@ footer {
     z-index: 1000;
 }
 
+/* Override for the music player playlist dropdown to ensure it's scrollable and auto-height */
+.mini-music-player .playlist-dropdown {
+    height: auto;
+    max-height: 400px; /* Keep a reasonable max height */
+    overflow-y: auto;
+}
+
 .playlist-dropdown-content {
     padding: 10px 0;
 }

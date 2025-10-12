@@ -465,9 +465,10 @@ function initializePage() {
     // --- Fetch and Display Posts Logic ---
     async function fetchAndDisplayPosts() {
         if (!postsContainer && !fullPostsContainer) { return; }
-            if (postsContainer) postsContainer.innerHTML = '<p data-translate="loadingPosts">Loading posts...</p>';
+        if (postsContainer) postsContainer.innerHTML = '<p data-translate="loadingPosts">Loading posts...</p>';
+        retranslateDynamicContent(); // Translate the "Loading..." message itself
         try {
-            const response = await fetch('/.netlify/functions/posts');
+            const response = await fetch(`/.netlify/functions/posts?lang=${currentLang}`);
             if (!response.ok) { const errorData = await response.json().catch(() => ({})); throw new Error(`Fetch failed: ${errorData.error || response.statusText} (${response.status})`); }
             const posts = await response.json();
             // Sort newest first
