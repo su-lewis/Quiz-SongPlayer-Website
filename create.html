@@ -37,26 +37,26 @@
             <section>
                 <div id="create-post-container" style="display: block;">
                     <div id="create-post-area" class="content-box">
-                        <h2>Create a New Post</h2>
+                        <h2 data-translate="createNewPost">Create a New Post</h2>
                         <p id="login-prompt" style="display: none;">
                             Please log in to create a post. <!-- Style moved to CSS -->
                         </p>
                         <form id="create-post-form" style="display: none;">
                             <div class="form-group">
-                                <label for="post-title">Title (optional):</label>
+                                <label for="post-title" data-translate="titleOptional">Title (optional):</label>
                                 <!-- CHANGED to textarea for wrapping, added maxlength -->
                                 <textarea id="post-title" name="title" rows="1" maxlength="300"></textarea>
                                 <!-- Added char counter -->
                                 <span id="title-char-count" class="char-counter">0 / 300</span>
                             </div>
                             <div class="form-group">
-                                <label for="post-content">Content:</label>
+                                <label for="post-content" data-translate="contentRequired">Content:</label>
                                 <!-- Added maxlength -->
                                 <textarea id="post-content" name="content" rows="8" required maxlength="40000"></textarea>
                                 <!-- Added char counter -->
                                 <span id="content-char-count" class="char-counter">0 / 40000</span>
                             </div>
-                            <button type="submit" id="submit-button" disabled>Submit Post</button>
+                            <button type="submit" id="submit-button" disabled data-translate="submitPost">Submit Post</button>
                             <p id="form-message" class="message" style="margin-top: 1em; font-weight: bold;"></p>
                         </form>
                     </div>
@@ -69,11 +69,7 @@
         </div>
     </main>
 
-    <footer>
-        <p>© QuizSongPlayer 2025</p><br><p>We are not affiliated with the city Minneapolis</p>
-    </footer>
-
-    
+    <div id="footer-placeholder"></div>
 
     <!-- Firebase SDK (for future client-side features) -->
     <!-- Note: Currently all database operations go through Netlify Functions -->
@@ -82,6 +78,7 @@
     <script src="js/firebaseclient.js"></script>
 
     <script src="_includes/header.js"></script>
+    <script src="_includes/footer.js"></script>
     <script src="_includes/sidebar.js"></script> <!-- Load sidebar content -->
     <script src="script.js"></script>
 </body>
