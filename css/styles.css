@@ -1405,6 +1405,17 @@ body.dark-mode .quick-links-list li a:visited {
     font-weight: 600; /* Re-apply bold weight */
 }
 
+/* Style for the separator in the quick links list */
+.quick-links-list li.separator-item {
+    padding: 4px 0; /* Add some vertical space around the line */
+    margin: 0;
+}
+
+.quick-links-list li.separator-item hr {
+    border: none;
+    border-top: 1px solid #eee; /* A light, subtle line */
+}
+
 /* ==========================================
    10. Character Counter Styles
    ========================================== */

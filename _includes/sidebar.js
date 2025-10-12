@@ -54,12 +54,13 @@ const sidebarContent = `
         <ul>
             <li><a href="https://x.com/lollipop1110111" target="_blank" data-translate="myX">My X</a></li>
             <li><a href="https://simpcity.cr/threads/alquis13.1195439/" target="_blank" data-translate="simpCity">SimpCity</a></li>
-            <li><a href="https://www.mega.nz" target="_blank" data-translate="megaFolder"><s>Mega Folder</s></a></li>
+            <li><s><a href="https://www.mega.nz" target="_blank" data-translate="megaFolder">Mega Folder</a></s></li>
+            <li><a href="https://ko-fi.com/lollipop1110111" target="_blank" data-translate="support">Support</a></li>
+            <li class="separator-item"><hr></li>
             <li>
                 <span id="video-trigger-info" role="button" tabindex="0" style="cursor: pointer;" data-translate="ansiArt">ANSI Art (Click to play)</span>
                 <div id="video-embed-container" style="display: none;"></div>
             </li>
-            <li><a href="https://ko-fi.com/lollipop1110111" target="_blank" data-translate="support">Support</a></li>
         </ul>
     </div>
 </div>
