@@ -1,3 +1,4 @@
+// FILE: _includes/footer.js
 const footerContent = `
 <footer>
     <p data-translate="copyright">© QuizSongPlayer 2025</p><br>

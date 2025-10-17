@@ -1,3 +1,4 @@
+// FILE: _includes/sidebar.js
 const sidebarContent = `
 <!-- Mini Music Player -->
 <div class="mini-music-player content-box">

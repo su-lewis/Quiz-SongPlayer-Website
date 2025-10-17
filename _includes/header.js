@@ -1,3 +1,4 @@
+// FILE: _includes/header.js
 const headerContent = `
 <header class="header-green">
     <div class="header-top">
