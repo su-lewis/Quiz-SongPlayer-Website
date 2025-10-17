@@ -482,10 +482,16 @@ body.dark-mode .dropdown-item-label:hover {
 }
 
 
-/* Always show hovered background if .language-active is present */
-.language-menu-item.language-active > a {
+/* Always show hovered background if .language-active is present or submenu is hovered */
+.language-menu-item.language-active > a,
+.language-menu-item:has(.language-submenu:hover) > a {
     background-color: #d3d7db;
     font-weight: normal;
+}
+
+body.dark-mode .language-menu-item.language-active > a,
+body.dark-mode .language-menu-item:has(.language-submenu:hover) > a {
+    background-color: var(--dark-mode-navhover);
 }
 
 .language-menu-item > a {
@@ -523,7 +529,7 @@ body.dark-mode .dropdown-item-label:hover {
 .language-submenu {
     display: none;
     position: absolute;
-    left: calc(100% + 5px); /* move submenu 5px to the right */
+    left: 103%; /* move submenu 5px to the right */
     top: -1px;
     height: auto;         /* auto height to fit all items */
     background-color: #fff;
@@ -604,7 +610,8 @@ body.dark-mode .playlist-retry-btn {
 
 .language-menu-item:hover .language-submenu,
 .language-submenu:hover,
-.language-menu-item.language-active .language-submenu {
+.language-menu-item.language-active .language-submenu,
+.language-menu-item:has(> a.persist-hover) .language-submenu {
     display: block;
 }
 /* Hide submenu when other items (not language) are hovered */

@@ -18,7 +18,33 @@ export function initInjectedUI() {
         console.log("UI: Found menu link, attaching click listener.");
         headerMenuLink.addEventListener('click', function(event) {
             event.preventDefault();
-            document.querySelector('.dropdown-menu')?.classList.toggle('show');
+            const dropdownMenu = document.querySelector('.dropdown-menu');
+            if (!dropdownMenu) return;
+
+            const isVisible = dropdownMenu.classList.toggle('show');
+
+            if (isVisible) {
+                const allItems = dropdownMenu.querySelectorAll('a, .dropdown-item-label');
+
+                allItems.forEach(item => {
+                    item.addEventListener('mouseover', () => {
+                        const submenu = item.closest('.language-submenu');
+                        if (submenu) {
+                            // Hover is inside a submenu
+                            submenu.querySelectorAll('a').forEach(i => i.classList.remove('persist-hover'));
+                            item.classList.add('persist-hover');
+                        } else {
+                            // Hover is on a top-level item
+                            // Clear all top-level items
+                            dropdownMenu.querySelectorAll(':scope > a, :scope > .dropdown-item-label, :scope > .language-menu-item > a').forEach(i => i.classList.remove('persist-hover'));
+                            // Clear all submenu items
+                            dropdownMenu.querySelectorAll('.language-submenu a').forEach(i => i.classList.remove('persist-hover'));
+                            // Highlight the current top-level item
+                            item.classList.add('persist-hover');
+                        }
+                    });
+                });
+            }
         });
 
         // Add a global click listener to close the dropdown when clicking elsewhere
