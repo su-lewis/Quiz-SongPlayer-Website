@@ -958,6 +958,7 @@ footer {
 
 #player-shuffle.shuffle-active:hover {
     color: #0066cc;
+    text-shadow: 0 0 8px rgba(0, 123, 255, 0.7);
 }
 
 /* Playlist dropdown */
@@ -1722,6 +1723,7 @@ body.dark-mode #player-shuffle.shuffle-active {
 
 body.dark-mode #player-shuffle.shuffle-active:hover {
     color: #80c1ff;
+    text-shadow: 0 0 10px rgba(30, 144, 255, 0.9);
 }
 
 /* Dark mode playlist dropdown */

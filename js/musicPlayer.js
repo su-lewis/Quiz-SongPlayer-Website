@@ -47,6 +47,7 @@ export function initMusicPlayer() {
     let currentVolume = initialVolume;
     let seekBarInterval = null;
     let currentPlaylistIndex = 738;
+    let volumeBeforeMute = initialVolume;
 
     function savePlayerState() {
         if (!isPlayerReady || !player || typeof player.getPlayerState !== 'function') return;
@@ -202,6 +203,8 @@ export function initMusicPlayer() {
         // Instantly reset the seek bar for better UX
         const seekBarProgress = document.getElementById('player-seek-bar-progress');
         if (seekBarProgress) seekBarProgress.style.width = '0%';
+        
+        player.setVolume(currentVolume);
 
         if (shuffleMode) {
             // Navigate backwards in history if possible
@@ -234,6 +237,8 @@ export function initMusicPlayer() {
         // Instantly reset the seek bar for better UX
         const seekBarProgress = document.getElementById('player-seek-bar-progress');
         if (seekBarProgress) seekBarProgress.style.width = '0%';
+
+        player.setVolume(currentVolume);
 
         if (shuffleMode) {
             // If we are in the middle of history, navigate forward
@@ -316,29 +321,19 @@ export function initMusicPlayer() {
     function toggleMute() {
         if (!isPlayerReady || !player) return;
 
-        // Ask the player for its current state
         const isCurrentlyMuted = player.isMuted();
 
         if (isCurrentlyMuted) {
-            // If it's muted, we need to unmute it.
             player.unMute();
-
-            // After unmuting, check if the volume was zero.
-            // If it was, the user probably muted by dragging the slider.
-            // In that case, we should restore volume to a reasonable level.
-            if (player.getVolume() === 0) {
-                player.setVolume(50); // Restore to 50%
-            }
+            player.setVolume(volumeBeforeMute);
+            currentVolume = volumeBeforeMute;
         } else {
-            // If it's not muted, we need to mute it.
+            volumeBeforeMute = player.getVolume();
             player.mute();
         }
 
-        // IMPORTANT: Call the UI update function AFTER the state has been changed.
-        // We add a tiny delay to give the API a moment to process the change.
-        setTimeout(() => {
-            updateVolumeUI();
-        }, 50); // 50ms delay
+        // Update UI after a short delay
+        setTimeout(updateVolumeUI, 50);
     }
 
     // NEW, SIMPLER VERSION
@@ -346,6 +341,7 @@ export function initMusicPlayer() {
         if (!isPlayerReady || !player || !volumeSlider) return;
 
         const newVolume = parseInt(volumeSlider.value, 10);
+        currentVolume = newVolume;
         player.setVolume(newVolume);
 
         // Also tell the player to mute/unmute based on the slider position.
