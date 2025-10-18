@@ -1,15 +1,10 @@
-import { initAuth } from './js/auth.js';
+import { initAuth, attachAuthButtonListeners } from './js/auth.js';
 import { initPosts, fetchAndDisplayPosts } from './js/posts.js';
 import { initTranslation } from './js/translation.js';
 import { initMusicPlayer } from './js/musicPlayer.js';
 import { initUI, initInjectedUI } from './js/ui.js';
 
-/**
- * Main function to initialize all page logic after the DOM is ready.
- */
 function initializePage() {
-    console.log("DOM is ready. Loading components...");
-
     // --- 1. Load Shared HTML Content ---
     const headerPlaceholder = document.getElementById('header-placeholder');
     if (headerPlaceholder && typeof headerContent !== 'undefined') {
@@ -24,30 +19,29 @@ function initializePage() {
         sidebarPlaceholder.innerHTML = sidebarContent;
     }
 
-    // --- THE FIX IS HERE ---
-    // We use a setTimeout with a delay of 0. This is a common trick to ensure
-    // that the browser has finished processing the innerHTML changes from above
-    // before we try to find and interact with the new elements.
-    setTimeout(() => {
-        console.log("Components loaded. Initializing modules...");
+    // --- 2. Initialize Modules in the Correct Order ---
+    const dependencies = {
+        fetchAndDisplayPosts: fetchAndDisplayPosts,
+        getCurrentLanguage: () => 'en' 
+    };
 
-        // --- 2. Initialize All Modules ---
-        const dependencies = {
-            fetchAndDisplayPosts: fetchAndDisplayPosts,
-            getCurrentLanguage: () => 'en' // Default getter
-        };
+    // Initialize core widget event listeners FIRST.
+    // This allows the widget to start initializing in the background.
+    initAuth(dependencies); 
 
-        // Initialize modules in the correct order
-        initTranslation(dependencies); // Initializes first, provides language info
-        initPosts(dependencies);       // Now has access to the language getter
-        initMusicPlayer();             // Self-contained
-        initUI();                      // General UI that doesn't depend on injected content
-        initInjectedUI();              // UI for injected content like the header menu
-        initAuth(dependencies);        // Auth runs last, needs injected header buttons
-        
-        console.log("All modules initialized.");
-    }, 0); // A delay of 0 is all that's needed.
+    // Initialize all other modules that don't depend on the auth buttons themselves.
+    initTranslation(dependencies);
+    initPosts(dependencies);
+    initMusicPlayer();
+    initUI();
+    initInjectedUI();
+    
+    // --- THIS IS THE CRITICAL FIX ---
+    // NOW that all components are on the page and all other scripts have run,
+    // we explicitly tell the auth module to find the buttons and make them clickable.
+    attachAuthButtonListeners();
+    
+    console.log("All modules initialized.");
 }
 
-// --- Main Entry Point ---
 document.addEventListener('DOMContentLoaded', initializePage);

@@ -1,7 +1,7 @@
 let dependencies = {};
 
 /**
- * Initializes the Netlify Identity widget and all related UI updates.
+ * Initializes the Netlify Identity widget event listeners.
  * @param {object} deps - An object containing dependencies.
  */
 export function initAuth(deps) {
@@ -10,44 +10,48 @@ export function initAuth(deps) {
     if (window.netlifyIdentity) {
         console.log("Auth: Netlify Identity script is loaded.");
         
-        netlifyIdentity.on("init", handleIdentityInit);
-        netlifyIdentity.on("login", handleIdentityLogin);
-        netlifyIdentity.on("logout", handleIdentityLogout);
+        // Listen for the core events from the widget.
+        netlifyIdentity.on("init", handleIdentityEvent);
+        netlifyIdentity.on("login", handleIdentityEvent);
+        netlifyIdentity.on("logout", handleIdentityEvent);
         netlifyIdentity.on("error", handleIdentityError);
     } else {
         console.error("CRITICAL ERROR: `window.netlifyIdentity` object not found.");
-        updateUserStatusUI(); // Show logged out state as a fallback
+        updateUserStatusUI(); // Fallback to show logged out state.
     }
 }
 
-function handleIdentityInit(user) {
-    console.log("Auth: 'init' event fired!");
-    updateUserStatusUI();
-
+/**
+ * Attaches click listeners to the auth buttons.
+ * This function MUST be called AFTER the header is injected into the DOM.
+ */
+export function attachAuthButtonListeners() {
     const signupButton = document.getElementById('signup-button');
     const loginButton = document.getElementById('login-button');
     const logoutButton = document.getElementById('logout-button');
 
-    console.log("Auth: Attaching click listeners to login/signup buttons.");
-    signupButton?.addEventListener('click', () => netlifyIdentity.open('signup'));
-    loginButton?.addEventListener('click', () => netlifyIdentity.open('login'));
-    logoutButton?.addEventListener('click', () => netlifyIdentity.logout());
-}
-
-function handleIdentityLogin(user) {
-    console.log("Auth: User logged in.");
-    updateUserStatusUI();
-    netlifyIdentity.close();
-    if (dependencies.fetchAndDisplayPosts) {
-        dependencies.fetchAndDisplayPosts(dependencies.getCurrentLanguage);
+    if (signupButton && loginButton && logoutButton) {
+        console.log("Auth: Attaching click listeners to login/signup/logout buttons.");
+        signupButton.addEventListener('click', () => netlifyIdentity.open('signup'));
+        loginButton.addEventListener('click', () => netlifyIdentity.open('login'));
+        logoutButton.addEventListener('click', () => netlifyIdentity.logout());
+    } else {
+        console.error("Auth Error: Could not find one or more auth buttons to attach listeners.");
     }
 }
 
-function handleIdentityLogout() {
-    console.log("Auth: User logged out.");
+function handleIdentityEvent(user) {
+    console.log("Auth: Identity event received (init, login, or logout).");
     updateUserStatusUI();
+    
+    // Refresh posts if the dependency exists
     if (dependencies.fetchAndDisplayPosts) {
-        dependencies.fetchAndDisplayPosts(dependencies.getCurrentLanguage);
+        dependencies.fetchAndDisplayPosts();
+    }
+    
+    // Close the widget modal after login
+    if (user) {
+        netlifyIdentity.close();
     }
 }
 
@@ -56,9 +60,6 @@ function handleIdentityError(err) {
     updateUserStatusUI();
 }
 
-/**
- * Updates the UI based on the current user's login status.
- */
 function updateUserStatusUI() {
     const user = window.netlifyIdentity?.currentUser();
     
@@ -69,8 +70,7 @@ function updateUserStatusUI() {
     const authButtonsDiv = document.getElementById('auth-buttons');
     const userStatusDiv = document.getElementById('user-status');
     const userEmailSpan = document.getElementById('user-email');
-    const formMessage = document.getElementById('form-message');
-
+    
     if (user) {
         if (authButtonsDiv) authButtonsDiv.style.display = 'none';
         if (userStatusDiv) userStatusDiv.style.display = 'flex';
