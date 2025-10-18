@@ -85,19 +85,19 @@ export function initMusicPlayer() {
     }
 
     function onPlayerReady(event) {
-    isPlayerReady = true;
-    player = event.target;
+        isPlayerReady = true;
+        player = event.target;
 
-    // --- THIS IS THE FIX ---
-    // Now that the player is ready, we know the button exists.
-    // Find the button and set its initial visual state.
-    const shuffleButton = document.getElementById('player-shuffle');
-    if (shuffleButton) {
-        shuffleButton.classList.toggle('shuffle-active', shuffleMode);
-    }
-    // --- END OF FIX ---
+        // --- THIS IS THE FIX ---
+        // Now that the player is ready, we know the button exists.
+        // Find the button and set its initial visual state.
+        const shuffleButton = document.getElementById('player-shuffle');
+        if (shuffleButton) {
+            shuffleButton.classList.toggle('shuffle-active', shuffleMode);
+        }
+        // --- END OF FIX ---
 
-    const savedState = loadPlayerState();
+        const savedState = loadPlayerState();
         const hasPlayedBefore = localStorage.getItem('musicPlayerHasPlayed') === 'true';
 
         let startMuted = false;
@@ -212,7 +212,7 @@ export function initMusicPlayer() {
         // Instantly reset the seek bar for better UX
         const seekBarProgress = document.getElementById('player-seek-bar-progress');
         if (seekBarProgress) seekBarProgress.style.width = '0%';
-        
+
         player.setVolume(currentVolume);
 
         if (shuffleMode) {
@@ -393,15 +393,24 @@ export function initMusicPlayer() {
             videoData = player.getVideoData();
         } catch (e) { return; }
 
+
+        // Determine the new videoId and title from override data or the player's data
         videoId = overrideData.videoId === null ? null : overrideData.videoId || videoData?.video_id;
         title = overrideData.title || videoData?.title;
 
-        if (videoTitleElement) {
-            videoTitleElement.textContent = title || "---";
-            videoTitleElement.title = title || "";
-            videoTitleElement.classList.toggle('scrolling', videoTitleElement.scrollWidth > videoTitleElement.clientWidth);
+        // --- THIS IS THE FIX ---
+        // Only update the title element if we have a new, valid title.
+        // Otherwise, leave the old title in place.
+        if (videoTitleElement && title) {
+            videoTitleElement.textContent = title;
+            videoTitleElement.title = title;
+            // Use a short timeout to allow the browser to render the new text before checking its width
+            setTimeout(() => {
+                if (videoTitleElement) { // Check if element still exists
+                    videoTitleElement.classList.toggle('scrolling', videoTitleElement.scrollWidth > videoTitleElement.clientWidth);
+                }
+            }, 50);
         }
-
         if (videoId) {
             if (thumbnailImg) thumbnailImg.src = `https://img.youtube.com/vi/${videoId}/mqdefault.jpg`;
             if (trackNumberElement && fullPlaylistData?.videos) {
