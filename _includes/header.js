@@ -19,7 +19,6 @@ const headerContent = `
                             <div class="language-submenu">
                                 <a href="#" data-lang="en"><span>English</span><span class="lang-english-name">(English)</span></a>
                                 <a href="#" data-lang="zh"><span>中文</span><span class="lang-english-name">(Chinese)</span></a>
-                                <a href="#" data-lang="hi"><span>हिन्दी</span><span class="lang-english-name">(Hindi)</span></a>
                                 <a href="#" data-lang="es"><span>Español</span><span class="lang-english-name">(Spanish)</span></a>
                                 <a href="#" data-lang="fr"><span>Français</span><span class="lang-english-name">(French)</span></a>
                                 <a href="#" data-lang="ar"><span>العربية</span><span class="lang-english-name">(Arabic)</span></a>
@@ -30,9 +29,6 @@ const headerContent = `
                                 <a href="#" data-lang="ko"><span>한국어</span><span class="lang-english-name">(Korean)</span></a>
                                 <a href="#" data-lang="it"><span>Italiano</span><span class="lang-english-name">(Italian)</span></a>
                                 <a href="#" data-lang="el"><span>Ελληνικά</span><span class="lang-english-name">(Greek)</span></a>
-                                <a href="#" data-lang="af"><span>Afrikaans</span><span class="lang-english-name">(Afrikaans)</span></a>
-                                <a href="#" data-lang="haw"><span>ʻŌlelo Hawaiʻi</span><span class="lang-english-name">(Hawaiian)</span></a>
-                                <a href="#" data-lang="la"><span>Latina</span><span class="lang-english-name">(Latin)</span></a>
                             </div>
                         </div>
                         <a href="#">Option 2</a>

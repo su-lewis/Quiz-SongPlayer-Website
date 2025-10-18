@@ -1,5 +1,8 @@
 let currentLang = 'en';
 const translationCache = {};
+
+// We use a Map to store the original text of each element.
+// This is more robust than data attributes.
 const originalTextMap = new WeakMap();
 
 export function initTranslation(dependencies) {
@@ -9,12 +12,15 @@ export function initTranslation(dependencies) {
         link.addEventListener('click', (e) => {
             e.preventDefault();
             const selectedLang = link.getAttribute('data-lang');
-            // THE FIX IS HERE: No longer pass arguments
             applyTranslations(selectedLang, dependencies.fetchAndDisplayPosts);
         });
     });
 
-    document.addEventListener('contentUpdated', retranslateDynamicContent);
+    document.addEventListener('contentUpdated', () => {
+        if (currentLang !== 'en') {
+            autoTranslate(currentLang);
+        }
+    });
 
     try {
         currentLang = localStorage.getItem('preferredLang') || 'en';
@@ -31,50 +37,67 @@ async function applyTranslations(lang, fetchPostsCallback) {
     await autoTranslate(lang);
     
     if (typeof fetchPostsCallback === 'function') {
-        console.log(`Translation: Language changed to '${lang}', triggering post fetch.`);
-        // THE FIX IS HERE: No longer pass arguments
         fetchPostsCallback();
     }
 }
 
-// ... (retranslateDynamicContent and autoTranslate functions remain the same)
-function retranslateDynamicContent() {
-    if (currentLang !== 'en') {
-        autoTranslate(currentLang);
-    }
-}
-
 async function autoTranslate(lang) {
-    if (!originalTextMap.has(document.body)) {
-        document.querySelectorAll('[data-translate], [data-translate-placeholder]').forEach(el => {
+    console.log(`--- Starting autoTranslate for '${lang}' ---`);
+    const elementsToTranslate = document.querySelectorAll('[data-translate], [data-translate-placeholder]');
+
+    // --- STEP 1: CAPTURE & RESTORE ---
+    // This combined loop is the core of the fix.
+    elementsToTranslate.forEach(el => {
+        // A) CAPTURE: If we haven't seen this element before, store its original English text.
+        if (!originalTextMap.has(el)) {
             if (el.hasAttribute('data-translate-placeholder')) {
-                originalTextMap.set(el, el.placeholder);
+                originalTextMap.set(el, { type: 'placeholder', text: el.placeholder });
             } else {
-                originalTextMap.set(el, el.innerHTML);
+                const textNode = Array.from(el.childNodes).find(node => node.nodeType === Node.TEXT_NODE && node.textContent.trim());
+                if (textNode) {
+                    originalTextMap.set(el, { type: 'textNode', text: textNode.textContent });
+                }
             }
-        });
-        originalTextMap.set(document.body, true);
-    }
-    document.querySelectorAll('[data-translate], [data-translate-placeholder]').forEach(el => {
-        if (originalTextMap.has(el)) {
-            if (el.hasAttribute('data-translate-placeholder')) {
-                el.placeholder = originalTextMap.get(el);
-            } else {
-                el.innerHTML = originalTextMap.get(el);
+        }
+        
+        // B) RESTORE: Always revert the element to its stored original English text.
+        const original = originalTextMap.get(el);
+        if (original) {
+            if (original.type === 'placeholder') {
+                el.placeholder = original.text;
+            } else if (original.type === 'textNode') {
+                const textNode = Array.from(el.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
+                if (textNode) {
+                    textNode.textContent = original.text;
+                }
             }
         }
     });
-    if (lang === 'en') return;
+
+    // If the target language is English, our job is done.
+    if (lang === 'en') {
+        console.log("Translation: Reverted to English.");
+        return;
+    }
+
+    // --- STEP 2: TRANSLATE ---
     const cacheKey = `translation_cache_${lang}`;
     try {
-        const cached = localStorage.getItem(cacheKey);
-        if (cached) Object.assign(translationCache, JSON.parse(cached));
+        const cachedData = localStorage.getItem(cacheKey);
+        // Clear and load fresh from cache to prevent mixing languages
+        for (const key in translationCache) delete translationCache[key];
+        if (cachedData) Object.assign(translationCache, JSON.parse(cachedData));
     } catch (e) { console.warn('Could not load translation cache.', e); }
-    for (const el of document.querySelectorAll('[data-translate], [data-translate-placeholder]')) {
-        const isPlaceholder = el.hasAttribute('data-translate-placeholder');
-        const originalText = (isPlaceholder ? el.placeholder : el.textContent).trim();
+
+    for (const el of elementsToTranslate) {
+        const original = originalTextMap.get(el);
+        if (!original?.text) continue;
+
+        const originalText = original.text.trim();
         if (!originalText) continue;
+
         let translatedText = translationCache[originalText];
+
         if (!translatedText) {
             try {
                 const response = await fetch('/.netlify/functions/translate', {
@@ -82,7 +105,7 @@ async function autoTranslate(lang) {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ text: originalText, target_lang: lang }),
                 });
-                if (!response.ok) throw new Error(`API error: ${response.status}`);
+                if (!response.ok) throw new Error(`API error ${response.status}`);
                 const data = await response.json();
                 translatedText = data.translatedText;
                 translationCache[originalText] = translatedText;
@@ -91,18 +114,19 @@ async function autoTranslate(lang) {
                 continue;
             }
         }
-        if (isPlaceholder) {
+
+        if (original.type === 'placeholder') {
             el.placeholder = translatedText;
-        } else {
-            const textNode = Array.from(el.childNodes).find(node => node.nodeType === Node.TEXT_NODE && node.textContent.trim());
+        } else if (original.type === 'textNode') {
+            const textNode = Array.from(el.childNodes).find(node => node.nodeType === Node.TEXT_NODE);
             if (textNode) {
                 textNode.textContent = translatedText;
-            } else {
-                el.textContent = translatedText;
             }
         }
     }
+
     try {
         localStorage.setItem(cacheKey, JSON.stringify(translationCache));
     } catch (e) { console.warn('Could not save translation cache.', e); }
+    console.log(`--- Finished autoTranslate for '${lang}' ---`);
 }

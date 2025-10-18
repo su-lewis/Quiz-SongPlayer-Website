@@ -85,10 +85,19 @@ export function initMusicPlayer() {
     }
 
     function onPlayerReady(event) {
-        isPlayerReady = true;
-        player = event.target;
+    isPlayerReady = true;
+    player = event.target;
 
-        const savedState = loadPlayerState();
+    // --- THIS IS THE FIX ---
+    // Now that the player is ready, we know the button exists.
+    // Find the button and set its initial visual state.
+    const shuffleButton = document.getElementById('player-shuffle');
+    if (shuffleButton) {
+        shuffleButton.classList.toggle('shuffle-active', shuffleMode);
+    }
+    // --- END OF FIX ---
+
+    const savedState = loadPlayerState();
         const hasPlayedBefore = localStorage.getItem('musicPlayerHasPlayed') === 'true';
 
         let startMuted = false;

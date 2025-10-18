@@ -28,7 +28,7 @@ const sidebarContent = `
     <div class="player-info">
         <span id="player-track-number" class="track-number">1.</span>
         <div class="title-container">
-            <p id="player-video-title" title="Current Video Title" data-translate="loadingTitle">Loading title...</p>
+            <p id="player-video-title" title="Current Video Title">Loading title...</p>
         </div>
     </div>
     <div id="player-seek-bar-container" class="seek-bar-container" title="Seek">
