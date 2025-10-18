@@ -1,16 +1,22 @@
 let dependencies = {};
 
 /**
- * Initializes the Netlify Identity widget event listeners.
+ * Initializes the Netlify Identity widget and all related UI updates.
  * @param {object} deps - An object containing dependencies.
  */
 export function initAuth(deps) {
     dependencies = deps;
 
+    // --- THIS IS THE FIX ---
+    // Check the user's status immediately on page load, without waiting for an event.
+    // This ensures the UI is correct as soon as the page is ready.
+    updateUserStatusUI();
+    // --- END OF FIX ---
+
     if (window.netlifyIdentity) {
         console.log("Auth: Netlify Identity script is loaded.");
         
-        // Listen for the core events from the widget.
+        // These event listeners will handle any FUTURE changes (like logging out).
         netlifyIdentity.on("init", handleIdentityEvent);
         netlifyIdentity.on("login", handleIdentityEvent);
         netlifyIdentity.on("logout", handleIdentityEvent);
@@ -46,7 +52,7 @@ function handleIdentityEvent(user) {
     
     // Refresh posts if the dependency exists
     if (dependencies.fetchAndDisplayPosts) {
-        dependencies.fetchAndDisplayPosts();
+        dependencies.fetchAndDisplayPosts(dependencies.getCurrentLanguage);
     }
     
     // Close the widget modal after login
@@ -60,6 +66,9 @@ function handleIdentityError(err) {
     updateUserStatusUI();
 }
 
+/**
+ * Updates the UI based on the current user's login status.
+ */
 function updateUserStatusUI() {
     const user = window.netlifyIdentity?.currentUser();
     
