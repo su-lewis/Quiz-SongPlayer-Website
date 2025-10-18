@@ -953,6 +953,7 @@ footer {
 
 #player-shuffle.shuffle-active {
     color: var(--header-bg-color);
+    text-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
 
 #player-shuffle.shuffle-active:hover {
@@ -1716,6 +1717,7 @@ body.dark-mode .quick-links-container .video-fullscreen-link:focus {
 /* Dark mode shuffle button active state */
 body.dark-mode #player-shuffle.shuffle-active {
     color: #4da6ff;
+    text-shadow: 0 0 8px rgba(30, 144, 255, 0.7);
 }
 
 body.dark-mode #player-shuffle.shuffle-active:hover {
