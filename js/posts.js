@@ -3,17 +3,32 @@ let dependencies = {};
 export function initPosts(deps) {
     dependencies = deps; // Store dependencies for use within this module
 
-    // Listen for language changes to update language and trigger a re-fetch.
+    // --- NEW: Listen for on-page navigation via hash links ---
+    // This handles clicking a second, third, etc., post link while already on the /posts page.
+    window.addEventListener('hashchange', handleHashChange);
+
+    // Listen for language changes to trigger a re-fetch.
     document.addEventListener('languageChanged', (event) => {
         console.log("Posts: 'languageChanged' event received. Re-fetching posts.");
-        fetchAndDisplayPosts(); // This will now have access to the stored `dependencies`
+        fetchAndDisplayPosts();
     });
 
     // Handle the create post form
     const createPostForm = document.getElementById('create-post-form');
     if (createPostForm) {
         createPostForm.addEventListener('submit', handleCreateSubmit);
-        // ... (char counter logic remains the same)
+        const titleInput = document.getElementById('post-title');
+        const contentInput = document.getElementById('post-content');
+        const titleCharCount = document.getElementById('title-char-count');
+        const contentCharCount = document.getElementById('content-char-count');
+        if (titleInput && titleCharCount) {
+            const max = parseInt(titleInput.getAttribute('maxlength') || '300', 10);
+            titleInput.addEventListener('input', () => updateCharCount(titleInput, titleCharCount, max));
+        }
+        if (contentInput && contentCharCount) {
+            const max = parseInt(contentInput.getAttribute('maxlength') || '40000', 10);
+            contentInput.addEventListener('input', () => updateCharCount(contentInput, contentCharCount, max));
+        }
     }
     
     // Initial fetch if a container exists on the page
@@ -22,7 +37,34 @@ export function initPosts(deps) {
     }
 }
 
-// THE FIX IS HERE: fetchAndDisplayPosts now uses the module-scoped `dependencies`
+/**
+ * NEW: This function handles clicks on post links after the page has already loaded.
+ */
+function handleHashChange() {
+    // We only care about this event on the full posts page.
+    if (!document.getElementById('full-posts-container')) {
+        return;
+    }
+
+    if (location.hash && location.hash.startsWith('#post-')) {
+        console.log("Hash changed to a post link. Applying highlight and cleaning URL.");
+        
+        // Remove highlight from any previously highlighted post.
+        document.querySelector('.highlight-post')?.classList.remove('highlight-post');
+
+        const el = document.querySelector(location.hash);
+        if (el) {
+            // The browser scrolls automatically, but this ensures it's smooth.
+            el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            el.classList.add('highlight-post');
+            setTimeout(() => el.classList.remove('highlight-post'), 2000);
+        }
+
+        // Clean the URL.
+        history.replaceState(null, '', window.location.pathname);
+    }
+}
+
 export async function fetchAndDisplayPosts() {
     try {
         const currentLang = dependencies.getCurrentLanguage();
@@ -34,7 +76,6 @@ export async function fetchAndDisplayPosts() {
         const posts = await response.json();
         
         if (!posts || posts.length === 0) {
-            // If there are no posts, show the "No posts found" message in both potential containers
             const fullContainer = document.getElementById('full-posts-container');
             const sidebarContainer = document.getElementById('posts-container');
             if (fullContainer) fullContainer.innerHTML = `<p data-translate="noPostsFound">No posts found.</p>`;
@@ -45,48 +86,49 @@ export async function fetchAndDisplayPosts() {
 
         posts.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
 
-        // --- NEW LOGIC: HANDLE EACH CONTAINER SEPARATELY ---
+        // --- Handle BOTH containers separately ---
 
         // 1. Handle the Full Posts Page Container
         const fullPostsContainer = document.getElementById('full-posts-container');
         if (fullPostsContainer) {
-            console.log("Posts: Rendering ALL posts into #full-posts-container.");
-            fullPostsContainer.innerHTML = ''; // Clear it
+            fullPostsContainer.innerHTML = '';
             posts.forEach(post => {
-                const postElement = renderPostElement(post, currentLang, false); // isTruncated = false
+                const postElement = renderPostElement(post, currentLang, false);
                 fullPostsContainer.appendChild(postElement);
             });
 
-            // Handle scrolling to a specific post if a hash is in the URL
-            if (location.hash) {
-                const el = document.querySelector(location.hash);
-                if (el) {
-                    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-                    el.classList.add('highlight-post');
-                    setTimeout(() => el.classList.remove('highlight-post'), 2000);
-                }
+            // This logic now ONLY runs on the initial page load. Subsequent clicks are handled by hashchange.
+            if (location.hash && location.hash.startsWith('#post-')) {
+                // Use a timeout to ensure the DOM is fully rendered before we try to scroll.
+                setTimeout(() => {
+                    const el = document.querySelector(location.hash);
+                    if (el) {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                        el.classList.add('highlight-post');
+                        setTimeout(() => el.classList.remove('highlight-post'), 2000);
+                        
+                        // Clean the URL after the initial scroll.
+                        history.replaceState(null, '', window.location.pathname);
+                    }
+                }, 100); // A small delay is robust.
             }
         }
 
         // 2. Handle the Sidebar Posts Container
         const sidebarPostsContainer = document.getElementById('posts-container');
         if (sidebarPostsContainer) {
-            console.log("Posts: Rendering sidebar posts into #posts-container.");
-            sidebarPostsContainer.innerHTML = ''; // Clear it
-            const postsToRender = posts.slice(0, 4); // Get the latest 4 posts
+            sidebarPostsContainer.innerHTML = '';
+            const postsToRender = posts.slice(0, 4);
             postsToRender.forEach(post => {
-                const postElement = renderPostElement(post, currentLang, true); // isTruncated = true
+                const postElement = renderPostElement(post, currentLang, true);
                 sidebarPostsContainer.appendChild(postElement);
             });
         }
         
-        // --- END OF NEW LOGIC ---
-
         document.dispatchEvent(new CustomEvent('contentUpdated'));
 
     } catch (error) {
         console.error("Error fetching/displaying posts:", error);
-        // Show an error message in both potential containers
         const fullContainer = document.getElementById('full-posts-container');
         const sidebarContainer = document.getElementById('posts-container');
         const errorMessage = `<p style="color: red;">Error loading posts: ${error.message}</p>`;
@@ -95,9 +137,6 @@ export async function fetchAndDisplayPosts() {
     }
 }
 
-
-// ... (All other helper functions like handleCreateSubmit, renderPostElement, etc., remain here unchanged)
-// You do not need to change the helper functions below this line.
 async function handleCreateSubmit(event) {
     event.preventDefault();
     const user = window.netlifyIdentity?.currentUser();
@@ -134,6 +173,18 @@ async function handleCreateSubmit(event) {
         console.error("Error creating post:", error);
         if (formMessage) { formMessage.textContent = `Error: ${error.message}`; formMessage.className = 'message error'; }
         if (submitButton) submitButton.disabled = false;
+    }
+}
+
+function updateCharCount(inputElement, counterElement, maxLength) {
+    if (!inputElement || !counterElement) return;
+    const currentLength = inputElement.value.length;
+    if (currentLength > maxLength * 0.9 || currentLength >= maxLength) {
+        counterElement.textContent = `${currentLength} / ${maxLength}`;
+        counterElement.style.display = 'block';
+        counterElement.classList.toggle('limit-reached', currentLength >= maxLength);
+    } else {
+        counterElement.style.display = 'none';
     }
 }
 
