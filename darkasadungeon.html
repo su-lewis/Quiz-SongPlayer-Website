@@ -13,7 +13,7 @@
     <link rel="apple-touch-icon" href="/images/apple-touch-icon.png">
     <link rel="manifest" href="/images/site.webmanifest">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
-    <link rel="stylesheet" href="/css/styles.css"> <!-- Use root-relative path for CSS -->
+    <link rel="stylesheet" href="/css/styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Almarai:wght@300;400;700;800&display=swap" rel="stylesheet">
     <meta name="apple-mobile-web-app-title" content="QuizSongPlayer">
 
@@ -31,26 +31,22 @@
         <div class="main-container">
             <section>
                 <h1 data-translate="darkDungeonTitle">Dark as a Dungeon</h1>
-                <p data-translate="darkDungeonDesc">Johnny Cash from 'At Folsom Prison' album.</p>
+                <p data-translate="darkDungeonDesc">Johnny Cash from the Folsom Prison album.</p>
 
-                    
-<!-- YouTube Embedded Video Player -->
-<div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; background: #000; margin-top: 2em; border-radius: 5px;">
-    <iframe 
-        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
-        src="https://www.youtube.com/embed/UqJM3NjE-cM?autoplay=1&mute=1&loop=1&playlist=UqJM3NjE-cM" 
-        title="Johnny Cash - Dark as a Dungeon" 
-        frameborder="0" 
-        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
-        allowfullscreen>
-    </iframe>
-</div>
-
-  
+                <!-- YouTube Embedded Video Player -->
+                <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; background: #000; margin-top: 2em; border-radius: 5px;">
+                    <iframe 
+                        style="position: absolute; top: 0; left: 0; width: 100%; height: 100%;"
+                        src="https://www.youtube.com/embed/UqJM3NjE-cM?autoplay=1&mute=1&loop=1&playlist=UqJM3NjE-cM" 
+                        title="Johnny Cash - Dark as a Dungeon" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                    </iframe>
+                </div>
 
             </section>
             <aside>
-                <!-- This placeholder will be filled by script.js -->
                 <div id="sidebar-placeholder"></div>
             </aside>
         </div>
@@ -58,11 +54,9 @@
 
     <div id="footer-placeholder"></div>
 
-    <!-- Load Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore-compat.js"></script>
     
-    <!-- Use root-relative paths for all scripts to ensure they load correctly -->
     <script src="/js/firebaseclient.js"></script>
     <script src="/_includes/header.js"></script>
     <script src="/_includes/footer.js"></script>
