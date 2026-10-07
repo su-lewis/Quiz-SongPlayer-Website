@@ -1,6 +1,6 @@
 {
-  "name": "QuizSongPlayer",
-  "short_name": "QuizSongPlayer",
+  "name": "Quiz SongPlayer",
+  "short_name": "Quiz SongPlayer",
   "icons": [
     {
       "src": "/images/web-app-manifest-192x192.png",
